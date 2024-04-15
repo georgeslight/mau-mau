@@ -6,8 +6,10 @@ import java.util.List;
 public class Player {
 
     private List<Card> hand = new ArrayList<>();
-
     private Integer rankingPoints;
+    private boolean saidMau;
+    private int[] score;
+
 
     public Player(List<Card> hand) {
         this.hand = hand;
@@ -27,5 +29,13 @@ public class Player {
 
     public void setHand(List<Card> hand) {
         this.hand = hand;
+    }
+
+    public boolean isSaidMau() {
+        return saidMau;
+    }
+
+    public void setSaidMau(boolean saidMau) {
+        this.saidMau = saidMau;
     }
 }
