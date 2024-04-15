@@ -1,5 +1,8 @@
 package de.htwberlin.maven_demo.model;
 
+import de.htwberlin.maven_demo.enums.Rank;
+import de.htwberlin.maven_demo.enums.Suit;
+
 import java.util.Collections;
 import java.util.Stack;
 import java.util.stream.Stream;

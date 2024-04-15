@@ -1,4 +1,4 @@
-package de.htwberlin.maven_demo.model;
+package de.htwberlin.maven_demo.enums;
 
 public enum Rank {
     SEVEN,

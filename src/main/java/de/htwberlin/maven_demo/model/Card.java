@@ -1,5 +1,8 @@
 package de.htwberlin.maven_demo.model;
 
+import de.htwberlin.maven_demo.enums.Rank;
+import de.htwberlin.maven_demo.enums.Suit;
+
 public class Card {
     private Suit suit;
     private Rank rank;
