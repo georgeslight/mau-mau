@@ -1,7 +1,9 @@
 package de.htwberlin.maven_demo;
 
+import de.htwberlin.maven_demo.model.Card;
 import de.htwberlin.maven_demo.model.Deck;
 import de.htwberlin.maven_demo.model.Player;
+
 
 import java.util.List;
 
@@ -10,6 +12,25 @@ public class GameState {
     private Deck deck;
     private Deck discardPile;
     private int currentPlayerIndex;
+    private boolean changedDirection;
+    private Card lastCardPlayed;
+    private Card wishCard;
+
+    public Card getLastCardPlayed() {
+        return lastCardPlayed;
+    }
+
+    public void setLastCardPlayed(Card lastCardPlayed) {
+        this.lastCardPlayed = lastCardPlayed;
+    }
+
+    public Card getWishCard() {
+        return wishCard;
+    }
+
+    public void setWishCard(Card wishCard) {
+        this.wishCard = wishCard;
+    }
 
     public List<Player> getPlayers() {
         return players;
@@ -41,5 +62,13 @@ public class GameState {
 
     public void setCurrentPlayerIndex(int currentPlayerIndex) {
         this.currentPlayerIndex = currentPlayerIndex;
+    }
+
+    public boolean isChangedDirection() {
+        return changedDirection;
+    }
+
+    public void setChangedDirection(boolean changedDirection) {
+        this.changedDirection = changedDirection;
     }
 }

@@ -3,8 +3,11 @@ package de.htwberlin.maven_demo;
 
 import de.htwberlin.maven_demo.model.Card;
 import de.htwberlin.maven_demo.model.Deck;
+import de.htwberlin.maven_demo.model.Player;
 
- interface Service {
+import java.util.List;
+
+interface Service {
 
         /**
          * Initializes the game with the specified number of players.
@@ -12,12 +15,15 @@ import de.htwberlin.maven_demo.model.Deck;
          *
          * @param numberOfPlayers the number of players in the game
          */
-        void initializeGame(int numberOfPlayers);
+        GameState initializeGame(int numberOfPlayers);
 
         /**
-         * Simulates cutting the deck to randomize card order further.
-         */
-        void cutDeck();
+         * Creates a player to a game
+        * @param gameState Game where the Player should be added to
+        * @return new Player
+        */
+        Player createPlayer(GameState gameState);
+
 
         /**
          * Starts the turn for the specified player.
@@ -31,7 +37,7 @@ import de.htwberlin.maven_demo.model.Deck;
          *
          * @param card the card to be played
          */
-         void playCard(Card card);
+         void playCard(Player player, Card card);
 
         /**
          * Handles the action of a player drawing a card from the draw pile.
@@ -45,7 +51,7 @@ import de.htwberlin.maven_demo.model.Deck;
          *
          * @return the shuffled deck
          */
-         Deck shuffle();
+         Deck shuffle(Deck deck);
 
         /**
          * Moves the game control to the next player in the sequence.
@@ -53,9 +59,11 @@ import de.htwberlin.maven_demo.model.Deck;
          void nextPlayer();
 
         /**
-         * Moves the game control to the previous player, typically used when the game direction reverses.
+         * sort cards in the players hand to optimize game experience
+         * @param player
+         * @return list of the sorted Cards -> Players hand
          */
-         void previousPlayer();
+         List<Card> sortPlayersCards(Player player);
 
         /**
          * Checks if the specified player has won the game.
@@ -63,7 +71,7 @@ import de.htwberlin.maven_demo.model.Deck;
          * @param player the index of the player to check for winning condition
          * @return true if the player has won, otherwise false
          */
-         boolean checkWinner(int player);
+         boolean checkWinner(Player player);
 
         /**
          * When the draw pile is empty, shuffles the discard pile into it to create a new draw pile.
@@ -87,26 +95,22 @@ import de.htwberlin.maven_demo.model.Deck;
          boolean checkValidCard(Card card, Card topCard);
 
         /**
-         * Updates the game state after each action to reflect the current status of the game.
-         */
-         void updateGameState();
-
-        /**
          * Ends the game and performs any cleanup necessary.
          */
-         void endGame();
+         void endGame(GameState game);
 
         /**
          * Called when a player has only one card left and declares "Mau".
          */
-         void mau();
+         void mau(Player player);
 
         /**
          * Handles the penalty for a player who fails to call "Mau" when they have one card left.
          */
-         void lostMau();
+         void lostMau(Player player);
 
         /**
+         *
          * Handles the discarding of a card to the discard pile.
          *
          * @param card the card to be discarded
@@ -116,7 +120,7 @@ import de.htwberlin.maven_demo.model.Deck;
         /**
          * Allows a player to surrender from the game, potentially affecting game dynamics.
          */
-         void surrender();
+         void surrender(Player player);
 
         /**
          * Handles the specific rules when a Jack is played.
