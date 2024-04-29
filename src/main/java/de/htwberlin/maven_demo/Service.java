@@ -9,90 +9,7 @@ import java.util.List;
 
 interface Service {
 
-        /**
-         * Initializes the game with the specified number of players.
-         * Sets up the deck, shuffles it, and distributes cards to each player.
-         *
-         * @param numberOfPlayers the number of players in the game
-         */
-        GameState initializeGame(int numberOfPlayers);
 
-        /**
-         * Creates a player to a game
-        * @param gameState Game where the Player should be added to
-        * @return new Player
-        */
-        Player createPlayer(GameState gameState);
-
-
-        /**
-         * Starts the turn for the specified player.
-         *
-         * @param player the index of the player whose turn is to start
-         */
-         void startTurn(int player);
-
-        /**
-         * Allows a player to play a card from their hand onto the discard pile.
-         *
-         * @param card the card to be played
-         */
-         void playCard(Player player, Card card);
-
-        /**
-         * Handles the action of a player drawing a card from the draw pile.
-         *
-         * @param player the index of the player who is drawing a card
-         */
-         void drawCard(int player);
-
-        /**
-         * Shuffles the deck and returns it.
-         *
-         * @return the shuffled deck
-         */
-         Deck shuffle(Deck deck);
-
-        /**
-         * Moves the game control to the next player in the sequence.
-         */
-         void nextPlayer();
-
-        /**
-         * sort cards in the players hand to optimize game experience
-         * @param player
-         * @return list of the sorted Cards -> Players hand
-         */
-         List<Card> sortPlayersCards(Player player);
-
-        /**
-         * Checks if the specified player has won the game.
-         *
-         * @param player the index of the player to check for winning condition
-         * @return true if the player has won, otherwise false
-         */
-         boolean checkWinner(Player player);
-
-        /**
-         * When the draw pile is empty, shuffles the discard pile into it to create a new draw pile.
-         */
-         void shuffleDiscardPileIntoDrawPile();
-
-        /**
-         * Applies effects of special cards like skipping turns or reversing game direction.
-         *
-         * @param card the special card whose effects need to be applied
-         */
-         void applySpecialCardEffects(Card card);
-
-        /**
-         * Checks if the card played is valid based on the current top card of the discard pile.
-         *
-         * @param card the card being played
-         * @param topCard the current top card on the discard pile
-         * @return true if the play is valid, otherwise false
-         */
-         boolean checkValidCard(Card card, Card topCard);
 
         /**
          * Ends the game and performs any cleanup necessary.
@@ -142,10 +59,5 @@ interface Service {
          */
          void playAce();
 
-        /**
-         * Calculates and returns the current players score based on the game state.
-         *
-         * @return the calculated score
-         */
-         int calculateScore();
+
     }
