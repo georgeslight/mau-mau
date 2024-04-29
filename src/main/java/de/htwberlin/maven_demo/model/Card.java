@@ -4,8 +4,8 @@ import de.htwberlin.maven_demo.enums.Rank;
 import de.htwberlin.maven_demo.enums.Suit;
 
 public class Card {
-    private Suit suit;
-    private Rank rank;
+    private final Suit suit;
+    private final Rank rank;
 
     public Card(Suit suit, Rank rank) {
         this.suit = suit;
@@ -13,18 +13,18 @@ public class Card {
     }
 
     public Suit getSuit() {
-        return suit;
-    }
-
-    public void setSuit(Suit suit) {
-        this.suit = suit;
+        return this.suit;
     }
 
     public Rank getRank() {
-        return rank;
+        return this.rank;
     }
 
-    public void setRank(Rank rank) {
-        this.rank = rank;
+    @Override
+    public String toString() {
+        return "Card{" +
+                "suit=" + suit +
+                ", rank=" + rank +
+                '}';
     }
 }

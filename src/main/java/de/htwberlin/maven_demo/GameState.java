@@ -10,7 +10,7 @@ import java.util.List;
 public class GameState {
     private List<Player> players;
     private Deck deck;
-    private Deck discardPile;
+    private List<Card> discardPile;
     private int currentPlayerIndex;
     private boolean changedDirection;
     private Card lastCardPlayed;
@@ -48,11 +48,11 @@ public class GameState {
         this.deck = deck;
     }
 
-    public Deck getDiscardPile() {
+    public List<Card> getDiscardPile() {
         return discardPile;
     }
 
-    public void setDiscardPile(Deck discardPile) {
+    public void setDiscardPile(List<Card> discardPile) {
         this.discardPile = discardPile;
     }
 
