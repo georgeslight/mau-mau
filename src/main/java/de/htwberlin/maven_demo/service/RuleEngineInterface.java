@@ -13,14 +13,21 @@ public interface RuleEngineInterface {
     void applySpecialCardEffects(Card card);
 
     /**
-     * Called when a player has only one card left and declares "Mau".
+     * Checks if the card played is valid based on the current top card of the discard pile.
+     *
+     * @param card the card being played
+     * @param topCard the current top card on the discard pile
+     * @return true if the play is valid, otherwise false
      */
-    void mau(Player player);
+    boolean checkValidCard(Card card, Card topCard);
 
     /**
-     * Handles the penalty for a player who fails to call "Mau" when they have one card left.
+     * Checks if the specified player has won the game.
+     *
+     * @param player to check for winning condition
+     * @return true if the player has won, otherwise false
      */
-    void lostMau(Player player);
+    boolean checkWinner(Player player);
 
     /**
      * Handles the specific rules when a Jack is played.
@@ -41,4 +48,5 @@ public interface RuleEngineInterface {
      * Handles the specific rules when an Ace is played.
      */
     void playAce();
+
 }

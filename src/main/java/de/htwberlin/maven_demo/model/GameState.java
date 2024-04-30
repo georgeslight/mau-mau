@@ -1,8 +1,4 @@
-package de.htwberlin.maven_demo;
-
-import de.htwberlin.maven_demo.model.Card;
-import de.htwberlin.maven_demo.model.Deck;
-import de.htwberlin.maven_demo.model.Player;
+package de.htwberlin.maven_demo.model;
 
 
 import java.util.List;
