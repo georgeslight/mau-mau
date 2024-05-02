@@ -25,7 +25,7 @@ public interface GameEngineInterface {
     /**
      * Moves the game control to the next player in the sequence.
      */
-    void nextPlayer();
+    void nextPlayer(GameState gameState);
 
     /**
      * Ends the game and performs any cleanup necessary.

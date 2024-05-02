@@ -2,6 +2,7 @@ package de.htwberlin.maven_demo.service;
 
 import de.htwberlin.maven_demo.model.Deck;
 import de.htwberlin.maven_demo.model.Card;
+import de.htwberlin.maven_demo.model.GameState;
 import de.htwberlin.maven_demo.model.Player;
 
 public interface CardManagerInterface {
@@ -20,7 +21,7 @@ public interface CardManagerInterface {
      * @param player the player playing the card
      * @param card the card to be played
      */
-    void playCard(Player player, Card card);
+    void playCard(Player player, Card card, GameState gameState);
 
     /**
      * Handles the action of a player drawing a card from the draw pile.
