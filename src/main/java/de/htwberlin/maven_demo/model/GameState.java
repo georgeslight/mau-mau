@@ -1,6 +1,8 @@
 package de.htwberlin.maven_demo.model;
 
 
+import de.htwberlin.maven_demo.enums.Suit;
+
 import java.util.List;
 
 public class GameState {
@@ -10,7 +12,7 @@ public class GameState {
     private int currentPlayerIndex;
     private boolean changedDirection;
     private Card lastCardPlayed;
-    private Card wishCard;
+    private Suit wishCard;
 
     public Card getLastCardPlayed() {
         return lastCardPlayed;
@@ -20,11 +22,11 @@ public class GameState {
         this.lastCardPlayed = lastCardPlayed;
     }
 
-    public Card getWishCard() {
+    public Suit getWishCard() {
         return wishCard;
     }
 
-    public void setWishCard(Card wishCard) {
+    public void setWishCard(Suit wishCard) {
         this.wishCard = wishCard;
     }
 
