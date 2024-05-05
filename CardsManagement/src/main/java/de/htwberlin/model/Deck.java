@@ -1,10 +1,11 @@
 package de.htwberlin.model;
 
-import de.htwberlin.maven_demo.enums.Rank;
-import de.htwberlin.maven_demo.enums.Suit;
+import de.htwberlin.enums.Rank;
+import de.htwberlin.enums.Suit;
 
 import java.util.Collections;
 import java.util.Stack;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Deck {
@@ -15,7 +16,7 @@ public class Deck {
         cards.addAll(Stream.of(Suit.values())
                 .flatMap(suit -> Stream.of(Rank.values())
                         .map(rank -> new Card(suit, rank)))
-                .toList());
+                .collect(Collectors.toList()));
         Collections.shuffle(cards);
     }
 

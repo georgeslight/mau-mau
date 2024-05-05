@@ -1,7 +1,5 @@
 package de.htwberlin.model;
 
-
-
 import de.htwberlin.enums.Suit;
 
 import java.util.List;

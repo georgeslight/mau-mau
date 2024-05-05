@@ -1,7 +1,5 @@
 package de.htwberlin.service;
 
-
-
 import de.htwberlin.model.Card;
 import de.htwberlin.model.GameState;
 import de.htwberlin.model.Player;

@@ -1,7 +1,7 @@
 package de.htwberlin.model;
 
-import de.htwberlin.maven_demo.enums.Rank;
-import de.htwberlin.maven_demo.enums.Suit;
+import de.htwberlin.enums.Rank;
+import de.htwberlin.enums.Suit;
 
 public class Card {
     private final Suit suit;
