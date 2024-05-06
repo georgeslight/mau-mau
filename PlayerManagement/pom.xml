@@ -20,11 +20,6 @@
     <dependencies>
         <dependency>
             <groupId>de.htwberlin</groupId>
-            <artifactId>GameEngine</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>de.htwberlin</groupId>
             <artifactId>CardsManagement</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>

@@ -1,44 +1,32 @@
 package de.htwberlin.service;
 
+import de.htwberlin.enums.Rank;
+import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Deck;
 import de.htwberlin.model.Card;
-import de.htwberlin.model.GameState;
-import de.htwberlin.model.Player;
+
+import java.util.List;
+import java.util.Stack;
 
 public interface CardManagerInterface {
 
     /**
      * Shuffles the deck and returns it.
      *
-     * @param deck the deck to shuffle
+     * @param deck the stack of cards to shuffle
      * @return the shuffled deck
      */
-    Deck shuffle(Deck deck);
+    Stack<Card> shuffle(Stack<Card> deck);
 
     /**
-     * Allows a player to play a card from their hand onto the discard pile.
      *
-     * @param player the player playing the card
-     * @param card the card to be played
+     * @return Card
      */
-    void playCard(Player player, Card card, GameState gameState);
+    Card createCard(Suit suit, Rank rank);
 
     /**
-     * Handles the action of a player drawing a card from the draw pile.
      *
-     * @param player the index of the player who is drawing a card
+     * @return Deck
      */
-    void drawCard(int player);
-
-    /**
-     * When the draw pile is empty, shuffles the discard pile into it to create a new draw pile.
-     */
-    void shuffleDiscardPileIntoDrawPile();
-
-    /**
-     * Handles the discarding of a card to the discard pile.
-     *
-     * @param card the card to be discarded
-     */
-    void discardCard(Card card);
+    Deck createDeck();
 }

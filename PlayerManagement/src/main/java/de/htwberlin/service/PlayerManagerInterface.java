@@ -1,7 +1,6 @@
 package de.htwberlin.service;
 
 import de.htwberlin.model.Card;
-import de.htwberlin.model.GameState;
 import de.htwberlin.model.Player;
 
 import java.util.List;
@@ -10,10 +9,9 @@ public interface PlayerManagerInterface {
 
     /**
      * Creates a player and adds them to the game.
-     * @param gameState Game where the Player should be added to
      * @return new Player
      */
-    Player createPlayer(GameState gameState);
+    Player createPlayer();
 
     /**
      * Sort cards in the player's hand to optimize game experience.

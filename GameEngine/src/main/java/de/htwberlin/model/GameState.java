@@ -3,11 +3,12 @@ package de.htwberlin.model;
 import de.htwberlin.enums.Suit;
 
 import java.util.List;
+import java.util.Stack;
 
 public class GameState {
     private List<Player> players;
     private Deck deck;
-    private List<Card> discardPile;
+    private Stack<Card> discardPile;
     private int currentPlayerIndex;
     private boolean changedDirection;
     private Card lastCardPlayed;
@@ -49,7 +50,7 @@ public class GameState {
         return discardPile;
     }
 
-    public void setDiscardPile(List<Card> discardPile) {
+    public void setDiscardPile(Stack<Card> discardPile) {
         this.discardPile = discardPile;
     }
 

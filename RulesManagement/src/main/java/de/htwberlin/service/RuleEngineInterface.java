@@ -1,7 +1,6 @@
 package de.htwberlin.service;
 
 import de.htwberlin.model.Card;
-import de.htwberlin.model.Player;
 
 public interface RuleEngineInterface {
 
@@ -20,14 +19,6 @@ public interface RuleEngineInterface {
      * @return true if the play is valid, otherwise false
      */
     boolean checkValidCard(Card card, Card topCard);
-
-    /**
-     * Checks if the specified player has won the game.
-     *
-     * @param player to check for winning condition
-     * @return true if the player has won, otherwise false
-     */
-    boolean checkWinner(Player player);
 
     /**
      * Handles the specific rules when a Jack is played.
