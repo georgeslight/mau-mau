@@ -1,8 +1,12 @@
 package de.htwberlin.service;
 
+import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
 
 public class RuleService implements RuleEngineInterface {
+
+
+
 
     @Override
     public void applySpecialCardEffects(Card card) {
@@ -16,7 +20,7 @@ public class RuleService implements RuleEngineInterface {
     }
 
     @Override
-    public void playJack() {
+    public void playJack(Suit wishedSuit) {
 //        todo
     }
 

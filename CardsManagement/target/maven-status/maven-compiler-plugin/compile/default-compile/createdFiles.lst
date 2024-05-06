@@ -1,0 +1,7 @@
+de\htwberlin\App.class
+de\htwberlin\service\CardService.class
+de\htwberlin\enums\Rank.class
+de\htwberlin\enums\Suit.class
+de\htwberlin\model\Card.class
+de\htwberlin\service\CardManagerInterface.class
+de\htwberlin\model\Deck.class

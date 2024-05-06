@@ -1,5 +1,6 @@
 package de.htwberlin.service;
 
+import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
 
 public interface RuleEngineInterface {
@@ -22,8 +23,9 @@ public interface RuleEngineInterface {
 
     /**
      * Handles the specific rules when a Jack is played.
+     * # Ein weiterer Bube darf nicht auf einem Buben abgelegt werden
      */
-    void playJack();
+    void playJack(Suit wishedSuit);
 
     /**
      * Handles the specific rules when a 7 is played.

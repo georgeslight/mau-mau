@@ -10,25 +10,7 @@ public class GameState {
     private Deck deck;
     private Stack<Card> discardPile;
     private int currentPlayerIndex;
-    private boolean changedDirection;
-    private Card lastCardPlayed;
-    private Suit wishCard;
 
-    public Card getLastCardPlayed() {
-        return lastCardPlayed;
-    }
-
-    public void setLastCardPlayed(Card lastCardPlayed) {
-        this.lastCardPlayed = lastCardPlayed;
-    }
-
-    public Suit getWishCard() {
-        return wishCard;
-    }
-
-    public void setWishCard(Suit wishCard) {
-        this.wishCard = wishCard;
-    }
 
     public List<Player> getPlayers() {
         return players;
@@ -60,13 +42,5 @@ public class GameState {
 
     public void setCurrentPlayerIndex(int currentPlayerIndex) {
         this.currentPlayerIndex = currentPlayerIndex;
-    }
-
-    public boolean isChangedDirection() {
-        return changedDirection;
-    }
-
-    public void setChangedDirection(boolean changedDirection) {
-        this.changedDirection = changedDirection;
     }
 }

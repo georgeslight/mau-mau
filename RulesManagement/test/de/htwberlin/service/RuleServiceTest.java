@@ -1,9 +1,9 @@
 package de.htwberlin.service;
 
+import de.htwberlin.Rules;
 import de.htwberlin.enums.Rank;
 import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
-import de.htwberlin.model.Player;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
@@ -12,10 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RuleServiceTest {
     RuleService ruleService = mock(RuleService.class);
-    private final Player mockPlayer = mock(Player.class);
-
-
-
+    Rules rules = mock(Rules.class);
 
     /**
      * applySpecialCardEffects runs the Method play7 if the card played was 7
@@ -43,7 +40,7 @@ class RuleServiceTest {
     public void applySpecialCardEffectsOnJack() {
         final Card cardJack = new Card(Suit.HEARTS, Rank.JACK);
         ruleService.applySpecialCardEffects(cardJack);
-        verify(ruleService).playJack();
+        verify(ruleService).playJack(cardJack.getSuit());
     }
 
     /**
@@ -95,22 +92,68 @@ class RuleServiceTest {
         Card card = new Card(Suit.CLUBS, Rank.TEN);
         assertFalse(ruleService.checkValidCard(card, topCard));
     }
-
+    /**
+     * Verify invalid play when 2 Jacks are played.
+     */
     @Test
-    void checkWinner() {
-
+    void playingTowJacks() {
+        Card topCard = new Card(Suit.HEARTS, Rank.JACK);
+        Card card = new Card(Suit.CLUBS, Rank.JACK);
+        assertFalse(ruleService.checkValidCard(card, topCard));
     }
 
+    /**
+     * when jack is played, the wishedSuit Attribute most be changed
+     */
     @Test
-    void playJack() {
+    void playJackTest1() {
+        ruleService.playJack(Suit.HEARTS);
+        assertEquals(Suit.HEARTS, rules.getWishCard());
     }
 
+    /**
+     * Cards to be drawn by next player are increased by 2
+     */
     @Test
     void play7() {
+        ruleService.play7();
+        assertEquals(2, rules.getCardsTObeDrawn());
     }
-
+    /**
+     * Cards to be drawn by next player are increased by 2. 2 sevens are played
+     */
     @Test
-    void play8() {
+    void play7time2() {
+        ruleService.play7();
+        ruleService.play7();
+        assertEquals(4, rules.getCardsTObeDrawn());
+    }
+    /**
+     * Cards to be drawn by next player are increased by 2. 3 sevens are played
+     */
+    @Test
+    void play7time3() {
+        ruleService.play7();
+        ruleService.play7();
+        ruleService.play7();
+        assertEquals(6, rules.getCardsTObeDrawn());
+    }
+    /**
+     * Next player Turn will be skipped after playing an 8
+     */
+    @Test
+    void play8SkipNextPlayer() {
+        ruleService.play8();
+        assertTrue(rules.isSkipNextPlayerTurn());
+    }
+    /**
+     * Draw 2 is skipped after playing an 8
+     */
+    @Test
+    void play8draw2() {
+        ruleService.play7();
+        ruleService.play8();
+        assertEquals(0, rules.getCardsTObeDrawn());
     }
 
     @Test
