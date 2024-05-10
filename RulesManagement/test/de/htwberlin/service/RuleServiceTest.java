@@ -155,8 +155,12 @@ class RuleServiceTest {
         ruleService.play8();
         assertEquals(0, rules.getCardsTObeDrawn());
     }
-
+    /**
+     * playing an Ace allows the current player to play another card
+     */
     @Test
     void playAce() {
+        ruleService.playAce();
+        assertTrue(rules.isCanPlayAgain());
     }
 }

@@ -11,6 +11,8 @@ public class Rules {
     private int cardsTObeDrawn;
     //wenn true, muss nächste Spieler eine Runde Aussetzen
     private boolean skipNextPlayerTurn;
+    //When Ace played, Player is allowed to play another card
+    private boolean canPlayAgain;
 
 
 
@@ -54,5 +56,12 @@ public class Rules {
 
     public void setSkipNextPlayerTurn(boolean skipNextPlayerTurn) {
         this.skipNextPlayerTurn = skipNextPlayerTurn;
+    }
+    public boolean isCanPlayAgain() {
+        return canPlayAgain;
+    }
+
+    public void setCanPlayAgain(boolean canPlayAgain) {
+        this.canPlayAgain = canPlayAgain;
     }
 }
