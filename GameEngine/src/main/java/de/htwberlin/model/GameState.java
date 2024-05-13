@@ -1,6 +1,5 @@
 package de.htwberlin.model;
 
-import de.htwberlin.enums.Suit;
 
 import java.util.List;
 import java.util.Stack;
@@ -11,6 +10,7 @@ public class GameState {
     private Stack<Card> discardPile;
     private int currentPlayerIndex;
     private int nextPlayerIndex;
+
 
 
     public List<Player> getPlayers() {

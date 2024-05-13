@@ -13,23 +13,25 @@ public interface RuleEngineInterface {
      * @return true if the play is valid, otherwise false
      */
     boolean checkValidCard(Card card, Card topCard);
-
+    /**
+     * calculates the index of the next player based on the current player index and the total number of players.
+     *
+     * @return the index of the next player
+     */
+    Integer calculateNextPlayerIndex(Integer currentPlayerIndex, Integer playerCount);
     /**
      * Handles the specific rules when a Jack is played.
      * # Ein weiterer Bube darf nicht auf einem Buben abgelegt werden
      */
     void playJack(Suit wishedSuit);
-
     /**
      * Handles the specific rules when a 7 is played.
      */
     void play7();
-
     /**
      * Handles the specific rules when an 8 is played.
      */
     void play8();
-
     /**
      * Handles the specific rules when an Ace is played.
      */

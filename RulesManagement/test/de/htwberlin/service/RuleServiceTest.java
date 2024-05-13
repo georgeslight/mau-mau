@@ -4,6 +4,7 @@ import de.htwberlin.model.Rules;
 import de.htwberlin.enums.Rank;
 import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
@@ -11,8 +12,74 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RuleServiceTest {
-    RuleService ruleService = mock(RuleService.class);
-    Rules rules = mock(Rules.class);
+    RuleService ruleService;
+    Rules rules;
+
+    @BeforeEach
+    void setUp() {
+        ruleService = mock(RuleService.class);
+        rules = new Rules();
+        rules.setNextPlayerIndex(0);  // Let's assume starting index is 0
+    }
+
+    /**
+     * Test the game direction forwards, expecting the index to increment.
+     */
+    @Test
+    void testIndexIncrement() {
+        rules.setGameDirection(true); // true for forward
+        rules.setNextPlayerIndex(0);
+        rules.setCanPlayAgain(false);
+        rules.setSkipNextPlayerTurn(false);
+        int playersCount = 4; // Example player count
+        assertEquals(1, ruleService.calculateNextPlayerIndex(0, playersCount));
+    }
+
+    /**
+     * Test the game direction backwards, expecting the index to decrement.
+     */
+    @Test
+    void testIndexDecrement() {
+        rules.setGameDirection(false); // false for backward
+        rules.setNextPlayerIndex(3);
+        int playersCount = 4;
+        assertEquals(0, ruleService.calculateNextPlayerIndex(1, playersCount));
+    }
+
+    /**
+     * Test skipping the next player when the game direction is forward.
+     */
+    @Test
+    void testSkipNextPlayerForward() {
+        rules.setGameDirection(true);
+        rules.setSkipNextPlayerTurn(true);
+        rules.setNextPlayerIndex(0);
+        int playersCount = 4;
+        assertEquals(2, ruleService.calculateNextPlayerIndex(0, playersCount));
+    }
+
+    /**
+     * Test skipping the next player when the game direction is backward.
+     */
+    @Test
+    void testSkipNextPlayerBackward() {
+        rules.setGameDirection(false);
+        rules.setSkipNextPlayerTurn(true);
+        rules.setNextPlayerIndex(0);
+        int playersCount = 4;
+        assertEquals(2, ruleService.calculateNextPlayerIndex(2, playersCount));
+    }
+
+    /**
+     * Test that the index remains the same when the current player can play again.
+     */
+    @Test
+    void testCanPlayAgain() {
+        rules.setCanPlayAgain(true);
+        rules.setNextPlayerIndex(1);
+        int playersCount = 4;
+        assertEquals(1, ruleService.calculateNextPlayerIndex(1, playersCount));
+    }
 
     /**
      * card can be played when suits match and ranks differ.

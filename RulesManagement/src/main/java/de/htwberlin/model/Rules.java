@@ -3,16 +3,31 @@ package de.htwberlin.model;
 import de.htwberlin.enums.Suit;
 
 public class Rules {
+    /**
+     * gameDirection: true = clockwise, false = counter-clockwise
+     */
     private boolean gameDirection;
     private Card lastCardPlayed;
     private Suit wishCard;
     //speichert wieviel cards vom nächsten spieler gezogen werden müssen
-    private int cardsTObeDrawn;
+    private Integer cardsTObeDrawn;
     //wenn true, muss nächste Spieler eine Runde Aussetzen
     private boolean skipNextPlayerTurn;
     //When Ace played, Player is allowed to play another card
     private boolean canPlayAgain;
+    private Integer nextPlayerIndex;
 
+    public void setCardsTObeDrawn(Integer cardsTObeDrawn) {
+        this.cardsTObeDrawn = cardsTObeDrawn;
+    }
+
+    public Integer getNextPlayerIndex() {
+        return nextPlayerIndex;
+    }
+
+    public void setNextPlayerIndex(Integer nextPlayerIndex) {
+        this.nextPlayerIndex = nextPlayerIndex;
+    }
 
     public Rules() {}
 
@@ -38,14 +53,6 @@ public class Rules {
 
     public void setWishCard(Suit wishCard) {
         this.wishCard = wishCard;
-    }
-
-    public int getCardsTObeDrawn() {
-        return cardsTObeDrawn;
-    }
-
-    public void setCardsTObeDrawn(int cardsTObeDrawn) {
-        this.cardsTObeDrawn = cardsTObeDrawn;
     }
 
     public boolean isSkipNextPlayerTurn() {

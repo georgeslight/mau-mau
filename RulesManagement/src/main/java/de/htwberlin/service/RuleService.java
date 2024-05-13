@@ -13,6 +13,11 @@ public class RuleService implements RuleEngineInterface {
     }
 
     @Override
+    public Integer calculateNextPlayerIndex(Integer currentPlayerIndex, Integer playerCount) {
+        return null;
+    }
+
+    @Override
     public void playJack(Suit wishedSuit) {
 //        todo
     }
