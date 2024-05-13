@@ -4,7 +4,7 @@ import de.htwberlin.model.Card;
 import de.htwberlin.model.GameState;
 import de.htwberlin.model.Player;
 
-public interface GameEngineInterface {
+public interface GameManagerInterface {
 
     /**
      * Initializes the game with the specified number of players.

@@ -13,6 +13,7 @@
     - CardsManagement -> George
     - PlayerManagement -> Debi
     - RulesManagemet -> Ghazi
+    - GameEngine -> Ghazi/George
     - Rest nach checken mit prof :)
   - mehrere Szenarien
   - 90% Code Coverage

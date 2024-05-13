@@ -10,6 +10,7 @@ public class GameState {
     private Deck deck;
     private Stack<Card> discardPile;
     private int currentPlayerIndex;
+    private int nextPlayerIndex;
 
 
     public List<Player> getPlayers() {
@@ -28,7 +29,7 @@ public class GameState {
         this.deck = deck;
     }
 
-    public List<Card> getDiscardPile() {
+    public Stack<Card> getDiscardPile() {
         return discardPile;
     }
 
@@ -42,5 +43,12 @@ public class GameState {
 
     public void setCurrentPlayerIndex(int currentPlayerIndex) {
         this.currentPlayerIndex = currentPlayerIndex;
+    }
+    public int getNextPlayerIndex() {
+        return nextPlayerIndex;
+    }
+
+    public void setNextPlayerIndex(int nextPlayerIndex) {
+        this.nextPlayerIndex = nextPlayerIndex;
     }
 }

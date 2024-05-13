@@ -6,13 +6,6 @@ import de.htwberlin.model.Card;
 public interface RuleEngineInterface {
 
     /**
-     * Applies effects of special cards like skipping turns or reversing game direction.
-     *
-     * @param card the special card whose effects need to be applied
-     */
-    void applySpecialCardEffects(Card card);
-
-    /**
      * Checks if the card played is valid based on the current top card of the discard pile.
      *
      * @param card the card being played

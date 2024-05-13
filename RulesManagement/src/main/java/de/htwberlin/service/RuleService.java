@@ -6,13 +6,6 @@ import de.htwberlin.model.Card;
 public class RuleService implements RuleEngineInterface {
 
 
-
-
-    @Override
-    public void applySpecialCardEffects(Card card) {
-//        todo
-    }
-
     @Override
     public boolean checkValidCard(Card card, Card topCard) {
 //        todo

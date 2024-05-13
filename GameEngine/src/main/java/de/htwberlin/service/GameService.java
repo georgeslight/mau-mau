@@ -4,7 +4,7 @@ import de.htwberlin.model.Card;
 import de.htwberlin.model.GameState;
 import de.htwberlin.model.Player;
 
-public class GameService implements GameEngineInterface{
+public class GameService implements GameManagerInterface {
 
     @Override
     public GameState initializeGame(int numberOfPlayers) {

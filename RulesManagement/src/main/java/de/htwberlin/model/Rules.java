@@ -1,7 +1,6 @@
-package de.htwberlin;
+package de.htwberlin.model;
 
 import de.htwberlin.enums.Suit;
-import de.htwberlin.model.Card;
 
 public class Rules {
     private boolean gameDirection;
@@ -13,7 +12,6 @@ public class Rules {
     private boolean skipNextPlayerTurn;
     //When Ace played, Player is allowed to play another card
     private boolean canPlayAgain;
-
 
 
     public Rules() {}
