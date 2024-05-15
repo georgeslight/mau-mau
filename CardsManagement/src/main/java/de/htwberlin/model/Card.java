@@ -27,4 +27,12 @@ public class Card {
                 ", rank=" + rank +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return suit == card.suit && rank == card.rank;
+    }
 }
