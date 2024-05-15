@@ -54,6 +54,17 @@ class GameServiceTest {
         assertEquals(1, state.getDiscardPile().size()); // A card has been drawn
     }
 
+    @Test
+    void testInitGameGeorge() {
+        int numbplayers = 4;
+        GameState gamestate = gameService.initializeGame(numbplayers);
+        gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
+        assertEquals(32 - (numbplayers * 5) - 1, gamestate.getDeck().getCards().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
+        assertEquals(numbplayers, gamestate.getPlayers().size());
+        assertNotEquals(gameState.getCurrentPlayerIndex(), gamestate.getNextPlayerIndex());
+        assertEquals(0, gamestate.getCurrentPlayerIndex());
+    }
+
     /**
      * Test moving to the next player in the sequence.
      */
@@ -84,6 +95,27 @@ class GameServiceTest {
 
         assertEquals(discardPileSize, gameState.getDiscardPile().size());// Discard pile size unchanged
         assertTrue(gameState.getDiscardPile().contains(drawnCard));// Drawn card is now on discard pile
+//        todo define numbers for variables
+    }
+
+    @Test
+    void testDrawCardGeorge() {
+        GameState gameState = gameService.initializeGame(4);
+        int playerIndex = gameState.getCurrentPlayerIndex();
+        Player player = gameState.getPlayers().get(playerIndex);
+        int initialHandSize = player.getHand().size();
+        int initialDiscardPileSize = gameState.getDiscardPile().size();
+        Card drawnCard = gameService.drawCard(playerIndex);
+        assertNotNull(drawnCard);
+        assertEquals(initialHandSize + 1, player.getHand().size());
+        assertEquals(initialHandSize - 1, gameState.getDiscardPile().size());
+
+        Stack<Card> allCardsWithoutDrawCard = new Stack<>();
+        allCardsWithoutDrawCard.addAll(gameState.getDeck().getCards());
+        allCardsWithoutDrawCard.addAll(gameState.getDiscardPile());
+        gameState.getPlayers().forEach(p -> allCardsWithoutDrawCard.addAll(p.getHand()));
+        assertFalse(allCardsWithoutDrawCard.contains(drawnCard));
+//        todo drawCard is in Player not zwischenspeicher
     }
 
     /**
@@ -110,7 +142,7 @@ class GameServiceTest {
     void testCheckWinner() {
         player1.setHand(Collections.emptyList()); // No cards left
         assertTrue(gameService.checkWinner(player1));
-        player1.setHand(Collections.singletonList(new Card(Suit.HEARTS, Rank.ACE)));
-        assertFalse(gameService.checkWinner(player1));
+        player2.setHand(List.of(new Card(Suit.HEARTS, Rank.ACE)));
+        assertFalse(gameService.checkWinner(player2));
     }
 }
