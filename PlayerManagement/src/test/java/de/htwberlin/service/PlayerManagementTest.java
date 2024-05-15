@@ -4,6 +4,7 @@ import de.htwberlin.enums.Rank;
 import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
 import de.htwberlin.model.Player;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -12,6 +13,14 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerManagementTest {
+
+    private PlayerManagement playerService;
+
+    @BeforeEach
+    void setUp() {
+        playerService = new PlayerManagement();
+    }
+
     /**
      * Tests the creation of a player.
      * It verifies that the createPlayer method of PlayerManagement produces a non-null player object.
@@ -21,8 +30,8 @@ class PlayerManagementTest {
         PlayerManagement playerManagement = new PlayerManagement();
         Player player = playerManagement.createPlayer();
         assertNotNull(player);
+        assertEquals(5, player.getHand().size());
     }
-
 
     /**
      * Tests the surrender operation for a player.
@@ -34,6 +43,7 @@ class PlayerManagementTest {
         PlayerManagement playerManagement = new PlayerManagement();
         Player player = new Player(new ArrayList<>());
         playerManagement.surrender(player);
+//        todo georges
     }
 
 
@@ -46,7 +56,7 @@ class PlayerManagementTest {
         PlayerManagement playerManagement = new PlayerManagement();
         Player player = new Player(new ArrayList<>());
         playerManagement.mau(player);
-
+//        test if player has only one card, if one card keep playing, if has more than one card, draw extra card
     }
 
     /**
@@ -58,6 +68,7 @@ class PlayerManagementTest {
         PlayerManagement playerManagement = new PlayerManagement();
         Player player = new Player(new ArrayList<>());
         playerManagement.lostMau(player);
+        // test player with only one card, doesnt click mau, and ahs to draw moire cards
     }
 
 
@@ -65,14 +76,41 @@ class PlayerManagementTest {
     void sortPlayersCards() {
         PlayerManagement playerManagement = new PlayerManagement();
         Player player = new Player();
-        List<Card> unsortedCards = List.of(new Card(Suit.HEARTS, Rank.JACK), new Card(Suit.SPADES, Rank.TEN), new Card(Suit.DIAMONDS, Rank.ACE));
+        final List<Card> unsortedCards = List.of(new Card(Suit.HEARTS, Rank.JACK), new Card(Suit.SPADES, Rank.TEN), new Card(Suit.DIAMONDS, Rank.ACE));
         player.setHand(unsortedCards);
         List<Card> sortedCards = playerManagement.sortPlayersCards(player);
         assertArrayEquals(new Card[] {
-                new Card(Suit.SPADES, Rank.TEN),
+                new Card(Suit.DIAMONDS, Rank.JACK),
+                new Card(Suit.DIAMONDS, Rank.ACE),
                 new Card(Suit.HEARTS, Rank.JACK),
-                new Card(Suit.DIAMONDS, Rank.ACE)
+                new Card(Suit.SPADES, Rank.TEN),
         }, sortedCards.toArray());
+    }
+
+    /**
+     * Order is CLUBS, DIAMONDS, HEARTS, SPADES and Rank asc
+     */
+    @Test
+    void sortPlayersCardsGeorge() {
+        List<Card> hand = new ArrayList<>();
+        hand.add(new Card(Suit.SPADES, Rank.TEN));
+        hand.add(new Card(Suit.HEARTS, Rank.SEVEN));
+        hand.add(new Card(Suit.CLUBS, Rank.ACE));
+        hand.add(new Card(Suit.SPADES, Rank.SEVEN));
+        hand.add(new Card(Suit.HEARTS, Rank.KING));
+        hand.add(new Card(Suit.DIAMONDS, Rank.KING));
+
+        Player player = new Player(hand);
+        playerService.sortPlayersCards(player);
+
+        List<Card> sortedHand = player.getHand();
+
+        assertEquals(new Card(Suit.CLUBS, Rank.ACE), sortedHand.get(0));
+        assertEquals(new Card(Suit.DIAMONDS, Rank.KING), sortedHand.get(1));
+        assertEquals(new Card(Suit.HEARTS, Rank.SEVEN), sortedHand.get(2));
+        assertEquals(new Card(Suit.HEARTS, Rank.KING), sortedHand.get(3));
+        assertEquals(new Card(Suit.SPADES, Rank.SEVEN), sortedHand.get(4));
+        assertEquals(new Card(Suit.SPADES, Rank.TEN), sortedHand.get(5));
     }
 
     /**
