@@ -10,14 +10,13 @@ import java.util.stream.Stream;
 
 public class Deck {
 
-    private Stack<Card> cards = new Stack<>();
+    private final Stack<Card> cards;
 
     public Deck() {
-        cards.addAll(Stream.of(Suit.values())
+        this.cards = Stream.of(Suit.values())
                 .flatMap(suit -> Stream.of(Rank.values())
                         .map(rank -> new Card(suit, rank)))
-                .collect(Collectors.toList()));
-        Collections.shuffle(cards);
+                .collect(Collectors.toCollection(Stack::new));
     }
 
     public Stack<Card> getCards() {

@@ -1,2 +1,22 @@
 /target/
 .idea
+*.iml
+CardsManagement/target/
+GameEngine/target/
+PlayerManagement/target/
+RulesManagement/target/
+
+/*.class
+/*.log
+/*.tmp
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Eclipse
+.project
+.classpath
+.settings/

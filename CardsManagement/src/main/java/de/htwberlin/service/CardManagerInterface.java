@@ -5,7 +5,6 @@ import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Deck;
 import de.htwberlin.model.Card;
 
-import java.util.List;
 import java.util.Stack;
 
 public interface CardManagerInterface {
