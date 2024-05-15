@@ -1,0 +1,24 @@
+-------------------------------------------------------------------------------
+Test set: de.htwberlin.service.GameServiceTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 5, Errors: 0, Skipped: 0, Time elapsed: 1.474 s <<< FAILURE! - in de.htwberlin.service.GameServiceTest
+testNextPlayer  Time elapsed: 1.427 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <de.htwberlin.model.Player@649f2009> but was: <null>
+	at de.htwberlin.service.GameServiceTest.testNextPlayer(GameServiceTest.java:66)
+
+testPlayCard  Time elapsed: 0.006 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <false> but was: <true>
+	at de.htwberlin.service.GameServiceTest.testPlayCard(GameServiceTest.java:102)
+
+testDrawCard  Time elapsed: 0.004 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <31> but was: <32>
+	at de.htwberlin.service.GameServiceTest.testDrawCard(GameServiceTest.java:79)
+
+testCheckWinner  Time elapsed: 0.003 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at de.htwberlin.service.GameServiceTest.testCheckWinner(GameServiceTest.java:112)
+
+testInitializeGame  Time elapsed: 0.003 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: not <null>
+	at de.htwberlin.service.GameServiceTest.testInitializeGame(GameServiceTest.java:52)
+

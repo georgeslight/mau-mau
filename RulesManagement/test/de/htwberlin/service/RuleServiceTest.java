@@ -19,7 +19,6 @@ class RuleServiceTest {
     void setUp() {
         ruleService = mock(RuleService.class);
         rules = new Rules();
-        rules.setNextPlayerIndex(0);  // Let's assume starting index is 0
     }
 
     /**
@@ -28,7 +27,6 @@ class RuleServiceTest {
     @Test
     void testIndexIncrement() {
         rules.setGameDirection(true); // true for forward
-        rules.setNextPlayerIndex(0);
         rules.setCanPlayAgain(false);
         rules.setSkipNextPlayerTurn(false);
         int playersCount = 4; // Example player count
@@ -41,9 +39,8 @@ class RuleServiceTest {
     @Test
     void testIndexDecrement() {
         rules.setGameDirection(false); // false for backward
-        rules.setNextPlayerIndex(3);
         int playersCount = 4;
-        assertEquals(0, ruleService.calculateNextPlayerIndex(1, playersCount));
+        assertEquals(2, ruleService.calculateNextPlayerIndex(3, playersCount));
     }
 
     /**
@@ -53,7 +50,6 @@ class RuleServiceTest {
     void testSkipNextPlayerForward() {
         rules.setGameDirection(true);
         rules.setSkipNextPlayerTurn(true);
-        rules.setNextPlayerIndex(0);
         int playersCount = 4;
         assertEquals(2, ruleService.calculateNextPlayerIndex(0, playersCount));
     }
@@ -65,9 +61,8 @@ class RuleServiceTest {
     void testSkipNextPlayerBackward() {
         rules.setGameDirection(false);
         rules.setSkipNextPlayerTurn(true);
-        rules.setNextPlayerIndex(0);
         int playersCount = 4;
-        assertEquals(2, ruleService.calculateNextPlayerIndex(2, playersCount));
+        assertEquals(1, ruleService.calculateNextPlayerIndex(3, playersCount));
     }
 
     /**
@@ -76,7 +71,6 @@ class RuleServiceTest {
     @Test
     void testCanPlayAgain() {
         rules.setCanPlayAgain(true);
-        rules.setNextPlayerIndex(1);
         int playersCount = 4;
         assertEquals(1, ruleService.calculateNextPlayerIndex(1, playersCount));
     }

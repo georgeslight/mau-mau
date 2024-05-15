@@ -20,6 +20,10 @@ public interface RuleEngineInterface {
      */
     Integer calculateNextPlayerIndex(Integer currentPlayerIndex, Integer playerCount);
     /**
+     * @return the number of cards each player should start with
+     */
+    Integer getStartingCards();
+    /**
      * Handles the specific rules when a Jack is played.
      * # Ein weiterer Bube darf nicht auf einem Buben abgelegt werden
      */

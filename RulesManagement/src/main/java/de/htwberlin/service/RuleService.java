@@ -7,6 +7,11 @@ public class RuleService implements RuleEngineInterface {
 
 
     @Override
+    public Integer getStartingCards() {
+        return 5;
+    }
+
+    @Override
     public boolean checkValidCard(Card card, Card topCard) {
 //        todo
         return false;

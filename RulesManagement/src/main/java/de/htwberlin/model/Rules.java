@@ -15,19 +15,11 @@ public class Rules {
     private boolean skipNextPlayerTurn;
     //When Ace played, Player is allowed to play another card
     private boolean canPlayAgain;
-    private Integer nextPlayerIndex;
 
     public void setCardsTObeDrawn(Integer cardsTObeDrawn) {
         this.cardsTObeDrawn = cardsTObeDrawn;
     }
 
-    public Integer getNextPlayerIndex() {
-        return nextPlayerIndex;
-    }
-
-    public void setNextPlayerIndex(Integer nextPlayerIndex) {
-        this.nextPlayerIndex = nextPlayerIndex;
-    }
 
     public Rules() {}
 
@@ -37,6 +29,10 @@ public class Rules {
 
     public void setGameDirection(boolean gameDirection) {
         this.gameDirection = gameDirection;
+    }
+
+    public Integer getCardsTObeDrawn() {
+        return cardsTObeDrawn;
     }
 
     public Card getLastCardPlayed() {
