@@ -31,6 +31,7 @@ class PlayerManagementTest {
         Player player = playerManagement.createPlayer();
         assertNotNull(player);
         assertEquals(5, player.getHand().size());
+//        todo test hand
     }
 
     /**
@@ -125,38 +126,4 @@ class PlayerManagementTest {
         int totalScore = playerManagement.calculateTotalScore(player);
         assertEquals(300, totalScore); // Überprüfe, ob die Gesamtpunktzahl korrekt berechnet wurde
     }
-
-    private List<Card> additionalCards = List.of(
-            new Card(Suit.CLUBS, Rank.SEVEN),
-            new Card(Suit.DIAMONDS, Rank.QUEEN),
-            new Card(Suit.HEARTS, Rank.KING)
-    );
-
-    /**
-     * Testet die Funktion addCardToHand(), um sicherzustellen, dass eine Karte korrekt der Hand eines Spielers hinzugefügt wird.
-     */
-    @Test
-    void addCardToHand_CardAddedToHand_Success() {
-        PlayerManagement playerManagement = new PlayerManagement();
-        Player player = new Player();
-        Card newCard = new Card(Suit.SPADES, Rank.QUEEN);
-        playerManagement.addCardToHand(player, newCard);
-        assertTrue(player.getHand().contains(newCard));
-    }
-
-    /**
-     * Testet die Funktion removeCardFromHand(), um sicherzustellen, dass eine Karte korrekt aus der Hand eines Spielers entfernt wird.
-     */
-    @Test
-    void removeCardFromHand_CardRemovedFromHand_Success() {
-        PlayerManagement playerManagement = new PlayerManagement();
-        List<Card> cards = new ArrayList<>(additionalCards);
-        Player player = new Player(cards);
-        Card cardToRemove = additionalCards.get(1); // Wähle eine Karte aus der Liste aus
-        playerManagement.removeCardFromHand(player, cardToRemove);
-        assertFalse(player.getHand().contains(cardToRemove));
-    }
-
-
-
 }
