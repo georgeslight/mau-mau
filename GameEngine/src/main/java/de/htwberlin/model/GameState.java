@@ -11,8 +11,6 @@ public class GameState {
     private int currentPlayerIndex;
     private int nextPlayerIndex;
 
-
-
     public List<Player> getPlayers() {
         return players;
     }

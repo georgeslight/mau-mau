@@ -1,13 +1,25 @@
 package de.htwberlin.service;
 
+import de.htwberlin.enums.Rank;
+import de.htwberlin.enums.Suit;
+import de.htwberlin.model.Card;
 import de.htwberlin.model.Player;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerManagerTest {
+
+    private PlayerManagement playerService;
+
+    @BeforeEach
+    void setUp() {
+        playerService = new PlayerManagement();
+    }
 
     /**
      * Tests the creation of a player.
@@ -21,8 +33,30 @@ class PlayerManagerTest {
     }
 
 
+    /**
+     * Order is 1. CLUBS, 2. DIAMONDS, 3. HEARTS, 4. SPADES and Rank is asc
+     */
     @Test
     void sortPlayersCards() {
+        List<Card> hand = new ArrayList<>();
+        hand.add(new Card(Suit.SPADES, Rank.TEN));
+        hand.add(new Card(Suit.HEARTS, Rank.SEVEN));
+        hand.add(new Card(Suit.CLUBS, Rank.ACE));
+        hand.add(new Card(Suit.SPADES, Rank.SEVEN));
+        hand.add(new Card(Suit.HEARTS, Rank.KING));
+        hand.add(new Card(Suit.DIAMONDS, Rank.KING));
+
+        Player player = new Player(hand);
+        playerService.sortPlayersCards(player);
+
+        List<Card> sortedHand = player.getHand();
+
+        assertEquals(new Card(Suit.CLUBS, Rank.ACE), sortedHand.get(0));
+        assertEquals(new Card(Suit.DIAMONDS, Rank.KING), sortedHand.get(1));
+        assertEquals(new Card(Suit.HEARTS, Rank.SEVEN), sortedHand.get(2));
+        assertEquals(new Card(Suit.HEARTS, Rank.KING), sortedHand.get(3));
+        assertEquals(new Card(Suit.SPADES, Rank.SEVEN), sortedHand.get(4));
+        assertEquals(new Card(Suit.SPADES, Rank.TEN), sortedHand.get(5));
     }
 
     /**
@@ -60,5 +94,4 @@ class PlayerManagerTest {
         Player player = new Player(new ArrayList<>());
         playerManagement.lostMau(player);
     }
-
 }
