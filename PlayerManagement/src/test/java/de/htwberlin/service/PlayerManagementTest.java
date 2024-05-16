@@ -31,7 +31,7 @@ class PlayerManagementTest {
         assertNotNull(player);
         player.setName("Player 1");
         assertEquals("Player 1", player.getName());
-        assertEquals(5, player.getHand().size()); // is already tested in gameServiceTest testInitGame
+        assertEquals(5, player.getHand().size());
     }
 
     /**
@@ -56,7 +56,7 @@ class PlayerManagementTest {
 
 
     /**
-     * Tests the "mau" action for a player.
+     * Test if player says mau changes boolean state
      */
     @Test
     void mau() {
@@ -68,8 +68,6 @@ class PlayerManagementTest {
         assertTrue(playerWithOneCard.isSaidMau());
         assertEquals(1, playerWithOneCard.getHand().size());
 
-        //  if has more than one card, draw extra cards todo ???
-
         Player playerWithMultipleCards = new Player("Player 1");
         List<Card> multipleCardsHand = List.of(
                 new Card(Suit.HEARTS, Rank.ACE),
@@ -79,9 +77,6 @@ class PlayerManagementTest {
         playerService.mau(playerWithMultipleCards);
         assertFalse(playerWithMultipleCards.isSaidMau(), "Player should not be able to say Mau with more than one card.");
         assertEquals(3, playerWithMultipleCards.getHand().size());
-
-
-
     }
 
     /**
@@ -97,7 +92,8 @@ class PlayerManagementTest {
         assertEquals(3, playerWithOneCard.getHand().size());
 
         // test player with only one card, doesnt click mau, and ahs to draw moire cards
-    }
+    } // todo george -> lostMau if player one card and didnt says mau, draws cards (number irrelevant)
+        // if player says mau with more than one card throw exception oder so was
 
     /**
      * Order is CLUBS, DIAMONDS, HEARTS, SPADES and Rank asc
@@ -123,20 +119,5 @@ class PlayerManagementTest {
         assertEquals(new Card(Suit.HEARTS, Rank.KING), sortedHand.get(3));
         assertEquals(new Card(Suit.SPADES, Rank.SEVEN), sortedHand.get(4));
         assertEquals(new Card(Suit.SPADES, Rank.TEN), sortedHand.get(5));
-    }
-
-    /**
-     * Testet die Funktion calculateTotalScore(), um sicherzustellen, dass die Gesamtpunktzahl eines Spielers korrekt berechnet wird.
-     */
-    @Test
-    void calculateTotalScore_CorrectCalculation_Success() {
-        PlayerManagement playerManagement = new PlayerManagement();
-        Player player = new Player("Player 1");
-        int[] score = {50, 100, 150}; // Beispielwert für die Punktzahl
-        player.setScore(score);
-        int totalScore = playerManagement.calculateTotalScore(player);
-        assertEquals(300, totalScore); // Überprüfe, ob die Gesamtpunktzahl korrekt berechnet wurde
-    // todo Ghazi put calculate Score in GameEngine and Rules -> Calculate score in Rules, get score in engine and set score in Player
-
     }
 }

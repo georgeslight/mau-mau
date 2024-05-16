@@ -32,20 +32,10 @@ public interface PlayerManagerInterface {
      * @param player the player declaring Mau
      */ // todo all maybe change name to sayOneCardLeft()
     void mau(Player player);
-//    method come in the component where the method the component the state changes
 
     /**
      * Handles the penalty for a player who fails to call "Mau" when they have one card left.
      * @param player the player who failed to declare Mau
      */
     void lostMau(Player player);
-
-    /**
-     * Berechnet die Gesamtpunktzahl eines Spielers.
-     *
-     * @param player der Spieler, dessen Gesamtpunktzahl berechnet werden soll
-     * @return die Gesamtpunktzahl des Spielers
-     */
-    int calculateTotalScore(Player player);
-
 }
