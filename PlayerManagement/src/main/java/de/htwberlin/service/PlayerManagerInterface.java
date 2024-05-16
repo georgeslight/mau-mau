@@ -45,4 +45,5 @@ public interface PlayerManagerInterface {
      * @return die Gesamtpunktzahl des Spielers
      */
     int calculateTotalScore(Player player);
+
 }

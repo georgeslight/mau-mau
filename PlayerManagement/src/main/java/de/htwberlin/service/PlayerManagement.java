@@ -8,17 +8,12 @@ import java.util.*;
 public class PlayerManagement implements PlayerManagerInterface {
     @Override
     public Player createPlayer() {
-        List<Card> hand = new ArrayList<>();
-        Player player = new Player(hand);
-        player.setName("Player");
-        return player;
+        return null;
     }
 
     @Override
     public List<Card> sortPlayersCards(Player player) {
-        List<Card> hand = new ArrayList<>(player.getHand());
-        hand.sort(Comparator.comparing(Card::getRank)); // Sortieren nach Rang
-        return new ArrayList<>(hand); // Neue Liste erstellen und sortierte Karten hinzufügen
+        return null;
     }
 
     @Override

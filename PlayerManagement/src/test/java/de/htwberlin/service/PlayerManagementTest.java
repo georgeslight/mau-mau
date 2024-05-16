@@ -54,10 +54,26 @@ class PlayerManagementTest {
      */
     @Test
     void mau() {
-        PlayerManagement playerManagement = new PlayerManagement();
-        Player player = new Player(new ArrayList<>());
-        playerManagement.mau(player);
-//        test if player has only one card, if one card keep playing, if has more than one card, draw extra card
+        //        test if player has only one card, if one card keep playing
+        Player playerWithOneCard = new Player();
+        List<Card> oneCardHand = List.of(new Card(Suit.HEARTS, Rank.ACE));
+        playerWithOneCard.setHand(oneCardHand);
+        playerService.mau(playerWithOneCard);
+        assertTrue(playerWithOneCard.isSaidMau());
+        assertEquals(1, playerWithOneCard.getHand().size());
+
+        //  if has more than one card, draw extra card
+
+        Player playerWithMultipleCards = new Player();
+        List<Card> multipleCardsHand = List.of(
+                new Card(Suit.HEARTS, Rank.ACE),
+                new Card(Suit.SPADES, Rank.KING)
+        );
+        playerWithMultipleCards.setHand(multipleCardsHand);
+        playerService.mau(playerWithMultipleCards);
+        assertFalse(playerWithMultipleCards.isSaidMau(), "Player should not be able to say Mau with more than one card.");
+        assertEquals(3, playerWithMultipleCards.getHand().size());
+
     }
 
     /**
@@ -66,33 +82,20 @@ class PlayerManagementTest {
      */
     @Test
     void lostMau() {
-        PlayerManagement playerManagement = new PlayerManagement();
-        Player player = new Player(new ArrayList<>());
-        playerManagement.lostMau(player);
+        Player playerWithOneCard = new Player();
+        List<Card> oneCardHand = List.of(new Card(Suit.HEARTS, Rank.ACE));
+        playerWithOneCard.setHand(oneCardHand);
+        playerService.lostMau(playerWithOneCard);
+        assertEquals(3, playerWithOneCard.getHand().size());
+
         // test player with only one card, doesnt click mau, and ahs to draw moire cards
-    }
-
-
-    @Test
-    void sortPlayersCards() {
-        PlayerManagement playerManagement = new PlayerManagement();
-        Player player = new Player();
-        final List<Card> unsortedCards = List.of(new Card(Suit.HEARTS, Rank.JACK), new Card(Suit.SPADES, Rank.TEN), new Card(Suit.DIAMONDS, Rank.ACE));
-        player.setHand(unsortedCards);
-        List<Card> sortedCards = playerManagement.sortPlayersCards(player);
-        assertArrayEquals(new Card[] {
-                new Card(Suit.DIAMONDS, Rank.JACK),
-                new Card(Suit.DIAMONDS, Rank.ACE),
-                new Card(Suit.HEARTS, Rank.JACK),
-                new Card(Suit.SPADES, Rank.TEN),
-        }, sortedCards.toArray());
     }
 
     /**
      * Order is CLUBS, DIAMONDS, HEARTS, SPADES and Rank asc
      */
     @Test
-    void sortPlayersCardsGeorge() {
+    void sortPlayersCards() {
         List<Card> hand = new ArrayList<>();
         hand.add(new Card(Suit.SPADES, Rank.TEN));
         hand.add(new Card(Suit.HEARTS, Rank.SEVEN));
@@ -126,4 +129,5 @@ class PlayerManagementTest {
         int totalScore = playerManagement.calculateTotalScore(player);
         assertEquals(300, totalScore); // Überprüfe, ob die Gesamtpunktzahl korrekt berechnet wurde
     }
+
 }
