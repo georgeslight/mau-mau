@@ -39,11 +39,19 @@ class PlayerManagementTest {
      * It ensures that a player can be surrendered without errors.
      */
     @Test
-    void surrender() {
-        PlayerManagement playerManagement = new PlayerManagement();
+    void testEndRound() {
         Player player = new Player(new ArrayList<>());
-        playerManagement.surrender(player);
-//        todo georges
+        player.setHand(List.of(new Card(Suit.HEARTS, Rank.ACE),
+                new Card(Suit.SPADES, Rank.KING),
+                new Card(Suit.DIAMONDS, Rank.SEVEN),
+                new Card(Suit.SPADES, Rank.QUEEN),
+                new Card(Suit.CLUBS, Rank.EIGHT)));
+        int rankingPointsBeforeSurrender = player.getRankingPoints();
+        playerService.endRound(player);
+        int rankingPointsAfterSurrender = player.getRankingPoints();
+        assertTrue(rankingPointsBeforeSurrender < rankingPointsAfterSurrender);
+        assertEquals(player.getScore()[player.getScore().length], (int) player.getRankingPoints());
+        assertEquals(33, player.getRankingPoints());
     }
 
 
@@ -131,5 +139,4 @@ class PlayerManagementTest {
     // todo Ghazi put calculate Score in GameEngine and Rules -> Calculate score in Rules, get score in engine and set score in Player
 
     }
-
 }

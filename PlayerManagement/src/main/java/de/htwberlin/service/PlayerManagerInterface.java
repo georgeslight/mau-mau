@@ -22,15 +22,17 @@ public interface PlayerManagerInterface {
 
     /**
      * Allows a player to surrender from the game, potentially affecting game dynamics.
+     * Also for when someone wins the round
      * @param player the player who is surrendering
      */
-    void surrender(Player player);
+    void endRound(Player player);
 
     /**
      * Called when a player has only one card left and declares "Mau".
      * @param player the player declaring Mau
-     */
+     */ // todo all maybe change name to sayOneCardLeft()
     void mau(Player player);
+//    method come in the component where the method the component the state changes
 
     /**
      * Handles the penalty for a player who fails to call "Mau" when they have one card left.

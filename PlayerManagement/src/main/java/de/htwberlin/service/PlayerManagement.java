@@ -17,7 +17,7 @@ public class PlayerManagement implements PlayerManagerInterface {
     }
 
     @Override
-    public void surrender(Player player) {
+    public void endRound(Player player) {
 
     }
 
