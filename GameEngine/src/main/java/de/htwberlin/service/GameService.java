@@ -19,8 +19,9 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
-    public void endGame(GameState game) {
+    public Player endGame(GameState game) {
 //        todo
+        return null;
     }
 
     @Override

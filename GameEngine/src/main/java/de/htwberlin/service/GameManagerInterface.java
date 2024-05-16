@@ -22,10 +22,12 @@ public interface GameManagerInterface {
 
     /**
      * Ends the game and performs any cleanup necessary.
+     * calculates the winner and displays the result
      *
      * @param game the current game state to end
+     * @return the Winner
      */
-    void endGame(GameState game);
+    Player endGame(GameState game);
 
     /**
      * Handles the action of a player drawing a card from the draw pile.

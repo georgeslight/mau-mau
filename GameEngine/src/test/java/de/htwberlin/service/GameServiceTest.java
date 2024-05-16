@@ -48,14 +48,11 @@ class GameServiceTest {
      */
     @Test
     void testInitGame() {
-        int numbplayers = 4;
-        GameState gamestate = gameService.initializeGame(numbplayers);
+        int playersCount = 4;
+        GameState gamestate = gameService.initializeGame(playersCount);
         gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
-// todo Ghazi: the component shouldn't be testing a concrete number of cards in the deck. this will be mocked from RulesService
-        assertEquals(32 - (numbplayers * 5) - 1, gamestate.getDeck().getCards().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
-
-// todo Ghazi: same as abouve, will be updated
-        assertEquals(numbplayers, gamestate.getPlayers().size());
+        assertEquals(32 - (playersCount * 5) - 1, gamestate.getDeck().getCards().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
+        assertEquals(playersCount, gamestate.getPlayers().size());
         assertNotEquals(gameState.getCurrentPlayerIndex(), gamestate.getNextPlayerIndex());
         assertEquals(0, gamestate.getCurrentPlayerIndex());
     }
@@ -91,7 +88,8 @@ class GameServiceTest {
 
         assertEquals(discardPileSize, gameState.getDiscardPile().size());// Discard pile size unchanged
         assertTrue(gameState.getDiscardPile().contains(drawnCard));// Drawn card is now on discard pile
-//     To-do define numbers for variables -> never mind.
+//     Todo George, choose one of the tests for drawCard please.
+//     define numbers for variables -> never mind.
 //     The values for the variables must be assigned when gameInitialize is called
     }
 
