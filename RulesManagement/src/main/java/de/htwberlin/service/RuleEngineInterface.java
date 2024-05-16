@@ -3,6 +3,8 @@ package de.htwberlin.service;
 import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
 
+import java.util.List;
+
 public interface RuleEngineInterface {
 
     /**
@@ -40,5 +42,12 @@ public interface RuleEngineInterface {
      * Handles the specific rules when an Ace is played.
      */
     void playAce();
+
+    /**
+     * Calculates the score of cards given.
+     * @param cards
+     * @return sum of the scores of the cards
+     */
+    Integer calculateScore(List<Card> cards);
 
 }

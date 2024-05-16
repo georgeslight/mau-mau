@@ -6,6 +6,10 @@ import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.Mockito.*;
 
 
@@ -190,5 +194,16 @@ class RuleServiceTest {
     void playAce() {
         ruleService.playAce();
         assertTrue(rules.isCanPlayAgain());
+    }
+
+    /**
+     * calculate score reutrn the correct score
+     */
+    @Test
+    void calculateScore() {
+        Card card1 = new Card(Suit.HEARTS, Rank.ACE);
+        Card card2 = new Card(Suit.SPADES, Rank.KING);
+        Card card3 = new Card(Suit.DIAMONDS, Rank.QUEEN);
+// todo George parametrized Test -> test all scores of all ranks
     }
 }

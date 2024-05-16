@@ -3,15 +3,12 @@ package de.htwberlin.model;
 import de.htwberlin.enums.Suit;
 
 public class Rules {
-    /**
-     * gameDirection: true = clockwise, false = counter-clockwise
-     */
+    // gameDirection: true = clockwise, false = counter-clockwise
     private boolean gameDirection;
     private Card lastCardPlayed;
     private Suit wishCard;
-    //speichert wieviel cards vom nächsten spieler gezogen werden müssen
+    // number of cards to be drawn by the next player
     private Integer cardsToBeDrawn;
-    //wenn true, muss nächste Spieler eine Runde Aussetzen
     private boolean skipNextPlayerTurn;
     //When Ace played, Player is allowed to play another card
     private boolean canPlayAgain;
@@ -19,7 +16,6 @@ public class Rules {
     public void setCardsTObeDrawn(Integer cardsTObeDrawn) {
         this.cardsToBeDrawn = cardsTObeDrawn;
     }
-
 
     public Rules() {}
 

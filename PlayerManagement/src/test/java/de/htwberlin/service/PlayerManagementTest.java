@@ -23,22 +23,21 @@ class PlayerManagementTest {
 
     /**
      * Tests the creation of a player.
-     * It verifies that the createPlayer method of PlayerManagement produces a non-null player object.
      */
     @Test
     void createPlayer() {
         PlayerManagement playerManagement = new PlayerManagement();
         Player player = playerManagement.createPlayer();
         assertNotNull(player);
-        assertEquals(5, player.getHand().size());
-//        todo test hand
+        player.setName("Player 1");
+        assertEquals("Player 1", player.getName());
+        assertEquals(5, player.getHand().size()); // is already tested in gameServiceTest testInitGame
     }
 
     /**
      * Tests the surrender operation for a player.
      * It ensures that a player can be surrendered without errors.
      */
-
     @Test
     void surrender() {
         PlayerManagement playerManagement = new PlayerManagement();
@@ -50,21 +49,20 @@ class PlayerManagementTest {
 
     /**
      * Tests the "mau" action for a player.
-     * It verifies that a player can perform the "mau" action without errors.
      */
     @Test
     void mau() {
         //        test if player has only one card, if one card keep playing
-        Player playerWithOneCard = new Player();
+        Player playerWithOneCard = new Player("Player 1");
         List<Card> oneCardHand = List.of(new Card(Suit.HEARTS, Rank.ACE));
         playerWithOneCard.setHand(oneCardHand);
         playerService.mau(playerWithOneCard);
         assertTrue(playerWithOneCard.isSaidMau());
         assertEquals(1, playerWithOneCard.getHand().size());
 
-        //  if has more than one card, draw extra card
+        //  if has more than one card, draw extra cards todo ???
 
-        Player playerWithMultipleCards = new Player();
+        Player playerWithMultipleCards = new Player("Player 1");
         List<Card> multipleCardsHand = List.of(
                 new Card(Suit.HEARTS, Rank.ACE),
                 new Card(Suit.SPADES, Rank.KING)
@@ -74,6 +72,8 @@ class PlayerManagementTest {
         assertFalse(playerWithMultipleCards.isSaidMau(), "Player should not be able to say Mau with more than one card.");
         assertEquals(3, playerWithMultipleCards.getHand().size());
 
+
+
     }
 
     /**
@@ -82,7 +82,7 @@ class PlayerManagementTest {
      */
     @Test
     void lostMau() {
-        Player playerWithOneCard = new Player();
+        Player playerWithOneCard = new Player("Player 1");
         List<Card> oneCardHand = List.of(new Card(Suit.HEARTS, Rank.ACE));
         playerWithOneCard.setHand(oneCardHand);
         playerService.lostMau(playerWithOneCard);
@@ -123,11 +123,13 @@ class PlayerManagementTest {
     @Test
     void calculateTotalScore_CorrectCalculation_Success() {
         PlayerManagement playerManagement = new PlayerManagement();
-        Player player = new Player();
+        Player player = new Player("Player 1");
         int[] score = {50, 100, 150}; // Beispielwert für die Punktzahl
         player.setScore(score);
         int totalScore = playerManagement.calculateTotalScore(player);
         assertEquals(300, totalScore); // Überprüfe, ob die Gesamtpunktzahl korrekt berechnet wurde
+    // todo Ghazi put calculate Score in GameEngine and Rules -> Calculate score in Rules, get score in engine and set score in Player
+
     }
 
 }

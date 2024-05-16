@@ -28,14 +28,14 @@ class GameServiceTest {
         gameState = new GameState();
         ruleService = mock(RuleService.class);
 
-        player1 = new Player();
-        player1.setName("Player 1");
-        player2 = new Player();
-        player2.setName("Player 2");
-        player3 = new Player();
-        player3.setName("Player 3");
-        player4 = new Player();
-        player4.setName("Player 4");
+        player1 = new Player("Player 1");
+
+        player2 = new Player("Player 2");
+
+        player3 = new Player("Player 3");
+
+        player4 = new Player("Player 4");
+
 
         gameState.setPlayers(Arrays.asList(player1, player2, player3, player4));
         gameState.setCurrentPlayerIndex(0);
@@ -47,19 +47,14 @@ class GameServiceTest {
      * Test initializing the game with a specified number of players.
      */
     @Test
-    void testInitializeGame() {
-        GameState state = gameService.initializeGame(4);
-        assertNotNull(state); // Game state exists
-        assertEquals(4, state.getPlayers().size()); // Correct number of players
-        assertEquals(1, state.getDiscardPile().size()); // A card has been drawn
-    }
-
-    @Test
-    void testInitGameGeorge() {
+    void testInitGame() {
         int numbplayers = 4;
         GameState gamestate = gameService.initializeGame(numbplayers);
         gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
+// todo Ghazi: the component shouldn't be testing a concrete number of cards in the deck. this will be mocked from RulesService
         assertEquals(32 - (numbplayers * 5) - 1, gamestate.getDeck().getCards().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
+
+// todo Ghazi: same as abouve, will be updated
         assertEquals(numbplayers, gamestate.getPlayers().size());
         assertNotEquals(gameState.getCurrentPlayerIndex(), gamestate.getNextPlayerIndex());
         assertEquals(0, gamestate.getCurrentPlayerIndex());
@@ -83,6 +78,7 @@ class GameServiceTest {
      */
     @Test
     void testDrawCard() {
+
         int drawPileSize = gameState.getDeck().getCards().size();
         int playerHandSize = player1.getHand().size();
         int discardPileSize = gameState.getDiscardPile().size();
@@ -95,7 +91,8 @@ class GameServiceTest {
 
         assertEquals(discardPileSize, gameState.getDiscardPile().size());// Discard pile size unchanged
         assertTrue(gameState.getDiscardPile().contains(drawnCard));// Drawn card is now on discard pile
-//        todo define numbers for variables
+//     To-do define numbers for variables -> never mind.
+//     The values for the variables must be assigned when gameInitialize is called
     }
 
     @Test

@@ -3,6 +3,8 @@ package de.htwberlin.service;
 import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
 
+import java.util.List;
+
 public class RuleService implements RuleEngineInterface {
 
 
@@ -22,6 +24,8 @@ public class RuleService implements RuleEngineInterface {
         return null;
     }
 
+
+
     @Override
     public void playJack(Suit wishedSuit) {
 //        todo
@@ -40,5 +44,10 @@ public class RuleService implements RuleEngineInterface {
     @Override
     public void playAce() {
 //        todo
+    }
+
+    @Override
+    public Integer calculateScore(List<Card> cards) {
+        return 0;
     }
 }

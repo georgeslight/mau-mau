@@ -11,7 +11,9 @@ public class Player {
     private boolean saidMau;
     private int[] score;
 
-    public Player() {    }
+    public Player(String name) {
+        this.name = name;
+    }
 
     public Player(List<Card> hand) {
         this.hand = hand;
