@@ -68,15 +68,13 @@ class CardServiceTest {
     void testCreateDeck(Suit suit, Rank rank) {
         Deck deck = cardService.createDeck();
         assertNotNull(deck);
-        Stack<Card> cards = deck.getCards();
-        assertNotNull(cards);
-        assertEquals(32, cards.size(), "A deck should have 32 cards");
+        assertEquals(32, deck.getCards().size(), "A deck should have 32 cards");
 
         // Verify the deck has all unique cards
-        Set<Card> cardSet = new HashSet<>(cards);
+        Set<Card> cardSet = new HashSet<>(deck.getCards());
         assertEquals(32, cardSet.size(), "The deck should have 32 unique cards");
 
         // Verify the deck has all combinations of suits and ranks
-        assertTrue(cards.contains(new Card(suit, rank)), "The deck should contain the card: " + suit + " " + rank);
+        assertTrue(deck.getCards().contains(new Card(suit, rank)), "The deck should contain the card: " + suit + " " + rank);
     }
 }

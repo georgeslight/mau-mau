@@ -10,14 +10,14 @@ public class Rules {
     private Card lastCardPlayed;
     private Suit wishCard;
     //speichert wieviel cards vom nächsten spieler gezogen werden müssen
-    private Integer cardsTObeDrawn;
+    private Integer cardsToBeDrawn;
     //wenn true, muss nächste Spieler eine Runde Aussetzen
     private boolean skipNextPlayerTurn;
     //When Ace played, Player is allowed to play another card
     private boolean canPlayAgain;
 
     public void setCardsTObeDrawn(Integer cardsTObeDrawn) {
-        this.cardsTObeDrawn = cardsTObeDrawn;
+        this.cardsToBeDrawn = cardsTObeDrawn;
     }
 
 
@@ -31,8 +31,8 @@ public class Rules {
         this.gameDirection = gameDirection;
     }
 
-    public Integer getCardsTObeDrawn() {
-        return cardsTObeDrawn;
+    public Integer getCardsToBeDrawn() {
+        return cardsToBeDrawn;
     }
 
     public Card getLastCardPlayed() {
@@ -58,6 +58,7 @@ public class Rules {
     public void setSkipNextPlayerTurn(boolean skipNextPlayerTurn) {
         this.skipNextPlayerTurn = skipNextPlayerTurn;
     }
+
     public boolean isCanPlayAgain() {
         return canPlayAgain;
     }

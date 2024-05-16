@@ -77,7 +77,7 @@ class RuleServiceTest {
 
     /**
      * card can be played when suits match and ranks differ.
-     */
+     */ // todo Parameter georges
     @Test
     void suitsMatchRankDont() {
         Card topCard = new Card(Suit.HEARTS, Rank.NINE);
@@ -143,7 +143,7 @@ class RuleServiceTest {
     @Test
     void play7() {
         ruleService.play7();
-        assertEquals(2, rules.getCardsTObeDrawn());
+        assertEquals(2, rules.getCardsToBeDrawn());
     }
     /**
      * Cards to be drawn by next player are increased by 2. 2 sevens are played
@@ -152,7 +152,7 @@ class RuleServiceTest {
     void play7time2() {
         ruleService.play7();
         ruleService.play7();
-        assertEquals(4, rules.getCardsTObeDrawn());
+        assertEquals(4, rules.getCardsToBeDrawn());
     }
     /**
      * Cards to be drawn by next player are increased by 2. 3 sevens are played
@@ -162,7 +162,7 @@ class RuleServiceTest {
         ruleService.play7();
         ruleService.play7();
         ruleService.play7();
-        assertEquals(6, rules.getCardsTObeDrawn());
+        assertEquals(6, rules.getCardsToBeDrawn());
     }
     /**
      * Next player Turn will be skipped after playing an 8
@@ -181,7 +181,7 @@ class RuleServiceTest {
     void play8draw2() {
         ruleService.play7();
         ruleService.play8();
-        assertEquals(0, rules.getCardsTObeDrawn());
+        assertEquals(0, rules.getCardsToBeDrawn());
     }
     /**
      * playing an Ace allows the current player to play another card
