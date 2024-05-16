@@ -38,4 +38,12 @@ public interface PlayerManagerInterface {
      */
     void lostMau(Player player);
 
+    /**
+     * Berechnet die Gesamtpunktzahl eines Spielers.
+     *
+     * @param player der Spieler, dessen Gesamtpunktzahl berechnet werden soll
+     * @return die Gesamtpunktzahl des Spielers
+     */
+    int calculateTotalScore(Player player);
+
 }
