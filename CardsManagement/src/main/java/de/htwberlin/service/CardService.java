@@ -6,6 +6,8 @@ import de.htwberlin.model.Card;
 import de.htwberlin.model.Deck;
 
 import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CardService implements CardManagerInterface {
     @Override
@@ -22,7 +24,10 @@ public class CardService implements CardManagerInterface {
 
     @Override
     public Deck createDeck() {
-        //        todo
+//        return new Deck(Stream.of(Suit.values())
+//                .flatMap(suit -> Stream.of(Rank.values())
+//                        .map(rank -> new Card(suit, rank)))
+//                .collect(Collectors.toCollection(Stack::new)));
         return null;
     }
 }
