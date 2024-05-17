@@ -4,8 +4,6 @@ import de.htwberlin.model.*;
 import de.htwberlin.enums.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions.*;
-import org.mockito.Mockito.*;
 
 import java.util.*;
 
@@ -21,25 +19,51 @@ class GameServiceTest {
     private Player player3;
     private Player player4;
     private RuleService ruleService;
+    private CardService cardService;
 
     @BeforeEach
     void setUp() {
+        cardService = new CardService();
         gameService = new GameService();
         gameState = new GameState();
         ruleService = mock(RuleService.class);
 
-        player1 = new Player("Player 1");
+        player1 = new Player("Player 1", List.of(
+                new Card(Suit.HEARTS, Rank.SEVEN),
+                new Card(Suit.CLUBS, Rank.EIGHT),
+                new Card(Suit.SPADES, Rank.NINE),
+                new Card(Suit.DIAMONDS, Rank.TEN),
+                new Card(Suit.CLUBS, Rank.JACK)
+        ));
 
-        player2 = new Player("Player 2");
+        player2 = new Player("Player 2", List.of(
+                new Card(Suit.SPADES, Rank.QUEEN),
+                new Card(Suit.DIAMONDS, Rank.KING),
+                new Card(Suit.HEARTS, Rank.ACE),
+                new Card(Suit.CLUBS, Rank.SEVEN),
+                new Card(Suit.SPADES, Rank.EIGHT)
+        ));
 
-        player3 = new Player("Player 3");
+        player3 = new Player("Player 3", List.of(
+                new Card(Suit.HEARTS, Rank.NINE),
+                new Card(Suit.CLUBS, Rank.TEN),
+                new Card(Suit.SPADES, Rank.JACK),
+                new Card(Suit.DIAMONDS, Rank.QUEEN),
+                new Card(Suit.HEARTS, Rank.KING)
+        ));
 
-        player4 = new Player("Player 4");
+        player4 = new Player("Player 4", List.of(
+                new Card(Suit.DIAMONDS, Rank.ACE),
+                new Card(Suit.SPADES, Rank.SEVEN),
+                new Card(Suit.CLUBS, Rank.NINE),
+                new Card(Suit.HEARTS, Rank.TEN),
+                new Card(Suit.DIAMONDS, Rank.JACK)
+        ));
 
 
         gameState.setPlayers(Arrays.asList(player1, player2, player3, player4));
         gameState.setCurrentPlayerIndex(0);
-        gameState.setDeck(new Deck());
+        gameState.setDeck(cardService.createDeck());
         gameState.setDiscardPile(new Stack<>());
     }
 
@@ -75,7 +99,6 @@ class GameServiceTest {
      */
     @Test
     void testDrawCard() {
-
         int drawPileSize = gameState.getDeck().getCards().size();
         int playerHandSize = player1.getHand().size();
         int discardPileSize = gameState.getDiscardPile().size();
@@ -88,29 +111,6 @@ class GameServiceTest {
 
         assertEquals(discardPileSize, gameState.getDiscardPile().size());// Discard pile size unchanged
         assertTrue(gameState.getDiscardPile().contains(drawnCard));// Drawn card is now on discard pile
-//     Todo George, choose one of the tests for drawCard please.
-//     define numbers for variables -> never mind.
-//     The values for the variables must be assigned when gameInitialize is called
-    }
-
-    @Test
-    void testDrawCardGeorge() {
-        GameState gameState = gameService.initializeGame(4);
-        int playerIndex = gameState.getCurrentPlayerIndex();
-        Player player = gameState.getPlayers().get(playerIndex);
-        int initialHandSize = player.getHand().size();
-        int initialDiscardPileSize = gameState.getDiscardPile().size();
-        Card drawnCard = gameService.drawCard(playerIndex);
-        assertNotNull(drawnCard);
-        assertEquals(initialHandSize + 1, player.getHand().size());
-        assertEquals(initialHandSize - 1, gameState.getDiscardPile().size());
-
-        Stack<Card> allCardsWithoutDrawCard = new Stack<>();
-        allCardsWithoutDrawCard.addAll(gameState.getDeck().getCards());
-        allCardsWithoutDrawCard.addAll(gameState.getDiscardPile());
-        gameState.getPlayers().forEach(p -> allCardsWithoutDrawCard.addAll(p.getHand()));
-        assertFalse(allCardsWithoutDrawCard.contains(drawnCard));
-//        todo drawCard is in Player not zwischenspeicher
     }
 
     /**
