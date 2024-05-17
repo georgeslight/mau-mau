@@ -6,6 +6,11 @@ import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.mockito.Mockito.*;
 
@@ -76,13 +81,25 @@ class RuleServiceTest {
         assertEquals(1, ruleService.calculateNextPlayerIndex(1, playersCount));
     }
 
+    private static Stream<Arguments> twoCards() {
+        return Stream.of(Suit.values())
+                .flatMap(suit1 -> Stream.of(Rank.values())
+                        .flatMap(rank1 -> Stream.of(Suit.values())
+                                .filter(suit2 -> suit1 != suit2)
+                                .flatMap(suit2 -> Stream.of(Rank.values())
+                                        .filter(rank2 -> rank1 != rank2)
+                                        .map(rank2 -> Arguments.of(new Card(suit1, rank1), new Card(suit2, rank2)))
+                                )
+                        )
+                );
+    }
+
     /**
      * card can be played when suits match and ranks differ.
-     */ // todo Parameter georges
-    @Test
-    void suitsMatchRankDont() {
-        Card topCard = new Card(Suit.HEARTS, Rank.NINE);
-        Card card = new Card(Suit.HEARTS, Rank.TEN);
+     */
+    @ParameterizedTest
+    @MethodSource("twoCards")
+    void suitsMatchRankDont(Card card, Card topCard) {
         assertTrue(ruleService.isValidMove(card, topCard));
     }
 
