@@ -14,7 +14,7 @@ public interface RuleEngineInterface {
      * @param topCard the current top card on the discard pile
      * @return true if the play is valid, otherwise false
      */
-    boolean checkValidCard(Card card, Card topCard);
+    boolean isValidMove(Card card, Card topCard);
     /**
      * calculates the index of the next player based on the current player index and the total number of players.
      *

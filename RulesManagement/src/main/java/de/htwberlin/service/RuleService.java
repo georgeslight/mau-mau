@@ -14,7 +14,7 @@ public class RuleService implements RuleEngineInterface {
     }
 
     @Override
-    public boolean checkValidCard(Card card, Card topCard) {
+    public boolean isValidMove(Card card, Card topCard) {
 //        todo
         return false;
     }

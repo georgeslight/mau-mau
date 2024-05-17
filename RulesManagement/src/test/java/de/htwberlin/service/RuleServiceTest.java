@@ -7,9 +7,6 @@ import de.htwberlin.model.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.mockito.Mockito.*;
 
 
@@ -86,7 +83,7 @@ class RuleServiceTest {
     void suitsMatchRankDont() {
         Card topCard = new Card(Suit.HEARTS, Rank.NINE);
         Card card = new Card(Suit.HEARTS, Rank.TEN);
-        assertTrue(ruleService.checkValidCard(card, topCard));
+        assertTrue(ruleService.isValidMove(card, topCard));
     }
 
     /**
@@ -96,7 +93,7 @@ class RuleServiceTest {
     void ranksMatchSuitsDont() {
         Card topCard = new Card(Suit.HEARTS, Rank.NINE);
         Card card = new Card(Suit.CLUBS, Rank.NINE);
-        assertTrue(ruleService.checkValidCard(card, topCard));
+        assertTrue(ruleService.isValidMove(card, topCard));
     }
 
     /**
@@ -106,7 +103,7 @@ class RuleServiceTest {
     void bothMatch() {
         Card topCard = new Card(Suit.HEARTS, Rank.NINE);
         Card card = new Card(Suit.HEARTS, Rank.NINE);
-        assertTrue(ruleService.checkValidCard(card, topCard));
+        assertTrue(ruleService.isValidMove(card, topCard));
     }
 
     /**
@@ -117,7 +114,7 @@ class RuleServiceTest {
     void bothDont() {
         Card topCard = new Card(Suit.HEARTS, Rank.NINE);
         Card card = new Card(Suit.CLUBS, Rank.TEN);
-        assertFalse(ruleService.checkValidCard(card, topCard));
+        assertFalse(ruleService.isValidMove(card, topCard));
     }
 
 
@@ -129,7 +126,7 @@ class RuleServiceTest {
     void playingTowJacks() {
         Card topCard = new Card(Suit.HEARTS, Rank.JACK);
         Card card = new Card(Suit.CLUBS, Rank.JACK);
-        assertFalse(ruleService.checkValidCard(card, topCard));
+        assertFalse(ruleService.isValidMove(card, topCard));
     }
 
     /**
