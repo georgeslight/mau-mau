@@ -30,10 +30,5 @@ public class PlayerManagement implements PlayerManagerInterface {
     public void lostMau(Player player) {
 
     }
-
-    @Override
-    public int calculateTotalScore(Player player) {
-        return 0;
-    }
 }
 

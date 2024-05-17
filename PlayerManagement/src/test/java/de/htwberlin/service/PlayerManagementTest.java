@@ -26,8 +26,7 @@ class PlayerManagementTest {
      */
     @Test
     void createPlayer() {
-        PlayerManagement playerManagement = new PlayerManagement();
-        Player player = playerManagement.createPlayer();
+        Player player = playerService.createPlayer();
         assertNotNull(player);
         player.setName("Player 1");
         assertEquals("Player 1", player.getName());
@@ -40,8 +39,7 @@ class PlayerManagementTest {
      */
     @Test
     void testEndRound() {
-        Player player = new Player(new ArrayList<>());
-        player.setHand(List.of(new Card(Suit.HEARTS, Rank.ACE),
+        Player player = new Player("test", List.of(new Card(Suit.HEARTS, Rank.ACE),
                 new Card(Suit.SPADES, Rank.KING),
                 new Card(Suit.DIAMONDS, Rank.SEVEN),
                 new Card(Suit.SPADES, Rank.QUEEN),
@@ -61,39 +59,45 @@ class PlayerManagementTest {
     @Test
     void mau() {
         //        test if player has only one card, if one card keep playing
-        Player playerWithOneCard = new Player("Player 1");
-        List<Card> oneCardHand = List.of(new Card(Suit.HEARTS, Rank.ACE));
-        playerWithOneCard.setHand(oneCardHand);
+        Player playerWithOneCard = new Player("Player 1", List.of(new Card(Suit.HEARTS, Rank.ACE)));
         playerService.mau(playerWithOneCard);
         assertTrue(playerWithOneCard.isSaidMau());
         assertEquals(1, playerWithOneCard.getHand().size());
 
-        Player playerWithMultipleCards = new Player("Player 1");
-        List<Card> multipleCardsHand = List.of(
-                new Card(Suit.HEARTS, Rank.ACE),
-                new Card(Suit.SPADES, Rank.KING)
-        );
-        playerWithMultipleCards.setHand(multipleCardsHand);
+        Player playerWithMultipleCards = new Player("Player 1", List.of(new Card(Suit.HEARTS, Rank.ACE), new Card(Suit.SPADES, Rank.KING)));
         playerService.mau(playerWithMultipleCards);
         assertFalse(playerWithMultipleCards.isSaidMau(), "Player should not be able to say Mau with more than one card.");
         assertEquals(3, playerWithMultipleCards.getHand().size());
     }
 
     /**
-     * Tests handling of a lost "mau" scenario for a player.
-     * It ensures that the lost "mau" scenario can be handled without errors.
+     * Tests the scenario where a player has one card left and fails to say "Mau."
+     * The player should draw two cards as a penalty.
      */
     @Test
-    void lostMau() {
-        Player playerWithOneCard = new Player("Player 1");
-        List<Card> oneCardHand = List.of(new Card(Suit.HEARTS, Rank.ACE));
-        playerWithOneCard.setHand(oneCardHand);
+    void testLostMauWithOneCardAndDidNotSayMau() {
+        Player playerWithOneCard = new Player("Player 1", List.of(new Card(Suit.HEARTS, Rank.ACE)));
+        playerWithOneCard.setSaidMau(false);
         playerService.lostMau(playerWithOneCard);
-        assertEquals(3, playerWithOneCard.getHand().size());
+        assertEquals(3, playerWithOneCard.getHand().size()); // player ahs to draw to cards if mau fails.
+    }
 
-        // test player with only one card, doesnt click mau, and ahs to draw moire cards
-    } // todo george -> lostMau if player one card and didnt says mau, draws cards (number irrelevant)
-        // if player says mau with more than one card throw exception oder so was
+    /**
+     * Tests the scenario where a player has more than one card and incorrectly says "Mau."
+     * An IllegalStateException should be thrown.
+     */
+    @Test
+    void testPlayerMoreThanOneCardAndSaidMau() {
+        Player player = new Player("Player 2", List.of(new Card(Suit.HEARTS, Rank.ACE), new Card(Suit.CLUBS, Rank.QUEEN)));
+        player.setSaidMau(true);
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> playerService.lostMau(player));
+
+        String expectedMessage = "Player cannot say Mau with more than one card.";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
 
     /**
      * Order is CLUBS, DIAMONDS, HEARTS, SPADES and Rank asc
@@ -108,7 +112,7 @@ class PlayerManagementTest {
         hand.add(new Card(Suit.HEARTS, Rank.KING));
         hand.add(new Card(Suit.DIAMONDS, Rank.KING));
 
-        Player player = new Player(hand);
+        Player player = new Player("test", hand);
         playerService.sortPlayersCards(player);
 
         List<Card> sortedHand = player.getHand();

@@ -6,16 +6,13 @@ import java.util.List;
 public class Player {
 
     private String name;
-    private List<Card> hand = new ArrayList<>();
+    private List<Card> hand;
     private Integer rankingPoints;
     private boolean saidMau;
     private int[] score;
 
-    public Player(String name) {
+    public Player(String name, List<Card> hand) {
         this.name = name;
-    }
-
-    public Player(List<Card> hand) {
         this.hand = hand;
     }
 
