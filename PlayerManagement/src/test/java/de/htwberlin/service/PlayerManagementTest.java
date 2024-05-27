@@ -68,6 +68,7 @@ class PlayerManagementTest {
         playerService.mau(playerWithMultipleCards);
         assertFalse(playerWithMultipleCards.isSaidMau(), "Player should not be able to say Mau with more than one card.");
         assertEquals(3, playerWithMultipleCards.getHand().size());
+        // todo: expected should be 2. Player doesnt get penalty if says mau with multiple cards. This is already tested in testPlayerMoreThanOneCardAndSaidMau
     }
 
     /**
@@ -79,7 +80,7 @@ class PlayerManagementTest {
         Player playerWithOneCard = new Player("Player 1", List.of(new Card(Suit.HEARTS, Rank.ACE)));
         playerWithOneCard.setSaidMau(false);
         playerService.lostMau(playerWithOneCard);
-        assertEquals(3, playerWithOneCard.getHand().size()); // player ahs to draw to cards if mau fails.
+        assertEquals(3, playerWithOneCard.getHand().size()); // player has to draw to cards if mau fails.
     }
 
     /**
@@ -89,9 +90,10 @@ class PlayerManagementTest {
     @Test
     void testPlayerMoreThanOneCardAndSaidMau() {
         Player player = new Player("Player 2", List.of(new Card(Suit.HEARTS, Rank.ACE), new Card(Suit.CLUBS, Rank.QUEEN)));
-        player.setSaidMau(true);
+        player.setSaidMau(true); //todo: instead of setting the variable, use the mau method?
 
         Exception exception = assertThrows(IllegalStateException.class, () -> playerService.lostMau(player));
+        //todo: create a new exception for this case?
 
         String expectedMessage = "Player cannot say Mau with more than one card.";
         String actualMessage = exception.getMessage();
