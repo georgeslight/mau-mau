@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="GameEngine" />
         <module name="RulesManagement" />
+        <module name="GameUI" />
         <module name="CardsManagement" />
         <module name="PlayerManagement" />
       </profile>
