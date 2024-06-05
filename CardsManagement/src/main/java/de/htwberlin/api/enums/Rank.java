@@ -1,4 +1,4 @@
-package de.htwberlin.enums;
+package de.htwberlin.api.enums;
 
 public enum Rank {
     SEVEN,
