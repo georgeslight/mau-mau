@@ -6,13 +6,6 @@ import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
-
-import static org.mockito.Mockito.*;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +16,7 @@ class RuleServiceTest {
 
     @BeforeEach
     void setUp() {
-        ruleService = mock(RuleService.class);
+        ruleService = new RuleService();
         rules = new Rules();
     }
 
