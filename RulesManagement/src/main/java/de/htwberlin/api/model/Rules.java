@@ -1,7 +1,6 @@
-package de.htwberlin.api;
+package de.htwberlin.api.model;
 
-import de.htwberlin.enums.Suit;
-import de.htwberlin.model.Card;
+import de.htwberlin.api.enums.Suit;
 
 public class Rules {
     // gameDirection: true = clockwise, false = counter-clockwise

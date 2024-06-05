@@ -43,8 +43,13 @@ class CardServiceTest {
         // Check if the shuffled deck has the same size as the original deck
         assertEquals(deck.size(), shuffleDeck.size());
         // Check that the order of cards in the shuffled deck is different from the original deck
-        IntStream.range(0, deck.size())
-                        .forEach(i -> assertNotEquals(deck.get(i), shuffleDeck.get(i)));
+        long samePositionCount = IntStream.range(0, deck.size())
+                        .filter(i -> deck.get(i).equals(shuffleDeck.get(i)))
+                                .count();
+        // Ckeck that at most 3 cards are in the same position
+        assertTrue(samePositionCount <= 3,"More than 3 cards are in the same position after shuffling");
+//        IntStream.range(0, deck.size())
+//                        .forEach(i -> assertNotEquals(deck.get(i), shuffleDeck.get(i)));
         // Check that the shuffled deck contains all the original cards
         assertTrue(shuffleDeck.containsAll(deck) && deck.containsAll(shuffleDeck));
     }

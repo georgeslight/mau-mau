@@ -1,7 +1,7 @@
-package de.htwberlin.api;
+package de.htwberlin.api.service;
 
-import de.htwberlin.enums.Suit;
-import de.htwberlin.model.Card;
+import de.htwberlin.api.enums.Suit;
+import de.htwberlin.api.model.Card;
 
 import java.util.List;
 

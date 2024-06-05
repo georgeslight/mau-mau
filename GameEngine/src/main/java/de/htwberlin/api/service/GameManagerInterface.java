@@ -1,8 +1,8 @@
-package de.htwberlin.service;
+package de.htwberlin.api.service;
 
-import de.htwberlin.model.Card;
-import de.htwberlin.model.GameState;
-import de.htwberlin.model.Player;
+import de.htwberlin.api.model.Card;
+import de.htwberlin.api.model.GameState;
+import de.htwberlin.api.model.Player;
 
 public interface GameManagerInterface {
 

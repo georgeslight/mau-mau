@@ -1,7 +1,8 @@
-package de.htwberlin.service;
+package de.htwberlin.impl.service;
 
-import de.htwberlin.model.Card;
-import de.htwberlin.model.Player;
+import de.htwberlin.api.service.PlayerManagerInterface;
+import de.htwberlin.api.model.Card;
+import de.htwberlin.api.model.Player;
 
 import java.util.*;
 

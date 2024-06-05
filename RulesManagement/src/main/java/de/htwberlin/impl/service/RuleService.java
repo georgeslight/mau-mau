@@ -1,10 +1,10 @@
-package de.htwberlin.service;
+package de.htwberlin.impl.service;
 
-import de.htwberlin.api.RuleEngineInterface;
-import de.htwberlin.enums.Rank;
-import de.htwberlin.enums.Suit;
-import de.htwberlin.model.Card;
-import de.htwberlin.api.Rules;
+import de.htwberlin.api.service.RuleEngineInterface;
+import de.htwberlin.api.enums.Rank;
+import de.htwberlin.api.enums.Suit;
+import de.htwberlin.api.model.Card;
+import de.htwberlin.api.model.Rules;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

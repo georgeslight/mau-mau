@@ -1,7 +1,13 @@
 package de.htwberlin.service;
 
-import de.htwberlin.model.*;
-import de.htwberlin.enums.*;
+import de.htwberlin.api.model.GameState;
+import de.htwberlin.api.model.Player;
+import de.htwberlin.api.service.GameManagerInterface;
+import de.htwberlin.impl.service.CardService;
+import de.htwberlin.impl.service.GameService;
+import de.htwberlin.impl.service.RuleService;
+import de.htwberlin.api.model.*;
+import de.htwberlin.api.enums.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

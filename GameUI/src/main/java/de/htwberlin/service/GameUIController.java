@@ -1,9 +1,8 @@
 package de.htwberlin.service;
 
+import de.htwberlin.impl.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
-import javax.swing.*;
 
 @Controller
 public class GameUIController {

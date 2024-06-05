@@ -1,8 +1,9 @@
-package de.htwberlin.service;
+package de.htwberlin.impl.service;
 
-import de.htwberlin.model.Card;
-import de.htwberlin.model.GameState;
-import de.htwberlin.model.Player;
+import de.htwberlin.api.service.GameManagerInterface;
+import de.htwberlin.api.model.Card;
+import de.htwberlin.api.model.GameState;
+import de.htwberlin.api.model.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

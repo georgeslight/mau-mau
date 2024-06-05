@@ -1,6 +1,5 @@
-package de.htwberlin.model;
+package de.htwberlin.api.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
