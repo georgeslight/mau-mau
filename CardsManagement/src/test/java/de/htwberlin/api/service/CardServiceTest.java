@@ -1,9 +1,10 @@
-package de.htwberlin.service;
+package de.htwberlin.api.service;
 
-import de.htwberlin.enums.Rank;
-import de.htwberlin.enums.Suit;
-import de.htwberlin.model.Card;
-import de.htwberlin.model.Deck;
+import de.htwberlin.api.enums.Rank;
+import de.htwberlin.api.enums.Suit;
+import de.htwberlin.api.model.Card;
+import de.htwberlin.api.model.Deck;
+import de.htwberlin.impl.service.CardService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

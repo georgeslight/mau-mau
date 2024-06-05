@@ -1,7 +1,7 @@
-package de.htwberlin.model;
+package de.htwberlin.api.model;
 
-import de.htwberlin.enums.Rank;
-import de.htwberlin.enums.Suit;
+import de.htwberlin.api.enums.Rank;
+import de.htwberlin.api.enums.Suit;
 
 public class Card {
     private final Suit suit;

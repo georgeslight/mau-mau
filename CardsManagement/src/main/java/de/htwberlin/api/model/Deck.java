@@ -1,4 +1,4 @@
-package de.htwberlin.model;
+package de.htwberlin.api.model;
 
 import java.util.Stack;
 
