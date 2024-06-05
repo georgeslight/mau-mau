@@ -5,7 +5,7 @@ import de.htwberlin.model.Player;
 
 import java.util.*;
 
-public class PlayerManagement implements PlayerManagerInterface {
+public class PlayerService implements PlayerManagerInterface {
     @Override
     public Player createPlayer() {
         return null;

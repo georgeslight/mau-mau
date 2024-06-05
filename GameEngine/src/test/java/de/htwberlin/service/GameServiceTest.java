@@ -25,8 +25,8 @@ class GameServiceTest {
     void setUp() {
         cardService = new CardService();
         gameService = new GameService();
-        gameState = new GameState();
         ruleService = mock(RuleService.class);
+        gameState = new GameState();
 
         player1 = new Player("Player 1", List.of(
                 new Card(Suit.HEARTS, Rank.SEVEN),

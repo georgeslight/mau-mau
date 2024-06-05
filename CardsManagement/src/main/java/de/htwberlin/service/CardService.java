@@ -4,11 +4,13 @@ import de.htwberlin.enums.Rank;
 import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
 import de.htwberlin.model.Deck;
+import org.springframework.stereotype.Service;
 
 import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Service
 public class CardService implements CardManagerInterface {
     @Override
     public Stack<Card> shuffle(Stack<Card> deck) {
