@@ -1,4 +1,4 @@
-package de.htwberlin.service;
+package de.htwberlin.api.service;
 
 import de.htwberlin.api.enums.Rank;
 import de.htwberlin.api.enums.Suit;

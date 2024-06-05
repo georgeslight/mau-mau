@@ -11,8 +11,11 @@ public class Player {
     private int[] score;
 
     public Player(String name, List<Card> hand) {
-        this.name = name;
+        this.score = new int[5];
+        this.saidMau = false;
+        this.rankingPoints = 0;
         this.hand = hand;
+        this.name = name;
     }
 
     public List<Card> getHand() {

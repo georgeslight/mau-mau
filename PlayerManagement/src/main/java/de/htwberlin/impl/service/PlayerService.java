@@ -8,7 +8,7 @@ import java.util.*;
 
 public class PlayerService implements PlayerManagerInterface {
     @Override
-    public Player createPlayer() {
+    public Player createPlayer(String name, List<Card> hand) {
         return null;
     }
 
