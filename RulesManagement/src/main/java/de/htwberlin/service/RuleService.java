@@ -5,9 +5,11 @@ import de.htwberlin.enums.Rank;
 import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
 import de.htwberlin.api.Rules;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class RuleService implements RuleEngineInterface {
 
     Rules rules = new Rules();

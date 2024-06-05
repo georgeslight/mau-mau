@@ -10,7 +10,8 @@
     </parent>
 
     <artifactId>GameUI</artifactId>
-    <packaging>jar</packaging>
+    <groupId>de.htwberlin</groupId>
+    <version>0.0.1-SNAPSHOT</version>
 
     <name>GameUI</name>
     <!-- FIXME change it to the project's website -->
@@ -29,5 +30,6 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
 
 </project>
