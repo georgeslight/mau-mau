@@ -14,11 +14,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerManagementTest {
 
-    private PlayerManagement playerService;
+    private PlayerService playerService;
 
     @BeforeEach
     void setUp() {
-        playerService = new PlayerManagement();
+        playerService = new PlayerService();
     }
 
     /**
