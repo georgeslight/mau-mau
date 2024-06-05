@@ -1,4 +1,4 @@
-package de.htwberlin.api.service;
+package de.htwberlin.service;
 
 import de.htwberlin.api.model.Rules;
 import de.htwberlin.impl.service.RuleService;
@@ -8,6 +8,8 @@ import de.htwberlin.api.model.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -143,6 +145,16 @@ class RuleServiceTest {
     }
 
     /**
+     * Nine can always be played.
+     */
+    @Test
+    void playingNine() {
+        Card topCard = new Card(Suit.HEARTS, Rank.JACK);
+        Card card = new Card(Suit.CLUBS, Rank.NINE);
+        assertTrue(ruleService.isValidMove(card, topCard));
+    }
+
+    /**
      * when jack is played, the wishedSuit Attribute most be changed
      */
     @Test
@@ -204,5 +216,23 @@ class RuleServiceTest {
     void playAce() {
         ruleService.applySpecialCardsEffect(new Card(Suit.HEARTS, Rank.ACE));
         assertTrue(rules.isCanPlayAgain());
+    }
+
+    /**
+     * Test that the score is calculated correctly.
+     */
+    @Test
+    void testCalculateScore() {
+        int score = ruleService.calculateScore(List.of(
+                new Card(Suit.HEARTS, Rank.SEVEN),
+                new Card(Suit.HEARTS, Rank.EIGHT),
+                new Card(Suit.HEARTS, Rank.NINE),
+                new Card(Suit.HEARTS, Rank.TEN),
+                new Card(Suit.HEARTS, Rank.JACK),
+                new Card(Suit.HEARTS, Rank.QUEEN),
+                new Card(Suit.HEARTS, Rank.KING),
+                new Card(Suit.HEARTS, Rank.ACE)
+        ));
+        assertEquals(-54, score);
     }
 }

@@ -12,7 +12,11 @@ import java.util.List;
 @Service
 public class RuleService implements RuleEngineInterface {
 
-    private Rules rules = new Rules();
+    private Rules rules;
+
+    public RuleService() {
+        this.rules = new Rules();
+    }
 
 
     @Override
@@ -25,7 +29,8 @@ public class RuleService implements RuleEngineInterface {
         if (card.getRank().equals(Rank.JACK) & topCard.getRank().equals(Rank.JACK)) return false;
         if (card.getRank().equals(topCard.getRank())
             || card.getSuit().equals(topCard.getSuit())
-            || card.getSuit().equals(rules.getWishCard()))
+            || card.getSuit().equals(rules.getWishCard())
+            || card.getRank().equals(Rank.NINE))
             return true;
         return false;
     }
@@ -66,8 +71,38 @@ public class RuleService implements RuleEngineInterface {
 
     @Override
     public Integer calculateScore(List<Card> cards) {
-        return 0;
+        int score = 0;
+        for (Card card : cards) {
+            switch (card.getRank()) {
+                case SEVEN:
+                    score -= 7;
+                    break;
+                case EIGHT:
+                    score -= 8;
+                    break;
+                case NINE:
+                    score -= 9;
+                    break;
+                case TEN:
+                    score -= 10;
+                    break;
+                case JACK:
+                    score -= 2;
+                    break;
+                case QUEEN:
+                    score -= 3;
+                    break;
+                case KING:
+                    score -= 4;
+                    break;
+                case ACE:
+                    score -= 11;
+                    break;
+            }
+        }
+        return score;
     }
+
     public Rules getRules() {
         return rules;
     }
