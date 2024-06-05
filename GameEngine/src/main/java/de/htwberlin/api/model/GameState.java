@@ -5,7 +5,7 @@ import java.util.Stack;
 
 public class GameState {
     private List<Player> players;
-    private Deck deck;
+    private Stack<Card> deck;
     private Stack<Card> discardPile;
     private int currentPlayerIndex;
     private int nextPlayerIndex;
@@ -18,12 +18,12 @@ public class GameState {
         this.players = players;
     }
 
-    public Deck getDeck() {
-        return deck;
+    public void setDeck(Stack<Card> deck) {
+        this.deck = deck;
     }
 
-    public void setDeck(Deck deck) {
-        this.deck = deck;
+    public Stack<Card> getDeck() {
+        return deck;
     }
 
     public Stack<Card> getDiscardPile() {

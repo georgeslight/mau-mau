@@ -4,8 +4,12 @@ import de.htwberlin.api.service.GameManagerInterface;
 import de.htwberlin.api.model.Card;
 import de.htwberlin.api.model.GameState;
 import de.htwberlin.api.model.Player;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class GameService implements GameManagerInterface {
@@ -14,68 +18,73 @@ public class GameService implements GameManagerInterface {
     private CardService cardService;
     private RuleService ruleService;
 
-    @Autowired
     public GameService(PlayerService playerService, CardService cardService, RuleService ruleService) {
-        super();
         this.playerService = playerService;
         this.cardService = cardService;
         this.ruleService = ruleService;
     }
-    public GameService() {
-        super();
-    }
-    public PlayerService getPlayerService() {
-        return playerService;
-    }
-    public void setPlayerService(PlayerService playerService) {
-        this.playerService = playerService;
-    }
-    public CardService getCardService() {
-        return cardService;
-    }
-    public void setCardService(CardService cardService) {
-        this.cardService = cardService;
-    }
-    public RuleService getRuleService() {
-        return ruleService;
-    }
-    public void setRuleService(RuleService ruleService) {
-        this.ruleService = ruleService;
-    }
-
 
     @Override
     public GameState initializeGame(int numberOfPlayers) {
-//        todo
-        return null;
+        GameState game = new GameState();
+        Stack<Card> deck = cardService.shuffle(cardService.createDeck());
+        List<Player> players = IntStream.range(0, numberOfPlayers)
+                .mapToObj(i -> {
+                    List<Card> hand = IntStream.range(0, 5)
+                            .mapToObj(j -> deck.pop())
+                            .collect(Collectors.toList());
+                    return playerService.createPlayer("Player " + i, hand);
+                })
+                .collect(Collectors.toList());
+
+        game.setPlayers(players);
+        Stack<Card> discardPile = new Stack<>();
+        discardPile.push(deck.pop());
+        game.setDiscardPile(discardPile);
+
+        game.setDeck(deck);
+
+        game.setCurrentPlayerIndex(0);
+        game.setNextPlayerIndex(1);
+
+        return game;
     }
 
     @Override
     public Player nextPlayer(GameState gameState) {
-//        todo
-        return null;
+        int nextPlayerIndex = ruleService.calculateNextPlayerIndex(gameState.getCurrentPlayerIndex(), gameState.getPlayers().size());
+        gameState.setCurrentPlayerIndex(nextPlayerIndex);
+        return gameState.getPlayers().get(nextPlayerIndex);
     }
 
     @Override
     public Player endGame(GameState game) {
-//        todo
+        game.getPlayers().forEach( player -> {
+            player.getScore(). ruleService.calculateScore(player.getHand());
+        });
         return null;
     }
 
     @Override
-    public Card drawCard(int player) {
-//        todo
-        return null;
+    public Card drawCard(GameState game, Player player) {
+        if (game.getDeck().empty()) throw new IllegalStateException("Cannot draw from an empty deck");
+
+        Card drawCard = game.getDeck().pop();
+        player.getHand().add(drawCard);
+        return drawCard;
     }
 
     @Override
     public void playCard(Player player, Card card, GameState gameState) {
-//        todo
+        if (player.getHand().remove(card)) {
+            gameState.getDiscardPile().push(card);
+        } else {
+            throw new IllegalArgumentException("The player does not have the specified card.");
+        }
     }
 
     @Override
     public boolean checkWinner(Player player) {
-//        todo
-        return false;
+        return player.getHand().isEmpty();
     }
 }
