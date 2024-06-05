@@ -5,11 +5,13 @@ import de.htwberlin.api.enums.Suit;
 import de.htwberlin.api.model.Card;
 import de.htwberlin.api.model.Deck;
 import de.htwberlin.api.service.CardManagerInterface;
+import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 
 public class CardService implements CardManagerInterface {
     @Override

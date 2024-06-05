@@ -13,9 +13,11 @@ import java.util.List;
 public class RuleService implements RuleEngineInterface {
 
     private Rules rules;
+    private CardService cardService;
 
     public RuleService() {
         this.rules = new Rules();
+        this.cardService = new CardService();
     }
 
 
@@ -109,5 +111,13 @@ public class RuleService implements RuleEngineInterface {
 
     public void setRules(Rules rules) {
         this.rules = rules;
+    }
+
+    public CardService getCardService() {
+        return cardService;
+    }
+
+    public void setCardService(CardService cardService) {
+        this.cardService = cardService;
     }
 }

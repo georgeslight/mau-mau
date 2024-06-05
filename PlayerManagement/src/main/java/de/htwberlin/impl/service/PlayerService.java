@@ -7,6 +7,13 @@ import de.htwberlin.api.model.Player;
 import java.util.*;
 
 public class PlayerService implements PlayerManagerInterface {
+
+    private CardService cardService;
+
+    public PlayerService() {
+        this.cardService = new CardService();
+    }
+
     @Override
     public Player createPlayer(String name, List<Card> hand) {
         return null;
@@ -30,6 +37,13 @@ public class PlayerService implements PlayerManagerInterface {
     @Override
     public void lostMau(Player player) {
 
+    }
+    public CardService getCardService() {
+        return cardService;
+    }
+
+    public void setCardService(CardService cardService) {
+        this.cardService = cardService;
     }
 }
 
