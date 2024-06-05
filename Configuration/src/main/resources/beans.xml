@@ -10,19 +10,19 @@
 		  id="cardService" />
 
 
-	<bean class="de.htwberlin.service.PlayerService"
+	<bean class="de.htwberlin.impl.service.PlayerService"
 		  id="playerService">
 		<property ref="cardService" name="" />
 	</bean>
 
 	<bean
-		class="de.htwberlin.service.RuleService"
+		class="de.htwberlin.impl.service.RuleService"
 		id="ruleService">
 		<property ref="cardService" name="cardService" />
 
 	</bean>
 
-	<bean class="de.htwberlin.service.GameService"
+	<bean class="de.htwberlin.impl.service.GameService"
 		id="gameService">
 		<property ref="cardService" name="cardService" />
 		<property ref="ruleService" name="bidService" />
