@@ -1,4 +1,4 @@
-package de.htwberlin.service;
+package de.htwberlin.api;
 
 import de.htwberlin.enums.Suit;
 import de.htwberlin.model.Card;
@@ -25,23 +25,32 @@ public interface RuleEngineInterface {
      * @return the number of cards each player should start with
      */
     Integer getStartingCards();
+
+
     /**
-     * Handles the specific rules when a Jack is played.
-     * # Ein weiterer Bube darf nicht auf einem Buben abgelegt werden
      */
-    void playJack(Suit wishedSuit);
-    /**
-     * Handles the specific rules when a 7 is played.
-     */
-    void play7();
+
     /**
      * Handles the specific rules when an 8 is played.
      */
-    void play8();
+
     /**
-     * Handles the specific rules when an Ace is played.
+     * Handles the specific rules when a Card with special effects is played.
+     * @param card the card being played
+     * jack: change the wished suit
+     * seven: next player draws 2 cards (Cardstobedrawn + 2)
+     * eight: skip next player's turn & reset cardsToBeDrawn to 0
+     * ace: player can play another card
      */
-    void playAce();
+
+    void applySpecialCardsEffect(Card card);
+
+    /**
+     * applies jack special effect
+     * @param card the card being played
+     * @param wishedSuit the suit wished by the player
+     */
+    void applyJackSpecialEffect(Card card, Suit wishedSuit);
 
     /**
      * Calculates the score of cards given.

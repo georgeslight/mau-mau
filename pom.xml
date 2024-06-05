@@ -15,7 +15,8 @@
 		<module>PlayerManagement</module>
 		<module>CardsManagement</module>
 		<module>RulesManagement</module>
-	</modules>
+        <module>GameUI</module>
+    </modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

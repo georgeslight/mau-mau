@@ -1,6 +1,7 @@
-package de.htwberlin.model;
+package de.htwberlin.api;
 
 import de.htwberlin.enums.Suit;
+import de.htwberlin.model.Card;
 
 public class Rules {
     // gameDirection: true = clockwise, false = counter-clockwise
@@ -8,7 +9,7 @@ public class Rules {
     private Card lastCardPlayed;
     private Suit wishCard;
     // number of cards to be drawn by the next player
-    private Integer cardsToBeDrawn;
+    private int cardsToBeDrawn;
     private boolean skipNextPlayerTurn;
     //When Ace played, Player is allowed to play another card
     private boolean canPlayAgain;
