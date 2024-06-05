@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class RuleService implements RuleEngineInterface {
 
-    Rules rules = new Rules();
+    private Rules rules = new Rules();
 
 
     @Override
@@ -67,5 +67,12 @@ public class RuleService implements RuleEngineInterface {
     @Override
     public Integer calculateScore(List<Card> cards) {
         return 0;
+    }
+    public Rules getRules() {
+        return rules;
+    }
+
+    public void setRules(Rules rules) {
+        this.rules = rules;
     }
 }
