@@ -184,23 +184,20 @@ class GameServiceTest {
      */
     @Test
     void testCheckWinner() {
-        Player player = new Player("Player", List.of(
-                new Card(Suit.HEARTS, Rank.SEVEN),
-                new Card(Suit.CLUBS, Rank.EIGHT),
-                new Card(Suit.SPADES, Rank.NINE),
-                new Card(Suit.DIAMONDS, Rank.TEN),
-                new Card(Suit.CLUBS, Rank.JACK)));
+        // Create a player with an empty hand (winning condition)
+        Player winningPlayer = new Player("Player 1", new ArrayList<>());
 
-        Player player2 = new Player("Player 2", List.of(
-                new Card(Suit.SPADES, Rank.QUEEN),
-                new Card(Suit.DIAMONDS, Rank.KING),
-                new Card(Suit.HEARTS, Rank.ACE),
-                new Card(Suit.CLUBS, Rank.SEVEN),
-                new Card(Suit.SPADES, Rank.EIGHT)));
+        // Create a player with cards in hand (non-winning condition)
+        List<Card> hand = new ArrayList<>();
+        hand.add(new Card(Suit.HEARTS, Rank.ACE));
+        Player nonWinningPlayer = new Player("Player 2", hand);
 
-        player.setHand(Collections.emptyList()); // No cards left
-        assertTrue(gameService.checkWinner(player));
-        player2.setHand(List.of(new Card(Suit.HEARTS, Rank.ACE)));
-        assertFalse(gameService.checkWinner(player2));
+        // Check if the winning player has won
+        boolean hasWon = gameService.checkWinner(winningPlayer);
+        assertTrue(hasWon);
+
+        // Check if the non-winning player has not won
+        hasWon = gameService.checkWinner(nonWinningPlayer);
+        assertFalse(hasWon);
     }
 }
