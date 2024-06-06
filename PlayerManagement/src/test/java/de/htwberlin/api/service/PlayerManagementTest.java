@@ -12,21 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 class PlayerManagementTest {
 
+    private CardManagerInterface cardManagerInterface;
+    //todo Ghazi: mocked interface must be used somehow?!
     private PlayerService playerService;
+    
 
     @BeforeEach
     void setUp() {
-        playerService = new PlayerService();
+        this.cardManagerInterface = mock(CardManagerInterface.class);
     }
 
     /**
      * Tests the creation of a player.
      */
 
-    /**
+
     @Test
     void createPlayer() {
         Player player = playerService.createPlayer("Player 1", List.of(new Card(Suit.CLUBS, Rank.EIGHT),
@@ -38,7 +42,7 @@ class PlayerManagementTest {
         assertEquals("Player 1", player.getName());
         assertEquals(5, player.getHand().size());
     }
-*/
+
     /**
      * Tests the surrender operation for a player.
      * It ensures that a player can be surrendered without errors.

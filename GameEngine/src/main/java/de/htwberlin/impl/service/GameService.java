@@ -94,8 +94,12 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
-    public boolean checkWinner(Player player) {
-        return player.getHand().isEmpty();
+    public boolean checkWinner(GameState gameState, Player player) {
+        if(player.getHand().isEmpty()){
+            if (player.isSaidMau()){
+                return true;
+            }else drawCard(gameState, player);
+        }return false;
     }
 
 }

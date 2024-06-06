@@ -28,6 +28,7 @@ class GameServiceTest {
     private PlayerManagerInterface playerManagerInterface;
     private CardManagerInterface cardManagerInterface;
     private RuleEngineInterface ruleEngineInterface;
+    private GameState gameState;
 
     @BeforeEach
     void setUp() {
@@ -35,6 +36,8 @@ class GameServiceTest {
         this.cardManagerInterface = mock(CardManagerInterface.class);
         this.ruleEngineInterface = mock(RuleEngineInterface.class);
         this.gameManagerInterface = new GameService(playerManagerInterface, cardManagerInterface, ruleEngineInterface);
+        this.gameState = new GameState();
+
     }
 
     /**
@@ -194,11 +197,11 @@ class GameServiceTest {
         Player nonWinningPlayer = new Player("Player 2", hand);
 
         // Check if the winning player has won
-        boolean hasWon = gameManagerInterface.checkWinner(winningPlayer);
+        boolean hasWon = gameManagerInterface.checkWinner(gameState ,winningPlayer);
         assertTrue(hasWon);
 
         // Check if the non-winning player has not won
-        hasWon = gameManagerInterface.checkWinner(nonWinningPlayer);
+        hasWon = gameManagerInterface.checkWinner(gameState,nonWinningPlayer);
         assertFalse(hasWon);
     }
 
@@ -230,4 +233,7 @@ class GameServiceTest {
         assertEquals(player3, winner); // Player 3 has the highest total score
         assertEquals(75, winner.getRankingPoints());
     }
+
+
+    //todo Ghazi/ George: test that player who forgot to say mau, draws a penalty card.
 }

@@ -12,7 +12,6 @@
         <module name="Configuration" />
         <module name="GameUI" />
         <module name="PlayerManagement" />
-        <module name="PlayerUI" />
         <module name="GameEngine" />
         <module name="RulesManagement" />
         <module name="CardsManagement" />
@@ -24,6 +23,7 @@
       <module name="htw.berlin" target="10" />
       <module name="logging" target="1.5" />
       <module name="Player" target="10" />
+      <module name="PlayerUI" target="17" />
       <module name="primary-source" target="1.5" />
       <module name="projects" target="1.5" />
       <module name="servlet" target="1.5" />

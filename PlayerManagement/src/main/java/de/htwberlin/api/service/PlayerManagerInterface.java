@@ -32,10 +32,4 @@ public interface PlayerManagerInterface {
      * @param player the player declaring Mau
      */ // todo all maybe change name to sayOneCardLeft()
     void mau(Player player);
-
-    /**
-     * Handles the penalty for a player who fails to call "Mau" when they have one card left.
-     * @param player the player who failed to declare Mau
-     */
-    void lostMau(Player player);
 }

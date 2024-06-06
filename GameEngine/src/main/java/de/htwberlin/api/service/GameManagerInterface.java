@@ -45,9 +45,9 @@ public interface GameManagerInterface {
 
     /**
      * Checks if the specified player has won the game.
-     *
+     * Handles the penalty for a player who fails to call "Mau" when they have one card left.
      * @param player to check for winning condition
      * @return true if the player has won, otherwise false
      */
-    boolean checkWinner(Player player);
+    boolean checkWinner(GameState gameState, Player player);
 }

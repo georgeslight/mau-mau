@@ -5,6 +5,7 @@ import de.htwberlin.api.service.CardManagerInterface;
 import de.htwberlin.api.service.PlayerManagerInterface;
 import de.htwberlin.api.model.Card;
 import de.htwberlin.api.model.Player;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -12,10 +13,11 @@ import java.util.*;
 @Service
 public class PlayerService implements PlayerManagerInterface {
 
-    private CardService cardService;
+    private CardManagerInterface cardService;
 
-    public PlayerService() {
-        this.cardService = new CardService();
+    @Autowired
+    public PlayerService(CardManagerInterface cardService) {
+        this.cardService = cardService;
     }
 
     @Override
@@ -26,12 +28,11 @@ public class PlayerService implements PlayerManagerInterface {
     @Override
     public List<Card> sortPlayersCards(Player player) {
         List<Card> hand = player.getHand();
-        //for (Suit suit : Suit.values())
-            //if hand contains card with suit, then sort all cards with that suit
-            //hand.sort(Comparator.comparing(Card::getRank));
-
-            //if(hand.contains(Card::getSuit)) return hand;
-          return hand;
+        Collections.sort(hand, new CardComparator());
+        for(Card card : hand){
+            System.out.println(card.getSuit() + " " + card.getRank());
+        }
+        return hand;
     }
 
     @Override
@@ -44,22 +45,9 @@ public class PlayerService implements PlayerManagerInterface {
 
     }
 
-    @Override
-    public void lostMau(Player player) {
-
-    }
-
-
-
-
-
-
-    public CardService getCardService() {
+    public CardManagerInterface getCardService() {
         return cardService;
     }
 
-    public void setCardService(CardService cardService) {
-        this.cardService = cardService;
-    }
 }
 
