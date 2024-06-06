@@ -27,7 +27,7 @@
 	</bean>
 
 
-	<bean class="de.htwberlin.service.GameUIController"
+	<bean class="de.htwberlin.impl.service.GameUIController"
 		id="uiController">
 		<property ref="gameService" name="gameService" />
 	</bean>

@@ -1,4 +1,4 @@
-package de.htwberlin.service;
+package de.htwberlin.impl.service;
 
 import de.htwberlin.impl.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -27,6 +27,7 @@ public class GameService implements GameManagerInterface {
         this.ruleService = ruleService;
     }
 
+
     @Override
     public GameState initializeGame(int numberOfPlayers) {
         GameState game = new GameState();
@@ -93,4 +94,5 @@ public class GameService implements GameManagerInterface {
     public boolean checkWinner(Player player) {
         return player.getHand().isEmpty();
     }
+
 }

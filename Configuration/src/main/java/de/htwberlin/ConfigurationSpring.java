@@ -1,6 +1,6 @@
 package de.htwberlin;
 
-import de.htwberlin.service.GameUIController;
+import de.htwberlin.impl.service.GameUIController;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
