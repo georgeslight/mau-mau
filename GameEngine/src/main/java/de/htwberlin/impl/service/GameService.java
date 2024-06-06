@@ -22,7 +22,6 @@ public class GameService implements GameManagerInterface {
     private final PlayerManagerInterface playerManagerInterface;
     private final CardManagerInterface cardManagerInterface;
     private final RuleEngineInterface ruleEngineInterface;
-
     @Autowired
     public GameService(PlayerManagerInterface playerManagerInterface, CardManagerInterface cardManagerInterface, RuleEngineInterface ruleEngineInterface) {
         this.playerManagerInterface = playerManagerInterface;
@@ -84,14 +83,21 @@ public class GameService implements GameManagerInterface {
         // Clear the discard pile
         game.getDiscardPile().clear();
         // Shuffle the deck
-        game.setDeck(cardManagerInterface.shuffle(game.getDeck()));
+        Stack<Card> deck = cardManagerInterface.shuffle(cardManagerInterface.createDeck());
+
         // Distribute new cards to the players
+        game.setDeck(deck);
         game.getPlayers().forEach(player -> {
             List<Card> hand = IntStream.range(0, 5)
                     .mapToObj(j -> game.getDeck().pop())
                     .collect(Collectors.toList());
             player.setHand(hand);
         });
+
+        Stack<Card> discardPile = new Stack<>();
+        discardPile.push(deck.pop());
+        game.setDiscardPile(discardPile);
+
         // Set the current player index to 0
         game.setCurrentPlayerIndex(0);
         // Set the next player index to 1
@@ -111,10 +117,14 @@ public class GameService implements GameManagerInterface {
     @Override
     public void playCard(Player player, Card card, GameState gameState) {
         if (player.getHand().remove(card)) {
-            gameState.getDiscardPile().push(card);
-        } else {
-            throw new IllegalArgumentException("The player does not have the specified card.");
+            if (player.getHand().remove(card)) {
+                gameState.getDiscardPile().push(card);
+            } else {
+                throw new IllegalArgumentException("The player does not have the specified card.");
+            }
         }
+            // nextPlayer(gameState);//todo: what do you think about this?
+            //todo: shouldn't we implement the logik of checking if the card is valid to play?
     }
 
     @Override
@@ -127,3 +137,4 @@ public class GameService implements GameManagerInterface {
     }
 
 }
+

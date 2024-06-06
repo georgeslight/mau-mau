@@ -153,7 +153,7 @@ class GameServiceTest {
     @Test
     void testPlayCard() {
         // Create a player with a hand containing the card to play
-        Card cardToPlay = new Card(Suit.HEARTS, Rank.ACE);
+        Card cardToPlay = new Card(Suit.HEARTS, Rank.TEN);
         Card anotherCard = new Card(Suit.SPADES, Rank.EIGHT);
         List<Card> initialHand = new ArrayList<>();
         initialHand.add(cardToPlay);
@@ -245,6 +245,53 @@ class GameServiceTest {
         assertNotNull(winner);
         assertEquals(player3, winner); // Player 3 has the highest total score
         assertEquals(75, winner.getRankingPoints());
+    }
+
+    /**
+     * tests the end of a round
+     *
+     */
+    @Test
+    void testEndRound() {
+        //test updated rankingPoints & test players have 5 cards each & test Deck Pile is full - 1 & test discard pile is 1
+        // Create players with different scores
+        Player player1 = new Player("Player 1", new ArrayList<>());
+        player1.setScore(Arrays.asList(10, 15, 20)); // total: 45
+
+        Player player2 = new Player("Player 2", new ArrayList<>());
+        player2.setScore(Arrays.asList(5, 10, 15)); // total: 30
+
+        Player player3 = new Player("Player 3", new ArrayList<>());
+        player3.setScore(Arrays.asList(20, 25, 30)); // total: 75
+        gameState.setPlayers(Arrays.asList(player1, player2, player3));
+
+
+        // Set up the game state
+        Stack<Card> deck = Stream.of(Suit.values())
+                .flatMap(suit -> Stream.of(Rank.values())
+                        .map(rank -> new Card(suit, rank)))
+                .collect(Collectors.toCollection(Stack::new));
+
+        when(cardManagerInterface.createDeck()).thenReturn(deck);
+        when(cardManagerInterface.shuffle(any())).thenAnswer(invocation -> {
+            Stack<Card> originalDeck = invocation.getArgument(0);
+            Collections.shuffle(originalDeck);
+            return originalDeck;
+        });
+        // Define the behavior of the playerService mock to return valid players
+        when(playerManagerInterface.createPlayer(anyString(), anyList())).thenAnswer(invocation -> {
+            String name = invocation.getArgument(0);
+            List<Card> hand = invocation.getArgument(1);
+            return new Player(name, hand);
+        });
+        int playersCount = gameState.getPlayers().size();
+        gameState.setDiscardPile(new Stack<>());
+        gameManagerInterface.endRound(gameState);
+        gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
+        assertEquals(32 - (playersCount * 5) - 1, gameState.getDeck().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
+        assertEquals(playersCount, gameState.getPlayers().size());
+        assertEquals(0, gameState.getCurrentPlayerIndex());
+
     }
 
 
