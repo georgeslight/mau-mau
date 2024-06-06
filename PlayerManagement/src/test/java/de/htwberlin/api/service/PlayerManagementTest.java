@@ -52,7 +52,7 @@ class PlayerManagementTest {
         playerService.endRound(player);
         int rankingPointsAfterSurrender = player.getRankingPoints();
         assertTrue(rankingPointsBeforeSurrender < rankingPointsAfterSurrender);
-        assertEquals(player.getScore()[player.getScore().length], (int) player.getRankingPoints());
+        assertEquals(player.getScore().get(player.getScore().size()), (int) player.getRankingPoints());
         assertEquals(33, player.getRankingPoints());
     }
 
