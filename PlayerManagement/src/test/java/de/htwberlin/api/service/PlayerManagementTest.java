@@ -29,9 +29,12 @@ class PlayerManagementTest {
     /**
     @Test
     void createPlayer() {
-        Player player = playerService.createPlayer();
+        Player player = playerService.createPlayer("Player 1", List.of(new Card(Suit.CLUBS, Rank.EIGHT),
+                new Card(Suit.SPADES, Rank.JACK),
+                new Card(Suit.DIAMONDS, Rank.NINE),
+                new Card(Suit.CLUBS, Rank.QUEEN),
+                new Card(Suit.HEARTS, Rank.QUEEN)));
         assertNotNull(player);
-        player.setName("Player 1");
         assertEquals("Player 1", player.getName());
         assertEquals(5, player.getHand().size());
     }
@@ -51,7 +54,7 @@ class PlayerManagementTest {
         playerService.endRound(player);
         int rankingPointsAfterSurrender = player.getRankingPoints();
         assertTrue(rankingPointsBeforeSurrender < rankingPointsAfterSurrender);
-        assertEquals(player.getScore()[player.getScore().length], (int) player.getRankingPoints());
+        assertEquals(player.getScore().get(player.getScore().size()), (int) player.getRankingPoints());
         assertEquals(33, player.getRankingPoints());
     }
 

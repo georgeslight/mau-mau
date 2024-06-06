@@ -3,7 +3,6 @@ package de.htwberlin.api.service;
 import de.htwberlin.api.enums.Rank;
 import de.htwberlin.api.enums.Suit;
 import de.htwberlin.api.model.Card;
-import de.htwberlin.api.model.Deck;
 import de.htwberlin.impl.service.CardService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,15 +71,15 @@ class CardServiceTest {
     @ParameterizedTest
     @MethodSource("suitAndRank")
     void testCreateDeck(Suit suit, Rank rank) {
-        Deck deck = cardService.createDeck();
+        Stack<Card> deck = cardService.createDeck();
         assertNotNull(deck);
-        assertEquals(32, deck.getCards().size(), "A deck should have 32 cards");
+        assertEquals(32, deck.size(), "A deck should have 32 cards");
 
         // Verify the deck has all unique cards
-        Set<Card> cardSet = new HashSet<>(deck.getCards());
+        Set<Card> cardSet = new HashSet<>(deck);
         assertEquals(32, cardSet.size(), "The deck should have 32 unique cards");
 
         // Verify the deck has all combinations of suits and ranks
-        assertTrue(deck.getCards().contains(new Card(suit, rank)), "The deck should contain the card: " + suit + " " + rank);
+        assertTrue(deck.contains(new Card(suit, rank)), "The deck should contain the card: " + suit + " " + rank);
     }
 }

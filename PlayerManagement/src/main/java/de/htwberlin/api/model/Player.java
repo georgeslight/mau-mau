@@ -1,5 +1,6 @@
 package de.htwberlin.api.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
@@ -8,10 +9,10 @@ public class Player {
     private List<Card> hand;
     private Integer rankingPoints;
     private boolean saidMau;
-    private int[] score;
+    private List<Integer> score;
 
     public Player(String name, List<Card> hand) {
-        this.score = new int[5];
+        this.score = new ArrayList<>();
         this.saidMau = false;
         this.rankingPoints = 0;
         this.hand = hand;
@@ -34,11 +35,11 @@ public class Player {
         this.name = name;
     }
 
-    public int[] getScore() {
+    public List<Integer> getScore() {
         return score;
     }
 
-    public void setScore(int[] score) {
+    public void setScore(List<Integer> score) {
         this.score = score;
     }
 

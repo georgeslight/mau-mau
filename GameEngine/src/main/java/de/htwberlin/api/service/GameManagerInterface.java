@@ -34,7 +34,7 @@ public interface GameManagerInterface {
      *
      * @param player the index of the player who is drawing a card
      */
-    Card drawCard(int player);
+    Card drawCard(GameState gameState, Player player);
 
     /**
      * Allows a player to play a card from their hand onto the discard pile.

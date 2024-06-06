@@ -2,7 +2,6 @@ package de.htwberlin.api.service;
 
 import de.htwberlin.api.enums.Rank;
 import de.htwberlin.api.enums.Suit;
-import de.htwberlin.api.model.Deck;
 import de.htwberlin.api.model.Card;
 
 import java.util.Stack;
@@ -27,5 +26,5 @@ public interface CardManagerInterface {
      *
      * @return Deck
      */
-    Deck createDeck();
+    Stack<Card> createDeck();
 }
