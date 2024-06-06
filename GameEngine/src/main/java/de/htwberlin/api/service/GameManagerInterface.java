@@ -29,6 +29,13 @@ public interface GameManagerInterface {
     Player endGame(GameState game);
 
     /**
+     * Calculates the points of the round and start a new one
+     *
+     * @param game the current game state to end
+     */
+    void endRound(GameState game);
+
+    /**
      * Handles the action of a player drawing a card from the draw pile.
      *
      * @param player the index of the player who is drawing a card

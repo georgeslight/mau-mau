@@ -76,9 +76,33 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
+    public void endRound(GameState game) {
+        game.getPlayers().forEach( player -> {
+            // Updated rankingPoints with the sum of all scores
+            player.setRankingPoints(player.getScore().stream().reduce(0, Integer::sum));
+        });
+        // Clear the discard pile
+        game.getDiscardPile().clear();
+        // Shuffle the deck
+        game.setDeck(cardManagerInterface.shuffle(game.getDeck()));
+        // Distribute new cards to the players
+        game.getPlayers().forEach(player -> {
+            List<Card> hand = IntStream.range(0, 5)
+                    .mapToObj(j -> game.getDeck().pop())
+                    .collect(Collectors.toList());
+            player.setHand(hand);
+        });
+        // Set the current player index to 0
+        game.setCurrentPlayerIndex(0);
+        // Set the next player index to 1
+        game.setNextPlayerIndex(1);
+
+    }
+
+    @Override
     public Card drawCard(GameState game, Player player) {
         if (game.getDeck().empty()) throw new IllegalStateException("Cannot draw from an empty deck");
-
+        //todo: shouldn't we implement the logik of shuffling the discard deck into the deck if it's empty?
         Card drawCard = game.getDeck().pop();
         player.getHand().add(drawCard);
         return drawCard;

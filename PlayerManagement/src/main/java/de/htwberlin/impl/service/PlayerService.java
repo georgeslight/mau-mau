@@ -1,6 +1,5 @@
 package de.htwberlin.impl.service;
 
-import de.htwberlin.api.enums.Suit;
 import de.htwberlin.api.service.CardManagerInterface;
 import de.htwberlin.api.service.PlayerManagerInterface;
 import de.htwberlin.api.model.Card;
@@ -14,12 +13,10 @@ import java.util.*;
 public class PlayerService implements PlayerManagerInterface {
 
     private CardManagerInterface cardService;
-
     @Autowired
     public PlayerService(CardManagerInterface cardService) {
-        this.cardService = cardService;
     }
-
+    //todo Q Ghazi: is the CardServiceInterface even needed here?!
     @Override
     public Player createPlayer(String name, List<Card> hand) {
         return new Player(name, hand);
@@ -36,18 +33,10 @@ public class PlayerService implements PlayerManagerInterface {
     }
 
     @Override
-    public void endRound(Player player) {
-
-    }
-
-    @Override
     public void mau(Player player) {
-
+        if (player.getHand().size() == 1) {
+            player.setSaidMau(true);
+        }
     }
-
-    public CardManagerInterface getCardService() {
-        return cardService;
-    }
-
 }
 

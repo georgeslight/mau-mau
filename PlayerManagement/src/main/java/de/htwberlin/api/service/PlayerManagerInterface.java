@@ -20,12 +20,7 @@ public interface PlayerManagerInterface {
      */
     List<Card> sortPlayersCards(Player player);
 
-    /**
-     * Allows a player to surrender from the game, potentially affecting game dynamics.
-     * Also for when someone wins the round
-     * @param player the player who is surrendering
-     */
-    void endRound(Player player);
+
 
     /**
      * Called when a player has only one card left and declares "Mau".
