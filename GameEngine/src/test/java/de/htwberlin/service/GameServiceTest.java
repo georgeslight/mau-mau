@@ -149,23 +149,34 @@ class GameServiceTest {
      */
     @Test
     void testPlayCard() {
-        Player player = new Player("Player", List.of(
-                new Card(Suit.HEARTS, Rank.SEVEN),
-                new Card(Suit.CLUBS, Rank.EIGHT),
-                new Card(Suit.SPADES, Rank.NINE),
-                new Card(Suit.DIAMONDS, Rank.TEN),
-                new Card(Suit.CLUBS, Rank.JACK)));
+        // Create a player with a hand containing the card to play
+        Card cardToPlay = new Card(Suit.HEARTS, Rank.ACE);
+        Card anotherCard = new Card(Suit.SPADES, Rank.EIGHT);
+        List<Card> initialHand = new ArrayList<>();
+        initialHand.add(cardToPlay);
+        initialHand.add(anotherCard);
+        Player player = new Player("Player 1", initialHand);
 
-        Card playedCard = new Card(Suit.HEARTS, Rank.ACE);
-        Card antoherCard = new Card(Suit.DIAMONDS, Rank.ACE);
-        List<Card> cards = new ArrayList<>();
-        cards.add(playedCard);
-        cards.add(antoherCard);
-        player.setHand(cards);
-//        gameService.playCard(player, playedCard, gameState);
-//        assertTrue(player.getHand().contains(antoherCard));// Player still has the other card
-//        assertFalse(player.getHand().contains(playedCard));// Player no longer has the played card
-//        assertEquals(playedCard, gameState.getDiscardPile().peek());// Played card is now on discard pile
+        // Set up the game state with a discard pile containing one card
+        Stack<Card> discardPile = new Stack<>();
+        discardPile.push(new Card(Suit.CLUBS, Rank.TEN)); // Initial card in the discard pile
+
+        GameState gameState = new GameState();
+        gameState.setPlayers(List.of(player));
+        gameState.setDiscardPile(discardPile);
+
+        // Play the card
+        gameService.playCard(player, cardToPlay, gameState);
+
+        // Verify the card was played correctly
+        assertEquals(1, player.getHand().size()); // Player's hand should be empty
+        assertTrue(player.getHand().contains(anotherCard)); // Remaining card should be the one not played
+        assertEquals(cardToPlay, gameState.getDiscardPile().peek()); // Discard pile should contain the played card
+        assertEquals(2, gameState.getDiscardPile().size()); // Discard pile should have two cards
+
+        // Test playing a card that the player does not have
+        Card cardNotInHand = new Card(Suit.SPADES, Rank.NINE);
+        assertThrows(IllegalArgumentException.class, () -> gameService.playCard(player, cardNotInHand, gameState));
     }
 
     /**
