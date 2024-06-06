@@ -4,8 +4,10 @@ import de.htwberlin.api.service.GameManagerInterface;
 import de.htwberlin.api.model.Card;
 import de.htwberlin.api.model.GameState;
 import de.htwberlin.api.model.Player;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -14,10 +16,11 @@ import java.util.stream.IntStream;
 @Service
 public class GameService implements GameManagerInterface {
 
-    private PlayerService playerService;
-    private CardService cardService;
-    private RuleService ruleService;
+    private final PlayerService playerService;
+    private final CardService cardService;
+    private final RuleService ruleService;
 
+    @Autowired
     public GameService(PlayerService playerService, CardService cardService, RuleService ruleService) {
         this.playerService = playerService;
         this.cardService = cardService;
@@ -60,9 +63,12 @@ public class GameService implements GameManagerInterface {
     @Override
     public Player endGame(GameState game) {
         game.getPlayers().forEach( player -> {
-            player.getScore(). ruleService.calculateScore(player.getHand());
+            // Updated rankingPoints with the sum of all scores
+            player.setRankingPoints(player.getScore().stream().reduce(0, Integer::sum));
         });
-        return null;
+        // Find the player with the highest ranking points
+        return game.getPlayers().stream().max(Comparator.comparingInt(Player::getRankingPoints))
+                .orElse(null);
     }
 
     @Override
