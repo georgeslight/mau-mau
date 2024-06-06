@@ -114,25 +114,34 @@ class GameServiceTest {
      */
     @Test
     void testDrawCard() {
-        Player player = new Player("Player", List.of(
-                new Card(Suit.HEARTS, Rank.SEVEN),
-                new Card(Suit.CLUBS, Rank.EIGHT),
-                new Card(Suit.SPADES, Rank.NINE),
-                new Card(Suit.DIAMONDS, Rank.TEN),
-                new Card(Suit.CLUBS, Rank.JACK)));
+        // Create a valid deck with one card
+        Stack<Card> deck = new Stack<>();
+        Card cardToDraw = new Card(Suit.HEARTS, Rank.ACE);
+        deck.push(cardToDraw);
 
-//        int drawPileSize = gameState.getDeck().size();
-//        int playerHandSize = player.getHand().size();
-//        int discardPileSize = gameState.getDiscardPile().size();
-//        Card drawnCard = gameService.drawCard(gameState.getCurrentPlayerIndex());
-//        assertEquals(drawPileSize - 1, gameState.getDeck().size());// One card removed from draw pile
-//        assertFalse(gameState.getDeck().contains(drawnCard));// Drawn card is no longer in draw pile
-//
-//        assertEquals(playerHandSize + 1, player.getHand().size());// Player has one more card
-//        assertTrue(player.getHand().contains(drawnCard));// Player has the drawn card
-//
-//        assertEquals(discardPileSize, gameState.getDiscardPile().size());// Discard pile size unchanged
-//        assertTrue(gameState.getDiscardPile().contains(drawnCard));// Drawn card is now on discard pile
+        // Create a player with one card in hand
+        List<Card> initialHand = new ArrayList<>();
+        initialHand.add(new Card(Suit.SPADES, Rank.JACK));
+        Player player = new Player("Player 1", initialHand);
+
+        // Set up the game state
+        GameState gameState = new GameState();
+        gameState.setDeck(deck);
+        gameState.setPlayers(List.of(player));
+        gameState.setCurrentPlayerIndex(0);
+
+        // Draw the card
+        Card drawnCard = gameService.drawCard(gameState, player);
+
+        // Verify the card was drawn correctly
+        assertEquals(cardToDraw, drawnCard);
+        assertEquals(2, player.getHand().size());
+        assertTrue(player.getHand().contains(cardToDraw));
+        assertTrue(player.getHand().contains(new Card(Suit.SPADES, Rank.JACK)));
+        assertTrue(gameState.getDeck().isEmpty());
+
+        // Test drawing from an empty deck
+        assertThrows(IllegalStateException.class, () -> gameService.drawCard(gameState, player));
     }
 
     /**
