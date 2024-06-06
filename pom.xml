@@ -17,6 +17,12 @@
 		<module>RulesManagement</module>
         <module>GameUI</module>
 		<module>Configuration</module>
+        <module>PlayerUI</module>
+		<module>PlayerUI</module>
+		<module>PlayerUI</module>
+        <module>PlayerUI</module>
+		<module>PlayerUI</module>
+		<module>PlayerUI</module>
 	</modules>
 
 	<properties>
