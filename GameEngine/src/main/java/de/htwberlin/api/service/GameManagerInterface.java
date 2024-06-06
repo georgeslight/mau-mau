@@ -21,8 +21,7 @@ public interface GameManagerInterface {
     Player nextPlayer(GameState gameState);
 
     /**
-     * Ends the game and performs any cleanup necessary.
-     * calculates the winner and displays the result
+     * Calculates the winner and displays the result
      *
      * @param game the current game state to end
      * @return the Winner

@@ -200,4 +200,33 @@ class GameServiceTest {
         hasWon = gameService.checkWinner(nonWinningPlayer);
         assertFalse(hasWon);
     }
+
+
+    /**
+     * Test ending the game and determining the winner.
+     */
+    @Test
+    void testEndGame() {
+        // Create players with different scores
+        Player player1 = new Player("Player 1", new ArrayList<>());
+        player1.setScore(Arrays.asList(10, 15, 20)); // total: 45
+
+        Player player2 = new Player("Player 2", new ArrayList<>());
+        player2.setScore(Arrays.asList(5, 10, 15)); // total: 30
+
+        Player player3 = new Player("Player 3", new ArrayList<>());
+        player3.setScore(Arrays.asList(20, 25, 30)); // total: 75
+
+        // Set up the game state
+        GameState gameState = new GameState();
+        gameState.setPlayers(Arrays.asList(player1, player2, player3));
+
+        // End the game and determine the winner
+        Player winner = gameService.endGame(gameState);
+
+        // Verify the winner
+        assertNotNull(winner);
+        assertEquals(player3, winner); // Player 3 has the highest total score
+        assertEquals(75, winner.getRankingPoints());
+    }
 }
