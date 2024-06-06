@@ -1,9 +1,12 @@
 package de.htwberlin.impl.service;
 
+import de.htwberlin.api.service.CardManagerInterface;
 import de.htwberlin.api.service.GameManagerInterface;
 import de.htwberlin.api.model.Card;
 import de.htwberlin.api.model.GameState;
 import de.htwberlin.api.model.Player;
+import de.htwberlin.api.service.PlayerManagerInterface;
+import de.htwberlin.api.service.RuleEngineInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,28 +19,28 @@ import java.util.stream.IntStream;
 @Service
 public class GameService implements GameManagerInterface {
 
-    private final PlayerService playerService;
-    private final CardService cardService;
-    private final RuleService ruleService;
+    private final PlayerManagerInterface playerManagerInterface;
+    private final CardManagerInterface cardManagerInterface;
+    private final RuleEngineInterface ruleEngineInterface;
 
     @Autowired
-    public GameService(PlayerService playerService, CardService cardService, RuleService ruleService) {
-        this.playerService = playerService;
-        this.cardService = cardService;
-        this.ruleService = ruleService;
+    public GameService(PlayerManagerInterface playerManagerInterface, CardManagerInterface cardManagerInterface, RuleEngineInterface ruleEngineInterface) {
+        this.playerManagerInterface = playerManagerInterface;
+        this.cardManagerInterface = cardManagerInterface;
+        this.ruleEngineInterface = ruleEngineInterface;
     }
 
 
     @Override
     public GameState initializeGame(int numberOfPlayers) {
         GameState game = new GameState();
-        Stack<Card> deck = cardService.shuffle(cardService.createDeck());
+        Stack<Card> deck = cardManagerInterface.shuffle(cardManagerInterface.createDeck());
         List<Player> players = IntStream.range(0, numberOfPlayers)
                 .mapToObj(i -> {
                     List<Card> hand = IntStream.range(0, 5)
                             .mapToObj(j -> deck.pop())
                             .collect(Collectors.toList());
-                    return playerService.createPlayer("Player " + i, hand);
+                    return playerManagerInterface.createPlayer("Player " + i, hand);
                 })
                 .collect(Collectors.toList());
 
@@ -56,7 +59,7 @@ public class GameService implements GameManagerInterface {
 
     @Override
     public Player nextPlayer(GameState gameState) {
-        int nextPlayerIndex = ruleService.calculateNextPlayerIndex(gameState.getCurrentPlayerIndex(), gameState.getPlayers().size());
+        int nextPlayerIndex = ruleEngineInterface.calculateNextPlayerIndex(gameState.getCurrentPlayerIndex(), gameState.getPlayers().size());
         gameState.setCurrentPlayerIndex(nextPlayerIndex);
         return gameState.getPlayers().get(nextPlayerIndex);
     }
