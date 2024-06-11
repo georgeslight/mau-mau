@@ -12,11 +12,7 @@ import java.util.*;
 @Service
 public class PlayerService implements PlayerManagerInterface {
 
-    private CardManagerInterface cardService;
-    @Autowired
-    public PlayerService(CardManagerInterface cardService) {
-    }
-    //todo Q Ghazi: is the CardServiceInterface even needed here?!
+
     @Override
     public Player createPlayer(String name, List<Card> hand) {
         return new Player(name, hand);

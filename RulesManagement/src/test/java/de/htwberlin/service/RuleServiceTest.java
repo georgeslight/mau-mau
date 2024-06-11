@@ -235,4 +235,6 @@ class RuleServiceTest {
         ));
         assertEquals(-54, score);
     }
+
+    //todo Ghazi: Verfiy bei allen mocks ob wirklich gemockt wurde!
 }
