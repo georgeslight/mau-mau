@@ -5,6 +5,8 @@ CardsManagement/target/
 GameEngine/target/
 PlayerManagement/target/
 RulesManagement/target/
+GameUI/target/
+Configuration/target/
 
 /*.class
 /*.log
@@ -20,3 +22,5 @@ Thumbs.db
 .project
 .classpath
 .settings/
+
+

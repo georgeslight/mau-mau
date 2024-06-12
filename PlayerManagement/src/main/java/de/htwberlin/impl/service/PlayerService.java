@@ -1,10 +1,8 @@
 package de.htwberlin.impl.service;
 
-import de.htwberlin.api.service.CardManagerInterface;
 import de.htwberlin.api.service.PlayerManagerInterface;
 import de.htwberlin.api.model.Card;
 import de.htwberlin.api.model.Player;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
