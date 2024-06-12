@@ -56,5 +56,5 @@ public interface GameManagerInterface {
      * @param player to check for winning condition
      * @return true if the player has won, otherwise false
      */
-    boolean checkWinner(GameState gameState, Player player);
+    boolean checkWinner(Player player);
 }
