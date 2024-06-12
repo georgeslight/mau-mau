@@ -5,12 +5,16 @@ import de.htwberlin.api.enums.Rank;
 import de.htwberlin.api.enums.Suit;
 import de.htwberlin.api.model.Card;
 import de.htwberlin.api.model.Rules;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class RuleService implements RuleEngineInterface {
+
+    private static final Logger LOGGER = LogManager.getLogger(RuleService.class);
 
     private Rules rules;
     private CardService cardService;

@@ -1,11 +1,15 @@
 package de.htwberlin.impl.service;
 
 import de.htwberlin.impl.service.GameService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
 public class GameUIController {
+
+    private static final Logger LOGGER = LogManager.getLogger(GameUIController.class);
 
     private GameService gameService;
 

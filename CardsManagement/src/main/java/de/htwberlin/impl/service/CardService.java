@@ -8,11 +8,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Stack;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
 public class CardService implements CardManagerInterface {
+
+    private static final Logger LOGGER = LogManager.getLogger(CardService.class);
+
     @Override
     public Stack<Card> shuffle(Stack<Card> deck) {
         return deck.stream()
