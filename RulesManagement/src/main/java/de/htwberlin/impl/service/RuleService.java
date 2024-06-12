@@ -17,6 +17,7 @@ public class RuleService implements RuleEngineInterface {
     private static final Logger LOGGER = LogManager.getLogger(RuleService.class);
 
     private Rules rules;
+//     todo: why need of cardService, its not used
     private CardService cardService;
 
     public RuleService() {
@@ -25,6 +26,7 @@ public class RuleService implements RuleEngineInterface {
     }
 
 
+//    todo: why?
     @Override
     public Integer getStartingCards() {
         return 5;
@@ -32,6 +34,7 @@ public class RuleService implements RuleEngineInterface {
 
     @Override
     public boolean isValidMove(Card card, Card topCard) {
+        // todo : Ghazi, player cannot play a jack if last player played a jack? i think he can
         if (card.getRank().equals(Rank.JACK) & topCard.getRank().equals(Rank.JACK)) return false;
         if (card.getRank().equals(topCard.getRank())
             || card.getSuit().equals(topCard.getSuit())
@@ -117,11 +120,11 @@ public class RuleService implements RuleEngineInterface {
         this.rules = rules;
     }
 
-    public CardService getCardService() {
-        return cardService;
-    }
-
-    public void setCardService(CardService cardService) {
-        this.cardService = cardService;
-    }
+//    public CardService getCardService() {
+//        return cardService;
+//    }
+//
+//    public void setCardService(CardService cardService) {
+//        this.cardService = cardService;
+//    }
 }

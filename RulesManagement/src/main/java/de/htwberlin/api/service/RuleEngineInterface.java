@@ -26,14 +26,6 @@ public interface RuleEngineInterface {
      */
     Integer getStartingCards();
 
-
-    /**
-     */
-
-    /**
-     * Handles the specific rules when an 8 is played.
-     */
-
     /**
      * Handles the specific rules when a Card with special effects is played.
      * @param card the card being played
