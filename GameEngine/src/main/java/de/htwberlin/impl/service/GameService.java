@@ -107,7 +107,6 @@ public class GameService implements GameManagerInterface {
     @Override
     public Card drawCard(GameState game, Player player) {
         if (game.getDeck().empty()) throw new IllegalStateException("Cannot draw from an empty deck");
-        //todo: shouldn't we implement the logik of shuffling the discard deck into the deck if it's empty?
         Card drawCard = game.getDeck().pop();
         player.getHand().add(drawCard);
         return drawCard;
@@ -116,23 +115,15 @@ public class GameService implements GameManagerInterface {
     @Override
     public void playCard(Player player, Card card, GameState gameState) {
         if (player.getHand().remove(card)) {
-            if (player.getHand().remove(card)) {
-                gameState.getDiscardPile().push(card);
-            } else {
-                throw new IllegalArgumentException("The player does not have the specified card.");
-            }
+            gameState.getDiscardPile().push(card);
+        } else {
+            throw new IllegalArgumentException("The player does not have the specified card.");
         }
-            // nextPlayer(gameState);//todo: what do you think about this?
-            //todo: shouldn't we implement the logik of checking if the card is valid to play?
     }
 
     @Override
-    public boolean checkWinner(GameState gameState, Player player) {
-        if(player.getHand().isEmpty()){
-            if (player.isSaidMau()){
-                return true;
-            }else drawCard(gameState, player);
-        }return false;
+    public boolean checkWinner(Player player) {
+        return player.getHand().isEmpty() && player.isSaidMau();
     }
 
 }

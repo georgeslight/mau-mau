@@ -28,7 +28,6 @@ class GameServiceTest {
     private PlayerManagerInterface playerManagerInterface;
     private CardManagerInterface cardManagerInterface;
     private RuleEngineInterface ruleEngineInterface;
-    private GameState gameState;
 
     @BeforeEach
     void setUp() {
@@ -36,7 +35,6 @@ class GameServiceTest {
         this.cardManagerInterface = mock(CardManagerInterface.class);
         this.ruleEngineInterface = mock(RuleEngineInterface.class);
         this.gameManagerInterface = new GameService(playerManagerInterface, cardManagerInterface, ruleEngineInterface);
-        this.gameState = new GameState();
     }
 
     /**
@@ -70,7 +68,7 @@ class GameServiceTest {
         gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
         assertEquals(32 - (playersCount * 5) - 1, gameState.getDeck().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
         assertEquals(playersCount, gameState.getPlayers().size());
-        //assertNotEquals(gameState.getCurrentPlayerIndex(), gameState.getNextPlayerIndex());
+        assertNotEquals(gameState.getCurrentPlayerIndex(), gameState.getNextPlayerIndex());
         assertEquals(0, gameState.getCurrentPlayerIndex());
     }
 
@@ -187,18 +185,6 @@ class GameServiceTest {
      */
     @Test
     void testCheckWinner() {
-        when(cardManagerInterface.createDeck()).thenReturn(
-                new Stack<Card>() {{
-                    push(new Card(Suit.HEARTS, Rank.ACE));
-                    push(new Card(Suit.HEARTS, Rank.SEVEN));
-                    push(new Card(Suit.HEARTS, Rank.EIGHT));
-                    push(new Card(Suit.HEARTS, Rank.NINE));
-                    push(new Card(Suit.HEARTS, Rank.TEN));
-                }}
-        );
-
-        gameState.setDeck(cardManagerInterface.createDeck());
-
         // Create a player with an empty hand (winning condition)
         Player winningPlayer = new Player("Player 1", new ArrayList<>());
 
@@ -208,14 +194,12 @@ class GameServiceTest {
         Player nonWinningPlayer = new Player("Player 2", hand);
 
         // Check if the winning player has won
-        boolean hasWon = gameManagerInterface.checkWinner(gameState ,winningPlayer);
-        assertTrue(hasWon);
+        assertFalse(gameManagerInterface.checkWinner(winningPlayer));
+        winningPlayer.setSaidMau(true);
+        assertTrue(gameManagerInterface.checkWinner(winningPlayer));
 
-        // Check if the non-winning player has not won
-        hasWon = gameManagerInterface.checkWinner(gameState,nonWinningPlayer);
-        assertFalse(hasWon);
-
-        //todo: bro I don't know if I messed it up or it was this way. So sorry if I did.
+        // Check if the non-winning player has not wongameManagerInterface.checkWinner(nonWinningPlayer)
+        assertFalse(gameManagerInterface.checkWinner(nonWinningPlayer));
     }
 
 
@@ -253,6 +237,7 @@ class GameServiceTest {
      */
     @Test
     void testEndRound() {
+        GameState gameState = new GameState();
         //test updated rankingPoints & test players have 5 cards each & test Deck Pile is full - 1 & test discard pile is 1
         // Create players with different scores
         Player player1 = new Player("Player 1", new ArrayList<>());
@@ -291,9 +276,5 @@ class GameServiceTest {
         assertEquals(32 - (playersCount * 5) - 1, gameState.getDeck().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
         assertEquals(playersCount, gameState.getPlayers().size());
         assertEquals(0, gameState.getCurrentPlayerIndex());
-
     }
-
-
-    //todo Ghazi/ George: test that player who forgot to say mau, draws a penalty card.
 }

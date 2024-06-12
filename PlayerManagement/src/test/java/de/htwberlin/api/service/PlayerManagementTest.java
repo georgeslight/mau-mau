@@ -19,7 +19,7 @@ class PlayerManagementTest {
     private CardManagerInterface cardManagerInterface;
     //todo Ghazi: mocked interface must be used somehow?!
     private PlayerService playerService;
-    
+
 
     @BeforeEach
     void setUp() {
