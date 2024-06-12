@@ -24,7 +24,7 @@ class PlayerManagementTest {
     @BeforeEach
     void setUp() {
         this.cardManagerInterface = mock(CardManagerInterface.class);
-        this.playerService = new PlayerService(cardManagerInterface);
+        this.playerService = new PlayerService();
     }
 
     /**

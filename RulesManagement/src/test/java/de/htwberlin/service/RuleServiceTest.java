@@ -1,6 +1,7 @@
 package de.htwberlin.service;
 
 import de.htwberlin.api.model.Rules;
+import de.htwberlin.api.service.CardManagerInterface;
 import de.htwberlin.impl.service.RuleService;
 import de.htwberlin.api.enums.Rank;
 import de.htwberlin.api.enums.Suit;
@@ -15,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RuleServiceTest {
     RuleService ruleService;
-    Rules rules;
+    CardManagerInterface cardManagerInterface;
+
 
     @BeforeEach
     void setUp() {
         ruleService = new RuleService();
-        rules = ruleService.getRules();
     }
 
 
@@ -29,9 +30,9 @@ class RuleServiceTest {
      */
     @Test
     void testIndexIncrement() {
-        rules.setGameDirection(true); // true for forward
-        rules.setCanPlayAgain(false);
-        rules.setSkipNextPlayerTurn(false);
+        ruleService.getRules().setGameDirection(true); // true for forward
+        ruleService.getRules().setCanPlayAgain(false);
+        ruleService.getRules().setSkipNextPlayerTurn(false);
         int playersCount = 4; // Example player count
         assertEquals(1, ruleService.calculateNextPlayerIndex(0, playersCount));
     }
@@ -41,7 +42,7 @@ class RuleServiceTest {
      */
     @Test
     void testIndexDecrement() {
-        rules.setGameDirection(false); // false for backward
+        ruleService.getRules().setGameDirection(false); // false for backward
         int playersCount = 4;
         assertEquals(2, ruleService.calculateNextPlayerIndex(3, playersCount));
     }
@@ -51,8 +52,8 @@ class RuleServiceTest {
      */
     @Test
     void testSkipNextPlayerForward() {
-        rules.setGameDirection(true);
-        rules.setSkipNextPlayerTurn(true);
+        ruleService.getRules().setGameDirection(true);
+        ruleService.getRules().setSkipNextPlayerTurn(true);
         int playersCount = 4;
         assertEquals(2, ruleService.calculateNextPlayerIndex(0, playersCount));
     }
@@ -62,8 +63,8 @@ class RuleServiceTest {
      */
     @Test
     void testSkipNextPlayerBackward() {
-        rules.setGameDirection(false);
-        rules.setSkipNextPlayerTurn(true);
+        ruleService.getRules().setGameDirection(false);
+        ruleService.getRules().setSkipNextPlayerTurn(true);
         int playersCount = 4;
         assertEquals(1, ruleService.calculateNextPlayerIndex(3, playersCount));
     }
@@ -73,7 +74,7 @@ class RuleServiceTest {
      */
     @Test
     void testCanPlayAgain() {
-        rules.setCanPlayAgain(true);
+        ruleService.getRules().setCanPlayAgain(true);
         int playersCount = 4;
         assertEquals(1, ruleService.calculateNextPlayerIndex(1, playersCount));
     }
@@ -160,7 +161,7 @@ class RuleServiceTest {
     @Test
     void playJackTest1() {
         ruleService.applyJackSpecialEffect(new Card(Suit.HEARTS, Rank.JACK), Suit.HEARTS);
-        assertEquals(Suit.HEARTS, rules.getWishCard());
+        assertEquals(Suit.HEARTS, ruleService.getRules().getWishCard());
     }
 
     /**
@@ -169,7 +170,7 @@ class RuleServiceTest {
     @Test
     void play7() {
         ruleService.applySpecialCardsEffect(new Card(Suit.HEARTS, Rank.SEVEN));
-        assertEquals(2, rules.getCardsToBeDrawn());
+        assertEquals(2, ruleService.getRules().getCardsToBeDrawn());
     }
     /**
      * Cards to be drawn by next player are increased by 2. 2 sevens are played
@@ -178,7 +179,7 @@ class RuleServiceTest {
     void play7time2() {
         ruleService.applySpecialCardsEffect(new Card(Suit.HEARTS, Rank.SEVEN));
         ruleService.applySpecialCardsEffect(new Card(Suit.DIAMONDS, Rank.SEVEN));
-        assertEquals(4, rules.getCardsToBeDrawn());
+        assertEquals(4, ruleService.getRules().getCardsToBeDrawn());
     }
     /**
      * Cards to be drawn by next player are increased by 2. 3 sevens are played
@@ -188,7 +189,7 @@ class RuleServiceTest {
         ruleService.applySpecialCardsEffect(new Card(Suit.HEARTS, Rank.SEVEN));
         ruleService.applySpecialCardsEffect(new Card(Suit.DIAMONDS, Rank.SEVEN));
         ruleService.applySpecialCardsEffect(new Card(Suit.SPADES, Rank.SEVEN));
-        assertEquals(6, rules.getCardsToBeDrawn());
+        assertEquals(6, ruleService.getRules().getCardsToBeDrawn());
     }
     /**
      * Next player Turn will be skipped after playing an 8
@@ -197,7 +198,7 @@ class RuleServiceTest {
     @Test
     void play8SkipNextPlayer() {
         ruleService.applySpecialCardsEffect(new Card(Suit.HEARTS, Rank.EIGHT));
-        assertTrue(rules.isSkipNextPlayerTurn());
+        assertTrue(ruleService.getRules().isSkipNextPlayerTurn());
     }
     /**
      * Draw 2 is skipped after playing an 8
@@ -207,7 +208,7 @@ class RuleServiceTest {
     void play8draw2() {
         ruleService.applySpecialCardsEffect(new Card(Suit.HEARTS, Rank.SEVEN));
         ruleService.applySpecialCardsEffect(new Card(Suit.HEARTS, Rank.EIGHT));
-        assertEquals(0, rules.getCardsToBeDrawn());
+        assertEquals(0, ruleService.getRules().getCardsToBeDrawn());
     }
     /**
      * playing an Ace allows the current player to play another card
@@ -215,7 +216,7 @@ class RuleServiceTest {
     @Test
     void playAce() {
         ruleService.applySpecialCardsEffect(new Card(Suit.HEARTS, Rank.ACE));
-        assertTrue(rules.isCanPlayAgain());
+        assertTrue(ruleService.getRules().isCanPlayAgain());
     }
 
     /**
@@ -237,4 +238,5 @@ class RuleServiceTest {
     }
 
     //todo Ghazi: Verfiy bei allen mocks ob wirklich gemockt wurde!
+    
 }

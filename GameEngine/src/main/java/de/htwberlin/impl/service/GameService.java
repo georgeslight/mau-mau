@@ -102,7 +102,6 @@ public class GameService implements GameManagerInterface {
         game.setCurrentPlayerIndex(0);
         // Set the next player index to 1
         game.setNextPlayerIndex(1);
-
     }
 
     @Override
