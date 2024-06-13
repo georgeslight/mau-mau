@@ -6,11 +6,14 @@ import de.htwberlin.api.service.CardManagerInterface;
 import de.htwberlin.api.service.GameManagerInterface;
 import de.htwberlin.api.service.PlayerManagerInterface;
 import de.htwberlin.api.service.RuleEngineInterface;
-import de.htwberlin.impl.service.GameService;
 import de.htwberlin.api.model.*;
 import de.htwberlin.api.enums.*;
-import org.junit.jupiter.api.BeforeEach;
+import de.htwberlin.impl.service.GameService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,23 +22,21 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@ExtendWith(MockitoExtension.class)
 class GameServiceTest {
 
-    private GameManagerInterface gameManagerInterface;
+    @InjectMocks
+    private GameManagerInterface gameService = new GameService();
+    @Mock
     private PlayerManagerInterface playerManagerInterface;
+    @Mock
     private CardManagerInterface cardManagerInterface;
+    @Mock
     private RuleEngineInterface ruleEngineInterface;
-
-    @BeforeEach
-    void setUp() {
-        this.playerManagerInterface = mock(PlayerManagerInterface.class);
-        this.cardManagerInterface = mock(CardManagerInterface.class);
-        this.ruleEngineInterface = mock(RuleEngineInterface.class);
-        this.gameManagerInterface = new GameService(playerManagerInterface, cardManagerInterface, ruleEngineInterface);
-    }
 
     /**
      * Test initializing the game with a specified number of players.
@@ -64,7 +65,7 @@ class GameServiceTest {
         });
 
         int playersCount = 4;
-        GameState gameState = gameManagerInterface.initializeGame(playersCount);
+        GameState gameState = gameService.initializeGame(playersCount);
         gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
         assertEquals(32 - (playersCount * 5) - 1, gameState.getDeck().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
         assertEquals(playersCount, gameState.getPlayers().size());
@@ -94,18 +95,18 @@ class GameServiceTest {
         gameState.setCurrentPlayerIndex(0);
 
         // Call nextPlayer and verify the state change
-        Player nextPlayer = gameManagerInterface.nextPlayer(gameState);
+        Player nextPlayer = gameService.nextPlayer(gameState);
         assertEquals(1, gameState.getCurrentPlayerIndex());
         assertEquals(players.get(1), nextPlayer);
 
         // Call nextPlayer again to verify circular behavior
-        nextPlayer = gameManagerInterface.nextPlayer(gameState);
+        nextPlayer = gameService.nextPlayer(gameState);
         assertEquals(2, gameState.getCurrentPlayerIndex());
         assertEquals(players.get(2), nextPlayer);
 
         // Simulate wrapping around to the first player
         gameState.setCurrentPlayerIndex(3);
-        nextPlayer = gameManagerInterface.nextPlayer(gameState);
+        nextPlayer = gameService.nextPlayer(gameState);
         assertEquals(0, gameState.getCurrentPlayerIndex());
         assertEquals(players.get(0), nextPlayer);
     }
@@ -132,7 +133,7 @@ class GameServiceTest {
         gameState.setCurrentPlayerIndex(0);
 
         // Draw the card
-        Card drawnCard = gameManagerInterface.drawCard(gameState, player);
+        Card drawnCard = gameService.drawCard(gameState, player);
 
         // Verify the card was drawn correctly
         assertEquals(cardToDraw, drawnCard);
@@ -142,7 +143,7 @@ class GameServiceTest {
         assertTrue(gameState.getDeck().isEmpty());
 
         // Test drawing from an empty deck
-        assertThrows(IllegalStateException.class, () -> gameManagerInterface.drawCard(gameState, player));
+        assertThrows(IllegalStateException.class, () -> gameService.drawCard(gameState, player));
     }
 
     /**
@@ -167,7 +168,7 @@ class GameServiceTest {
         gameState.setDiscardPile(discardPile);
 
         // Play the card
-        gameManagerInterface.playCard(player, cardToPlay, gameState);
+        gameService.playCard(player, cardToPlay, gameState);
 
         // Verify the card was played correctly
         assertEquals(1, player.getHand().size()); // Player's hand should be empty
@@ -177,7 +178,7 @@ class GameServiceTest {
 
         // Test playing a card that the player does not have
         Card cardNotInHand = new Card(Suit.SPADES, Rank.NINE);
-        assertThrows(IllegalArgumentException.class, () -> gameManagerInterface.playCard(player, cardNotInHand, gameState));
+        assertThrows(IllegalArgumentException.class, () -> gameService.playCard(player, cardNotInHand, gameState));
     }
 
     /**
@@ -194,12 +195,12 @@ class GameServiceTest {
         Player nonWinningPlayer = new Player("Player 2", hand);
 
         // Check if the winning player has won
-        assertFalse(gameManagerInterface.checkWinner(winningPlayer));
+        assertFalse(gameService.checkWinner(winningPlayer));
         winningPlayer.setSaidMau(true);
-        assertTrue(gameManagerInterface.checkWinner(winningPlayer));
+        assertTrue(gameService.checkWinner(winningPlayer));
 
         // Check if the non-winning player has not wongameManagerInterface.checkWinner(nonWinningPlayer)
-        assertFalse(gameManagerInterface.checkWinner(nonWinningPlayer));
+        assertFalse(gameService.checkWinner(nonWinningPlayer));
     }
 
 
@@ -223,7 +224,7 @@ class GameServiceTest {
         gameState.setPlayers(Arrays.asList(player1, player2, player3));
 
         // End the game and determine the winner
-        Player winner = gameManagerInterface.endGame(gameState);
+        Player winner = gameService.endGame(gameState);
 
         // Verify the winner
         assertNotNull(winner);
@@ -266,7 +267,7 @@ class GameServiceTest {
 
         int playersCount = gameState.getPlayers().size();
         gameState.setDiscardPile(new Stack<>());
-        gameManagerInterface.endRound(gameState);
+        gameService.endRound(gameState);
         gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
         assertEquals(32 - (playersCount * 5) - 1, gameState.getDeck().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
         assertEquals(playersCount, gameState.getPlayers().size());

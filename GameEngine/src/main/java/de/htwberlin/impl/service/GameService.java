@@ -23,9 +23,10 @@ public class GameService implements GameManagerInterface {
 
     private static final Logger LOGGER = LogManager.getLogger(GameService.class);
 
-    private final PlayerManagerInterface playerManagerInterface;
-    private final CardManagerInterface cardManagerInterface;
-    private final RuleEngineInterface ruleEngineInterface;
+    private PlayerManagerInterface playerManagerInterface;
+    private CardManagerInterface cardManagerInterface;
+    private RuleEngineInterface ruleEngineInterface;
+
     @Autowired
     public GameService(PlayerManagerInterface playerManagerInterface, CardManagerInterface cardManagerInterface, RuleEngineInterface ruleEngineInterface) {
         this.playerManagerInterface = playerManagerInterface;
@@ -33,6 +34,8 @@ public class GameService implements GameManagerInterface {
         this.ruleEngineInterface = ruleEngineInterface;
     }
 
+    public GameService() {
+    }
 
     @Override
     public GameState initializeGame(int numberOfPlayers) {
