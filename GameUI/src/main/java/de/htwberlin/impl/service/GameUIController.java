@@ -1,37 +1,45 @@
 package de.htwberlin.impl.service;
 
-import de.htwberlin.impl.service.GameService;
+import de.htwberlin.api.GameUIInterface;
+import de.htwberlin.api.service.GameManagerInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class GameUIController {
+public class GameUIController implements GameUIInterface {
 
     private static final Logger LOGGER = LogManager.getLogger(GameUIController.class);
 
-    private GameService gameService;
+    private GameManagerInterface gameManagerInterface;
+    private GameUIView view;
 
     @Autowired
-    public GameUIController(GameService gameService) {
+    public GameUIController(GameManagerInterface gameManagerInterface, GameUIView view) {
         super();
-        this.gameService = gameService;
+        this.view = view;
+        this.gameManagerInterface = gameManagerInterface;
     }
 
     public GameUIController() {
         super();
     }
 
-    public GameService getGameService() {
-        return gameService;
+    public GameManagerInterface getGameService() {
+        return gameManagerInterface;
     }
 
-    public void setGameService(GameService gameService) {
-        this.gameService = gameService;
+    public void setGameService(GameManagerInterface gameManagerInterface) {
+        this.gameManagerInterface = gameManagerInterface;
     }
 
+    /**
+     * here view and service
+     */
+    @Override
     public void run() {
-        System.out.println("GameUI is running");
+        view.print();
+
     }
 }
