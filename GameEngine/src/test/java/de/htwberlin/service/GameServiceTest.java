@@ -263,12 +263,7 @@ class GameServiceTest {
             Collections.shuffle(originalDeck);
             return originalDeck;
         });
-        // Define the behavior of the playerService mock to return valid players
-        when(playerManagerInterface.createPlayer(anyString(), anyList())).thenAnswer(invocation -> {
-            String name = invocation.getArgument(0);
-            List<Card> hand = invocation.getArgument(1);
-            return new Player(name, hand);
-        });
+
         int playersCount = gameState.getPlayers().size();
         gameState.setDiscardPile(new Stack<>());
         gameManagerInterface.endRound(gameState);
