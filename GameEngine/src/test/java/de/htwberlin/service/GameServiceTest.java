@@ -43,6 +43,7 @@ class GameServiceTest {
      */
     @Test
     void testInitGame() {
+        String playerName = "Max";
         // Create a valid deck of cards
         Stack<Card> deck = Stream.of(Suit.values())
                 .flatMap(suit -> Stream.of(Rank.values())
@@ -65,7 +66,7 @@ class GameServiceTest {
         });
 
         int playersCount = 4;
-        GameState gameState = gameService.initializeGame(playersCount);
+        GameState gameState = gameService.initializeGame(playerName, playersCount);
         gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
         assertEquals(32 - (playersCount * 5) - 1, gameState.getDeck().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
         assertEquals(playersCount, gameState.getPlayers().size());

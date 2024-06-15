@@ -13,7 +13,7 @@ public interface GameManagerInterface {
      * @param numberOfPlayers the number of players in the game
      * @return GameState the state of the game after initialization
      */
-    GameState initializeGame(int numberOfPlayers);
+    GameState initializeGame(String playerName, int numberOfPlayers);
 
     /**
      * Moves the game control to the next player in the sequence.

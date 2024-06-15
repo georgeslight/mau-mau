@@ -38,18 +38,27 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
-    public GameState initializeGame(int numberOfPlayers) {
+    public GameState initializeGame(String playerName, int numberOfPlayers) {
         GameState game = new GameState();
         Stack<Card> deck = cardManagerInterface.shuffle(cardManagerInterface.createDeck());
-        List<Player> players = IntStream.range(0, numberOfPlayers)
+
+        // Create main player
+        List<Card> firstPlayerHand = IntStream.range(0, 5)
+                .mapToObj(i -> deck.pop())
+                .collect(Collectors.toList());
+        Player firstPlayer = playerManagerInterface.createPlayer(playerName, firstPlayerHand);
+
+        // Create remaining players with default names
+        List<Player> players = IntStream.range(1, numberOfPlayers)
                 .mapToObj(i -> {
                     List<Card> hand = IntStream.range(0, 5)
                             .mapToObj(j -> deck.pop())
                             .collect(Collectors.toList());
-                    return playerManagerInterface.createPlayer("Player " + i, hand);
+                    return playerManagerInterface.createPlayer("Player " + (i + 1), hand);
                 })
                 .collect(Collectors.toList());
 
+        players.add(0, firstPlayer);
         game.setPlayers(players);
         Stack<Card> discardPile = new Stack<>();
         discardPile.push(deck.pop());
