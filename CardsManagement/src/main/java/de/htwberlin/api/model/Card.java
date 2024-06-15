@@ -24,10 +24,31 @@ public class Card {
 
     @Override
     public String toString() {
-        return "Card{" +
-                "suit=" + suit +
-                ", rank=" + rank +
-                '}';
+        return this.rankToString() + this.suitToSymbol();
+    }
+
+    private String rankToString() {
+        switch (rank) {
+            case SEVEN: return "7";
+            case EIGHT: return "8";
+            case NINE: return "9";
+            case TEN: return "10";
+            case JACK: return "J";
+            case QUEEN: return "Q";
+            case KING: return "K";
+            case ACE: return "A";
+            default: throw new IllegalArgumentException("Unknown rank: " + rank);
+        }
+    }
+
+    private String suitToSymbol() {
+        switch (suit) {
+            case HEARTS: return "♥";
+            case DIAMONDS: return "♦";
+            case CLUBS: return "♣";
+            case SPADES: return "♠";
+            default: throw new IllegalArgumentException("Unknown suit: " + suit);
+        }
     }
 
     @Override
