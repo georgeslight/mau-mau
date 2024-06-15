@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan(basePackages = "de.htwberlin")
 public class ConfigurationSpring {
-    private static final ConfigurableApplicationContext context = new AnnotationConfigApplicationContext("de.htwberlin");
+    private static final ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(ConfigurationSpring.class);
 
     public static void main(String[] args) {
         context.getBean(GameUIController.class).run();
