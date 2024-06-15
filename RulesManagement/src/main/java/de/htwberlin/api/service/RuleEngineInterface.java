@@ -34,7 +34,6 @@ public interface RuleEngineInterface {
      * eight: skip next player's turn & reset cardsToBeDrawn to 0
      * ace: player can play another card
      */
-
     void applySpecialCardsEffect(Card card);
 
     /**
@@ -50,5 +49,4 @@ public interface RuleEngineInterface {
      * @return sum of the scores of the cards
      */
     Integer calculateScore(List<Card> cards);
-
 }

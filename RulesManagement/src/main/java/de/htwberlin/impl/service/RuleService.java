@@ -49,15 +49,21 @@ public class RuleService implements RuleEngineInterface {
     @Override
     public Integer calculateNextPlayerIndex(Integer currentPlayerIndex, Integer playerCount) {
         int counts = 1;
-        if (rules.isSkipNextPlayerTurn()) counts++;
-        if (rules.isCanPlayAgain()) counts = 0;
-        if (!rules.isGameDirection()) counts = -counts;
+        if (rules.isSkipNextPlayerTurn()) {
+            counts++;
+            LOGGER.debug("Skipped player a index: {}", (currentPlayerIndex + 1) % playerCount);
+            // reset state
+            rules.setSkipNextPlayerTurn(false);
+        }
+//        if (rules.isCanPlayAgain()) counts = 0;
+//        if (!rules.isGameDirection()) counts = -counts;
 
         int nextPlayerIndex = (currentPlayerIndex + counts) % playerCount;
 
         if (nextPlayerIndex < 0) {
             nextPlayerIndex += playerCount;
         }
+        LOGGER.debug("nextPlayerIndex: {}", nextPlayerIndex);
         return nextPlayerIndex;
     }
 

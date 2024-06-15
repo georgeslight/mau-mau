@@ -5,6 +5,7 @@ import de.htwberlin.api.model.Card;
 import de.htwberlin.api.model.GameState;
 import de.htwberlin.api.model.Player;
 import de.htwberlin.api.service.GameManagerInterface;
+import de.htwberlin.api.service.RuleEngineInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,13 @@ public class GameUIController implements GameUIInterface {
     private static final Logger LOGGER = LogManager.getLogger(GameUIController.class);
 
     private GameManagerInterface gameService;
+    private RuleEngineInterface ruleService;
     private GameUIView view;
 
     @Autowired
-    public GameUIController(GameManagerInterface gameManagerInterface, GameUIView view) {
+    public GameUIController(GameManagerInterface gameManagerInterface, RuleEngineInterface ruleService, GameUIView view) {
         this.view = view;
+        this.ruleService = ruleService;
         this.gameService = gameManagerInterface;
     }
 
@@ -54,6 +57,8 @@ public class GameUIController implements GameUIInterface {
             if (playedCard != null) {
                 gameService.playCard(currentPlayer, playedCard, gameState);
                 System.out.println(currentPlayer.getName() + " played: " + playedCard);
+                // Set special card effects
+                ruleService.applySpecialCardsEffect(playedCard);
             } else {
                 Card drawnCard = gameService.drawCard(gameState, currentPlayer);
                 System.out.println(currentPlayer.getName() + " drew a card: " + drawnCard);
