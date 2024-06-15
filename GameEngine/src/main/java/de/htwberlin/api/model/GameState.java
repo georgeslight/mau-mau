@@ -7,8 +7,10 @@ public class GameState {
     private List<Player> players;
     private Stack<Card> deck;
     private Stack<Card> discardPile;
+    // change to Player?
     private int currentPlayerIndex;
-    private int nextPlayerIndex;
+    // change to Player?
+//    private int nextPlayerIndex;
 
     public List<Player> getPlayers() {
         return players;
@@ -42,11 +44,11 @@ public class GameState {
         this.currentPlayerIndex = currentPlayerIndex;
     }
 
-    public int getNextPlayerIndex() {
-        return nextPlayerIndex;
-    }
-
-    public void setNextPlayerIndex(int nextPlayerIndex) {
-        this.nextPlayerIndex = nextPlayerIndex;
-    }
+//    public int getNextPlayerIndex() {
+//        return nextPlayerIndex;
+//    }
+//
+//    public void setNextPlayerIndex(int nextPlayerIndex) {
+//        this.nextPlayerIndex = nextPlayerIndex;
+//    }
 }

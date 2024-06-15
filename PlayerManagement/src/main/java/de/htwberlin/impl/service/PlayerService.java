@@ -20,13 +20,8 @@ public class PlayerService implements PlayerManagerInterface {
     }
 
     @Override
-    public List<Card> sortPlayersCards(Player player) {
-        List<Card> hand = player.getHand();
-        Collections.sort(hand, new CardComparator());
-        for(Card card : hand){
-            System.out.println(card.getSuit() + " " + card.getRank());
-        }
-        return hand;
+    public void sortPlayersCards(Player player) {
+        player.getHand().sort(new CardComparator());
     }
 
     @Override

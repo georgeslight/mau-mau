@@ -37,7 +37,7 @@ public class CardService implements CardManagerInterface {
     public Stack<Card> createDeck() {
         return Stream.of(Suit.values())
                 .flatMap(suit -> Stream.of(Rank.values())
-                        .map(rank -> new Card(suit, rank)))
+                        .map(rank -> this.createCard(suit, rank)))
                 .collect(Collectors.toCollection(Stack::new));
     }
 }

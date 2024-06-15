@@ -35,13 +35,15 @@ public class RuleService implements RuleEngineInterface {
     @Override
     public boolean isValidMove(Card card, Card topCard) {
         // todo : Ghazi, player cannot play a jack if last player played a jack? i think he can
-        if (card.getRank().equals(Rank.JACK) & topCard.getRank().equals(Rank.JACK)) return false;
-        if (card.getRank().equals(topCard.getRank())
-            || card.getSuit().equals(topCard.getSuit())
-            || card.getSuit().equals(rules.getWishCard())
-            || card.getRank().equals(Rank.NINE))
-            return true;
-        return false;
+//        if (card.getRank().equals(Rank.JACK) & topCard.getRank().equals(Rank.JACK)) return false;
+//        if (card.getRank().equals(topCard.getRank())
+//            || card.getSuit().equals(topCard.getSuit())
+//            || card.getSuit().equals(rules.getWishCard())
+//            || card.getRank().equals(Rank.NINE))
+//            return true;
+//        return false;
+        return card.getSuit().equals(topCard.getSuit()) || card.getRank().equals(topCard.getRank());
+
     }
 
     @Override
@@ -49,9 +51,14 @@ public class RuleService implements RuleEngineInterface {
         int counts = 1;
         if (rules.isSkipNextPlayerTurn()) counts++;
         if (rules.isCanPlayAgain()) counts = 0;
-        if (!rules.isGameDirection())counts = counts * -1;
+        if (!rules.isGameDirection()) counts = -counts;
 
-        return currentPlayerIndex + counts;
+        int nextPlayerIndex = (currentPlayerIndex + counts) % playerCount;
+
+        if (nextPlayerIndex < 0) {
+            nextPlayerIndex += playerCount;
+        }
+        return nextPlayerIndex;
     }
 
     @Override

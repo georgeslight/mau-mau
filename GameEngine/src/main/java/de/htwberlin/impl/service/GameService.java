@@ -67,7 +67,7 @@ public class GameService implements GameManagerInterface {
         game.setDeck(deck);
 
         game.setCurrentPlayerIndex(0);
-        game.setNextPlayerIndex(1);
+//        game.setNextPlayerIndex(1);
 
         return game;
     }
@@ -117,15 +117,39 @@ public class GameService implements GameManagerInterface {
         // Set the current player index to 0
         game.setCurrentPlayerIndex(0);
         // Set the next player index to 1
-        game.setNextPlayerIndex(1);
+//        game.setNextPlayerIndex(1);
     }
 
     @Override
     public Card drawCard(GameState game, Player player) {
-        if (game.getDeck().empty()) throw new IllegalStateException("Cannot draw from an empty deck");
+        // Check if deck is empty
+        if (game.getDeck().empty()) {
+            this.reshuffleDeck(game);
+        }
+
         Card drawCard = game.getDeck().pop();
         player.getHand().add(drawCard);
         return drawCard;
+    }
+
+    private void reshuffleDeck(GameState game) {
+        LOGGER.info("Deck is empty, reshuffling Deck");
+
+        // Save the last card from the discard pile
+        Card lastCard = game.getDiscardPile().pop();
+
+        // Create new discard pile with only last card
+        Stack<Card> newDiscard = new Stack<>();
+        newDiscard.push(lastCard);
+
+        // Move all cards from the discard pile to deck
+        Stack<Card> newDeck = game.getDiscardPile();
+
+        // Set and shuffle the new deck
+        game.setDeck(cardManagerInterface.shuffle(newDeck));
+
+        // Set the new discard pile
+        game.setDiscardPile(newDiscard);
     }
 
     @Override

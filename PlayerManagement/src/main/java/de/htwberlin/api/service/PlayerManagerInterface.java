@@ -15,10 +15,10 @@ public interface PlayerManagerInterface {
 
     /**
      * Sort cards in the player's hand to optimize game experience.
+     *
      * @param player the player whose cards to sort
-     * @return list of the sorted Cards -> Player's hand
      */
-    List<Card> sortPlayersCards(Player player);
+    void sortPlayersCards(Player player);
 
 
 
