@@ -1,6 +1,8 @@
 package de.htwberlin.impl.service;
 
 import de.htwberlin.api.GameUIInterface;
+import de.htwberlin.api.enums.Rank;
+import de.htwberlin.api.enums.Suit;
 import de.htwberlin.api.model.Card;
 import de.htwberlin.api.model.GameState;
 import de.htwberlin.api.model.Player;
@@ -59,6 +61,12 @@ public class GameUIController implements GameUIInterface {
                 System.out.println(currentPlayer.getName() + " played: " + playedCard);
                 // Set special card effects
                 ruleService.applySpecialCardsEffect(playedCard);
+
+                if (playedCard.getRank().equals(Rank.JACK)) {
+                    Suit wishedSuit = view.getPlayerWishedSuit(currentPlayer);
+                    ruleService.applyJackSpecialEffect(playedCard,wishedSuit);
+                    System.out.println(currentPlayer.getName() + " wishes for " + wishedSuit);
+                }
             } else {
                 Card drawnCard = gameService.drawCard(gameState, currentPlayer);
                 System.out.println(currentPlayer.getName() + " drew a card: " + drawnCard);

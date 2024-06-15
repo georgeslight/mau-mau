@@ -1,5 +1,6 @@
 package de.htwberlin.impl.service;
 
+import de.htwberlin.api.enums.Suit;
 import de.htwberlin.api.model.GameState;
 import de.htwberlin.api.model.Player;
 import de.htwberlin.api.model.Card;
@@ -7,9 +8,12 @@ import de.htwberlin.api.service.CardManagerInterface;
 import de.htwberlin.api.service.GameManagerInterface;
 import de.htwberlin.api.service.PlayerManagerInterface;
 import de.htwberlin.api.service.RuleEngineInterface;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
@@ -18,6 +22,8 @@ import java.util.stream.IntStream;
  */
 @Service
 public class GameUIView {
+
+    private static final Logger LOGGER = LogManager.getLogger(GameUIView.class);
 
     Scanner scanner = new Scanner(System.in);
 
@@ -82,6 +88,36 @@ public class GameUIView {
                 }
             } catch (NumberFormatException | IndexOutOfBoundsException e) {
                 System.out.println("Invalid input. Please enter a valid card index or 'draw'.");
+            }
+        }
+    }
+
+    public Suit getPlayerWishedSuit(Player player) {
+        while (true) {
+            System.out.println(player.getName() + ", choose a suit for your wish:");
+            System.out.println("1: CLUBS");
+            System.out.println("2: DIAMONDS");
+            System.out.println("3: HEARTS");
+            System.out.println("4: SPADES");
+
+            try {
+                int choice = scanner.nextInt();
+
+                switch (choice) {
+                    case 1:
+                        return Suit.CLUBS;
+                    case 2:
+                        return Suit.DIAMONDS;
+                    case 3:
+                        return Suit.HEARTS;
+                    case 4:
+                        return Suit.SPADES;
+                    default:
+                        System.out.println("Invalid input. Please enter a number between 1 and 4.");
+                }
+            } catch (InputMismatchException e) {
+                LOGGER.error("InputMismatchException: Invalid input entered.", e);
+                scanner.next(); // Clear the invalid input
             }
         }
     }

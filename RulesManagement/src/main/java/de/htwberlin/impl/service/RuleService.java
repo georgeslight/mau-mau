@@ -34,8 +34,27 @@ public class RuleService implements RuleEngineInterface {
 
     @Override
     public boolean isValidMove(Card card, Card topCard) {
-        // todo : Ghazi, player cannot play a jack if last player played a jack? i think he can
-//        if (card.getRank().equals(Rank.JACK) & topCard.getRank().equals(Rank.JACK)) return false;
+        // Jack rules
+        if (card.getRank().equals(Rank.JACK)) {
+            // J can be played on any card except another Jack
+            if (topCard.getRank().equals(Rank.JACK)) {
+                LOGGER.warn("Cannot play Jack on Jack");
+                return false;
+            }
+            return true;
+        }
+
+        // If Jack was played
+        if (topCard.getRank().equals(Rank.JACK)) {
+            if (card.getSuit().equals(rules.getWishCard())) {
+                rules.setWishCard(null);
+                return true;
+            } else {
+                System.out.println("You must play a card of the wished suit: " + rules.getWishCard());
+                return false;
+            }
+        }
+
 //        if (card.getRank().equals(topCard.getRank())
 //            || card.getSuit().equals(topCard.getSuit())
 //            || card.getSuit().equals(rules.getWishCard())
