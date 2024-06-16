@@ -13,6 +13,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.stream.IntStream;
+
 @Controller
 public class GameUIController implements GameUIInterface {
 
@@ -55,12 +57,25 @@ public class GameUIController implements GameUIInterface {
             Card topCard = gameState.getDiscardPile().peek();
             System.out.println("Top card on the discard pile: " + topCard);
 
+            // If 7 was played
+            int accumulatedDrawCount = ruleService.getRules().getCardsToBeDrawn();
+            if (accumulatedDrawCount > 0) {
+                System.out.println("You need to draw " + accumulatedDrawCount + " cards, or play another 7.");
+            }
+
             Card playedCard = view.getPlayerCardChoice(currentPlayer, topCard);
+
             if (playedCard != null) {
                 gameService.playCard(currentPlayer, playedCard, gameState);
                 System.out.println(currentPlayer.getName() + " played: " + playedCard);
                 // Set special card effects
                 ruleService.applySpecialCardsEffect(playedCard);
+
+                // Handle drawing cards if the player plays a 7
+                if (playedCard.getRank().equals(Rank.SEVEN)) {
+                    gameService.nextPlayer(gameState);
+                    continue;
+                }
 
                 // Jack played
                 if (playedCard.getRank().equals(Rank.JACK)) {
@@ -69,8 +84,14 @@ public class GameUIController implements GameUIInterface {
                     System.out.println(currentPlayer.getName() + " wishes for " + wishedSuit);
                 }
             } else {
-                Card drawnCard = gameService.drawCard(gameState, currentPlayer);
-                System.out.println(currentPlayer.getName() + " drew a card: " + drawnCard);
+                // If player chooses to draw cards
+                IntStream.range(0, Math.max(accumulatedDrawCount, 1))
+                        .forEach(i -> {
+                            Card drawnCard = gameService.drawCard(gameState, currentPlayer);
+                            System.out.println(currentPlayer.getName() + " drew a card: " + drawnCard);
+                        });
+                // reset state
+                ruleService.getRules().setCardsTObeDrawn(0);
             }
 
             if (gameService.checkWinner(currentPlayer)) {

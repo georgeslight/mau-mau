@@ -34,6 +34,15 @@ public class RuleService implements RuleEngineInterface {
 
     @Override
     public boolean isValidMove(Card card, Card topCard) {
+        // 7 was played
+        if (topCard.getRank().equals(Rank.SEVEN)) {
+            if (card.getRank().equals(Rank.SEVEN)) return true;
+            if (rules.getCardsToBeDrawn() != 0) {
+                System.out.println("You either have to draw, or play another 7");
+                return false;
+            }
+        }
+
         // If 9 was played, Nine can be played on any card
         if (card.getRank().equals(Rank.NINE)) return true;
 
@@ -80,7 +89,6 @@ public class RuleService implements RuleEngineInterface {
             // reset state
             rules.setCanPlayAgain(false);
         }
-//        if (!rules.isGameDirection()) counts = -counts;
 
         int nextPlayerIndex = (currentPlayerIndex + counts) % playerCount;
 
@@ -149,19 +157,8 @@ public class RuleService implements RuleEngineInterface {
         return score;
     }
 
+    @Override
     public Rules getRules() {
         return rules;
     }
-
-    public void setRules(Rules rules) {
-        this.rules = rules;
-    }
-
-//    public CardService getCardService() {
-//        return cardService;
-//    }
-//
-//    public void setCardService(CardService cardService) {
-//        this.cardService = cardService;
-//    }
 }

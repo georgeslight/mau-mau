@@ -2,6 +2,7 @@ package de.htwberlin.api.service;
 
 import de.htwberlin.api.enums.Suit;
 import de.htwberlin.api.model.Card;
+import de.htwberlin.api.model.Rules;
 
 import java.util.List;
 
@@ -49,4 +50,6 @@ public interface RuleEngineInterface {
      * @return sum of the scores of the cards
      */
     Integer calculateScore(List<Card> cards);
+
+    Rules getRules();
 }

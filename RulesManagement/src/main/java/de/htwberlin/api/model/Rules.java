@@ -8,7 +8,7 @@ public class Rules {
     private Card lastCardPlayed;
     private Suit wishCard;
     // number of cards to be drawn by the next player
-    private int cardsToBeDrawn;
+    private int cardsToBeDrawn = 0;
     private boolean skipNextPlayerTurn;
     //When Ace played, Player is allowed to play another card
     private boolean canPlayAgain;
