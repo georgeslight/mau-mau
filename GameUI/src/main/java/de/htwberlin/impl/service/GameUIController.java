@@ -62,6 +62,7 @@ public class GameUIController implements GameUIInterface {
                 // Set special card effects
                 ruleService.applySpecialCardsEffect(playedCard);
 
+                // Jack played
                 if (playedCard.getRank().equals(Rank.JACK)) {
                     Suit wishedSuit = view.getPlayerWishedSuit(currentPlayer);
                     ruleService.applyJackSpecialEffect(playedCard,wishedSuit);

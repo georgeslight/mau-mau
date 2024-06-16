@@ -60,7 +60,8 @@ public class RuleService implements RuleEngineInterface {
 //            || card.getSuit().equals(rules.getWishCard())
 //            || card.getRank().equals(Rank.NINE))
 //            return true;
-//        return false;
+//        return false
+        // normal rules
         return card.getSuit().equals(topCard.getSuit()) || card.getRank().equals(topCard.getRank());
 
     }
@@ -68,13 +69,20 @@ public class RuleService implements RuleEngineInterface {
     @Override
     public Integer calculateNextPlayerIndex(Integer currentPlayerIndex, Integer playerCount) {
         int counts = 1;
+        // play 8 (skips next player)
         if (rules.isSkipNextPlayerTurn()) {
             counts++;
-            LOGGER.debug("Skipped player a index: {}", (currentPlayerIndex + 1) % playerCount);
+            LOGGER.debug("Skipped player at index: {}", (currentPlayerIndex + 1) % playerCount);
             // reset state
             rules.setSkipNextPlayerTurn(false);
         }
-//        if (rules.isCanPlayAgain()) counts = 0;
+
+        // play A (can play again)
+        if (rules.isCanPlayAgain()) {
+            counts = 0;
+            // reset state
+            rules.setCanPlayAgain(false);
+        }
 //        if (!rules.isGameDirection()) counts = -counts;
 
         int nextPlayerIndex = (currentPlayerIndex + counts) % playerCount;
