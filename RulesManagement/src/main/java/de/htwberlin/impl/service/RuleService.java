@@ -34,6 +34,9 @@ public class RuleService implements RuleEngineInterface {
 
     @Override
     public boolean isValidMove(Card card, Card topCard) {
+        // If 9 was played, Nine can be played on any card
+        if (card.getRank().equals(Rank.NINE)) return true;
+
         // Jack rules
         if (card.getRank().equals(Rank.JACK)) {
             // J can be played on any card except another Jack
@@ -55,12 +58,6 @@ public class RuleService implements RuleEngineInterface {
             }
         }
 
-//        if (card.getRank().equals(topCard.getRank())
-//            || card.getSuit().equals(topCard.getSuit())
-//            || card.getSuit().equals(rules.getWishCard())
-//            || card.getRank().equals(Rank.NINE))
-//            return true;
-//        return false
         // normal rules
         return card.getSuit().equals(topCard.getSuit()) || card.getRank().equals(topCard.getRank());
 
