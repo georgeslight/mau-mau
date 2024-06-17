@@ -1,46 +1,25 @@
 package de.htwberlin.gameui.impl;
 
 import de.htwberlin.cardmanagement.api.enums.Suit;
-import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.cardmanagement.api.model.Card;
-import de.htwberlin.cardmanagement.api.service.CardManagerInterface;
-import de.htwberlin.gameengine.api.service.GameManagerInterface;
-import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
-import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
-/**
- * IO, Logging
- */
 @Service
 public class GameUIView {
 
-    private static final Logger LOGGER = LogManager.getLogger(GameUIView.class);
+    private final Scanner scanner = new Scanner(System.in);
 
-    Scanner scanner = new Scanner(System.in);
-
-    private final CardManagerInterface cardService;
-    private final PlayerManagerInterface playerService;
-    private final RuleEngineInterface ruleService;
-    private final GameManagerInterface gameService;
-
-    @Autowired
-    public GameUIView (GameManagerInterface gameManagerInterface, CardManagerInterface cardManagerInterface, PlayerManagerInterface playerManagerInterface, RuleEngineInterface ruleEngineInterface) {
-        this.gameService = gameManagerInterface;
-        this.cardService = cardManagerInterface;
-        this.playerService = playerManagerInterface;
-        this.ruleService = ruleEngineInterface;
+    public void showWelcomeMessage() {
+        System.out.println("Welcome to Mau Mau!");
     }
 
-    private int numberOfPlayers() {
+    public int getNumberOfPlayers() {
         System.out.println("Enter the number of players (2-4): ");
         int numberOfPlayers = scanner.nextInt();
         while (numberOfPlayers < 2 || numberOfPlayers > 4) {
@@ -50,46 +29,44 @@ public class GameUIView {
         return numberOfPlayers;
     }
 
-    private String getPlayerName() {
+    public String getPlayerName() {
         System.out.println("Enter your name: ");
         return scanner.next();
-
     }
 
-    public GameState init() {
-        System.out.println("Welcome to Mau Mau!");
-        int numberOfPlayers = this.numberOfPlayers();
-        String playerName = this.getPlayerName();
-        GameState gameState = gameService.initializeGame(playerName, numberOfPlayers);
-        gameState.getPlayers().forEach(player -> System.out.println(player.getName()));
-        return gameState;
+    public void showPlayers(List<Player> players) {
+        players.forEach(player -> System.out.println(player.getName()));
     }
 
-    public void displayHand(Player player) {
-        playerService.sortPlayersCards(player);
+    public void showCurrentPlayerInfo(Player player) {
+        System.out.println(player.getName() + "'s turn. Your hand: ");
         IntStream.range(0, player.getHand().size())
                 .forEach(i -> System.out.println(i + ": " + player.getHand().get(i)));
     }
 
-    public Card getPlayerCardChoice(Player player, Card topCard) {
-        while (true) {
-            System.out.println("Enter the index of the card you want to play, or 'draw' to draw a card:");
-            String input = scanner.next();
-            if (input.equalsIgnoreCase("draw")) {
-                return null;
-            }
-            try {
-                int cardIndex = Integer.parseInt(input);
-                Card chosenCard = player.getHand().get(cardIndex);
-                if (ruleService.isValidMove(chosenCard, topCard)) {
-                    return chosenCard;
-                } else {
-                    System.out.println("Invalid move. The chosen card does not match the top card.");
-                }
-            } catch (NumberFormatException | IndexOutOfBoundsException e) {
-                System.out.println("Invalid input. Please enter a valid card index or 'draw'.");
-            }
-        }
+    public void showTopCard(Card card) {
+        System.out.println("Top card on the discard pile: " + card);
+    }
+
+    public void showAccumulatedDrawCount(int count) {
+        System.out.println("You need to draw " + count + " cards, or play another 7.");
+    }
+
+    public String promptCardChoice() {
+        System.out.println("Enter the index of the card you want to play, or 'draw' to draw a card:");
+        return scanner.next();
+    }
+
+    public void showInvalidMoveMessage() {
+        System.out.println("Invalid move. The chosen card does not match the top card.");
+    }
+
+    public void showInvalidInputMessage() {
+        System.out.println("Invalid input. Please enter a valid card index or 'draw'.");
+    }
+
+    public void showPlayedCard(Player currentPlayer, Card playedCard) {
+        System.out.println(currentPlayer.getName() + " played: " + playedCard);
     }
 
     public Suit getPlayerWishedSuit(Player player) {
@@ -116,9 +93,21 @@ public class GameUIView {
                         System.out.println("Invalid input. Please enter a number between 1 and 4.");
                 }
             } catch (InputMismatchException e) {
-                LOGGER.error("InputMismatchException: Invalid input entered.", e);
+                System.out.println("InputMismatchException: Invalid input entered.\n" + e);
                 scanner.next(); // Clear the invalid input
             }
         }
+    }
+
+    public void showDrawnCard(Player currentPlayer, Card drawnCard) {
+        System.out.println(currentPlayer.getName() + " drew a card: " + drawnCard);
+    }
+
+    public void showWishedSuit(Player currentPlayer, Suit wishedSuit) {
+        System.out.println(currentPlayer.getName() + " wishes for " + wishedSuit);
+    }
+
+    public void showWinner(Player currentPlayer) {
+        System.out.println(currentPlayer.getName() + " wins the game!");
     }
 }

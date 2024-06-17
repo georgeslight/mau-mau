@@ -7,6 +7,7 @@ import de.htwberlin.cardmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.gameengine.api.service.GameManagerInterface;
+import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
 import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,11 +23,13 @@ public class GameUIController implements GameUIInterface {
 
     private GameManagerInterface gameService;
     private RuleEngineInterface ruleService;
+    private PlayerManagerInterface playerService;
     private GameUIView view;
 
     @Autowired
-    public GameUIController(GameManagerInterface gameManagerInterface, RuleEngineInterface ruleService, GameUIView view) {
+    public GameUIController(GameManagerInterface gameManagerInterface, PlayerManagerInterface playerManagerInterface, RuleEngineInterface ruleService, GameUIView view) {
         this.view = view;
+        this.playerService = playerManagerInterface;
         this.ruleService = ruleService;
         this.gameService = gameManagerInterface;
     }
@@ -34,40 +37,28 @@ public class GameUIController implements GameUIInterface {
     public GameUIController() {
     }
 
-    public GameManagerInterface getGameService() {
-        return gameService;
-    }
-
-    public void setGameService(GameManagerInterface gameManagerInterface) {
-        this.gameService = gameManagerInterface;
-    }
-
-    /**
-     * here view and service
-     */
     @Override
     public void run() {
-        GameState gameState = view.init();
+        GameState gameState = this.init();
         while (true) {
-            System.out.println();
             Player currentPlayer = gameState.getPlayers().get(gameState.getCurrentPlayerIndex());
-            System.out.println(currentPlayer.getName() + "'s turn. Your hand: ");
-            view.displayHand(currentPlayer);
+            playerService.sortPlayersCards(currentPlayer);
+            view.showCurrentPlayerInfo(currentPlayer);
 
             Card topCard = gameState.getDiscardPile().peek();
-            System.out.println("Top card on the discard pile: " + topCard);
+            view.showTopCard(topCard);
 
             // If 7 was played
-            int accumulatedDrawCount = ruleService.getRules().getCardsToBeDrawn();
+            int accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
             if (accumulatedDrawCount > 0) {
-                System.out.println("You need to draw " + accumulatedDrawCount + " cards, or play another 7.");
+                view.showAccumulatedDrawCount(accumulatedDrawCount);
             }
 
-            Card playedCard = view.getPlayerCardChoice(currentPlayer, topCard);
+            Card playedCard = this.getPlayerCardChoice(currentPlayer, topCard);
 
             if (playedCard != null) {
                 gameService.playCard(currentPlayer, playedCard, gameState);
-                System.out.println(currentPlayer.getName() + " played: " + playedCard);
+                view.showPlayedCard(currentPlayer, playedCard);
                 // Set special card effects
                 ruleService.applySpecialCardsEffect(playedCard);
 
@@ -81,24 +72,64 @@ public class GameUIController implements GameUIInterface {
                 if (playedCard.getRank().equals(Rank.JACK)) {
                     Suit wishedSuit = view.getPlayerWishedSuit(currentPlayer);
                     ruleService.applyJackSpecialEffect(playedCard,wishedSuit);
-                    System.out.println(currentPlayer.getName() + " wishes for " + wishedSuit);
+                    view.showWishedSuit(currentPlayer, wishedSuit);
                 }
             } else {
                 // If player chooses to draw cards
-                IntStream.range(0, Math.max(accumulatedDrawCount, 1))
-                        .forEach(i -> {
-                            Card drawnCard = gameService.drawCard(gameState, currentPlayer);
-                            System.out.println(currentPlayer.getName() + " drew a card: " + drawnCard);
-                        });
-                // reset state
-                ruleService.getRules().setCardsTObeDrawn(0);
+                this.drawCards(accumulatedDrawCount, gameState, currentPlayer);
             }
 
             if (gameService.checkWinner(currentPlayer)) {
-                System.out.println(currentPlayer.getName() + " wins the game!");
+                view.showWinner(currentPlayer);
                 break;
             }
             gameService.nextPlayer(gameState);
         }
+    }
+
+    public GameState init() {
+        view.showWelcomeMessage();
+        int numberOfPlayers = view.getNumberOfPlayers();
+        String playerName = view.getPlayerName();
+        GameState gameState = gameService.initializeGame(playerName, numberOfPlayers);
+        view.showPlayers(gameState.getPlayers());
+        gameState.getPlayers().forEach(player -> System.out.println(player.getName()));
+        return gameState;
+    }
+
+    public void displayHand(Player player) {
+        playerService.sortPlayersCards(player);
+        IntStream.range(0, player.getHand().size())
+                .forEach(i -> System.out.println(i + ": " + player.getHand().get(i)));
+    }
+
+    private Card getPlayerCardChoice(Player player, Card topCard) {
+        while (true) {
+            String input = view.promptCardChoice();
+            if (input.equalsIgnoreCase("draw")) {
+                return null;
+            }
+            try {
+                int cardIndex = Integer.parseInt(input);
+                Card chosenCard = player.getHand().get(cardIndex);
+                if (ruleService.isValidMove(chosenCard, topCard)) {
+                    return chosenCard;
+                } else {
+                    view.showInvalidMoveMessage();
+                }
+            } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                view.showInvalidInputMessage();
+            }
+        }
+    }
+
+    private void drawCards(int accumulatedDrawCount, GameState gameState, Player currentPlayer) {
+        IntStream.range(0, Math.max(accumulatedDrawCount, 1))
+                .forEach(i -> {
+                    Card drawnCard = gameService.drawCard(gameState, currentPlayer);
+                    view.showDrawnCard(currentPlayer, drawnCard);
+                });
+        // reset state
+        gameState.getRules().setCardsTObeDrawn(0);
     }
 }

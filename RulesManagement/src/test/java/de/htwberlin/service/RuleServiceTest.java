@@ -1,6 +1,5 @@
 package de.htwberlin.service;
 
-import de.htwberlin.cardmanagement.api.service.CardManagerInterface;
 import de.htwberlin.rulesmanagement.impl.RuleService;
 import de.htwberlin.cardmanagement.api.enums.Rank;
 import de.htwberlin.cardmanagement.api.enums.Suit;
@@ -14,15 +13,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RuleServiceTest {
-    RuleService ruleService;
-    CardManagerInterface cardManagerInterface;
 
+    RuleService ruleService;
 
     @BeforeEach
     void setUp() {
         ruleService = new RuleService();
     }
-
 
     /**
      * Test the game direction forwards, expecting the index to increment.
@@ -77,19 +74,6 @@ class RuleServiceTest {
         int playersCount = 4;
         assertEquals(1, ruleService.calculateNextPlayerIndex(1, playersCount));
     }
-
-//    private static Stream<Arguments> twoCards() {
-//        return Stream.of(Suit.values())
-//                .flatMap(suit1 -> Stream.of(Rank.values())
-//                        .flatMap(rank1 -> Stream.of(Suit.values())
-//                                .filter(suit2 -> suit1 != suit2)
-//                                .flatMap(suit2 -> Stream.of(Rank.values())
-//                                        .filter(rank2 -> rank1 != rank2)
-//                                        .map(rank2 -> Arguments.of(new Card(suit1, rank1), new Card(suit2, rank2)))
-//                                )
-//                        )
-//                );
-//    }
 
     /**
      * card can be played when suits match and ranks differ.
@@ -235,7 +219,4 @@ class RuleServiceTest {
         ));
         assertEquals(-54, score);
     }
-
-    //todo Ghazi: Verfiy bei allen mocks ob wirklich gemockt wurde!
-    
 }

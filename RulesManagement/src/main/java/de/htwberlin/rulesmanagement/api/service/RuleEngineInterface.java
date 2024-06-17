@@ -2,7 +2,6 @@ package de.htwberlin.rulesmanagement.api.service;
 
 import de.htwberlin.cardmanagement.api.enums.Suit;
 import de.htwberlin.cardmanagement.api.model.Card;
-import de.htwberlin.rulesmanagement.api.model.Rules;
 
 import java.util.List;
 
@@ -22,10 +21,6 @@ public interface RuleEngineInterface {
      * @return the index of the next player
      */
     Integer calculateNextPlayerIndex(Integer currentPlayerIndex, Integer playerCount);
-    /**
-     * @return the number of cards each player should start with
-     */
-    Integer getStartingCards();
 
     /**
      * Handles the specific rules when a Card with special effects is played.
@@ -50,6 +45,4 @@ public interface RuleEngineInterface {
      * @return sum of the scores of the cards
      */
     Integer calculateScore(List<Card> cards);
-
-    Rules getRules();
 }

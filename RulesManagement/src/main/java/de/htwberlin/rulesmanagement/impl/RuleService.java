@@ -17,20 +17,12 @@ public class RuleService implements RuleEngineInterface {
 
     private static final Logger LOGGER = LogManager.getLogger(RuleService.class);
 
-    private Rules rules;
-//     todo: why need of cardService, its not used
-    private CardService cardService;
+//    private Rules rules;
+//    private CardService cardService;
 
     public RuleService() {
-        this.rules = new Rules();
-        this.cardService = new CardService();
-    }
-
-
-//    todo: why?
-    @Override
-    public Integer getStartingCards() {
-        return 5;
+//        this.rules = new Rules();
+//        this.cardService = new CardService();
     }
 
     @Override
@@ -39,7 +31,18 @@ public class RuleService implements RuleEngineInterface {
         if (topCard.getRank().equals(Rank.SEVEN)) {
             if (card.getRank().equals(Rank.SEVEN)) return true;
             if (rules.getCardsToBeDrawn() != 0) {
-                System.out.println("You either have to draw, or play another 7");
+                LOGGER.debug("Either have to draw, or play another 7");
+                return false;
+            }
+        }
+
+        // If Jack was played
+        if (topCard.getRank().equals(Rank.JACK)) {
+            if (card.getSuit().equals(rules.getWishCard())) {
+                rules.setWishCard(null);
+                return true;
+            } else {
+                LOGGER.debug("Must play a card of the wished suit: " + rules.getWishCard());
                 return false;
             }
         }
@@ -57,16 +60,6 @@ public class RuleService implements RuleEngineInterface {
             return true;
         }
 
-        // If Jack was played
-        if (topCard.getRank().equals(Rank.JACK)) {
-            if (card.getSuit().equals(rules.getWishCard())) {
-                rules.setWishCard(null);
-                return true;
-            } else {
-                System.out.println("You must play a card of the wished suit: " + rules.getWishCard());
-                return false;
-            }
-        }
 
         // normal rules
         return card.getSuit().equals(topCard.getSuit()) || card.getRank().equals(topCard.getRank());
@@ -156,10 +149,5 @@ public class RuleService implements RuleEngineInterface {
             }
         }
         return score;
-    }
-
-    @Override
-    public Rules getRules() {
-        return rules;
     }
 }
