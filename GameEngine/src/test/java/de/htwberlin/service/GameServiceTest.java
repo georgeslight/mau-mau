@@ -1,14 +1,15 @@
 package de.htwberlin.service;
 
-import de.htwberlin.api.model.GameState;
-import de.htwberlin.api.model.Player;
-import de.htwberlin.api.service.CardManagerInterface;
-import de.htwberlin.api.service.GameManagerInterface;
-import de.htwberlin.api.service.PlayerManagerInterface;
-import de.htwberlin.api.service.RuleEngineInterface;
-import de.htwberlin.api.model.*;
-import de.htwberlin.api.enums.*;
-import de.htwberlin.impl.service.GameService;
+import de.htwberlin.cardmanagement.api.enums.Rank;
+import de.htwberlin.cardmanagement.api.enums.Suit;
+import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.gameengine.api.model.GameState;
+import de.htwberlin.playermanagement.api.model.Player;
+import de.htwberlin.cardmanagement.api.service.CardManagerInterface;
+import de.htwberlin.gameengine.api.service.GameManagerInterface;
+import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
+import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
+import de.htwberlin.gameengine.impl.GameService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

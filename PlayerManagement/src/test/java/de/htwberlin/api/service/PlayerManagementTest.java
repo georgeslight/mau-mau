@@ -1,10 +1,11 @@
 package de.htwberlin.api.service;
 
-import de.htwberlin.api.enums.Rank;
-import de.htwberlin.api.enums.Suit;
-import de.htwberlin.api.model.Card;
-import de.htwberlin.api.model.Player;
-import de.htwberlin.impl.service.PlayerService;
+import de.htwberlin.cardmanagement.api.enums.Rank;
+import de.htwberlin.cardmanagement.api.enums.Suit;
+import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.cardmanagement.api.service.CardManagerInterface;
+import de.htwberlin.playermanagement.api.model.Player;
+import de.htwberlin.playermanagement.impl.PlayerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
