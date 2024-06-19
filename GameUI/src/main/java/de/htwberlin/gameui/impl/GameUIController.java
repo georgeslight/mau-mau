@@ -54,13 +54,13 @@ public class GameUIController implements GameUIInterface {
                 view.showAccumulatedDrawCount(accumulatedDrawCount);
             }
 
-            Card playedCard = this.getPlayerCardChoice(currentPlayer, topCard);
+            Card playedCard = this.getPlayerCardChoice(currentPlayer, topCard, gameState);
 
             if (playedCard != null) {
                 gameService.playCard(currentPlayer, playedCard, gameState);
                 view.showPlayedCard(currentPlayer, playedCard);
                 // Set special card effects
-                ruleService.applySpecialCardsEffect(playedCard);
+                ruleService.applySpecialCardsEffect(playedCard, gameState.getRules());
 
                 // Handle drawing cards if the player plays a 7
                 if (playedCard.getRank().equals(Rank.SEVEN)) {
@@ -71,7 +71,7 @@ public class GameUIController implements GameUIInterface {
                 // Jack played
                 if (playedCard.getRank().equals(Rank.JACK)) {
                     Suit wishedSuit = view.getPlayerWishedSuit(currentPlayer);
-                    ruleService.applyJackSpecialEffect(playedCard,wishedSuit);
+                    ruleService.applyJackSpecialEffect(playedCard,wishedSuit, gameState.getRules());
                     view.showWishedSuit(currentPlayer, wishedSuit);
                 }
             } else {
@@ -97,13 +97,7 @@ public class GameUIController implements GameUIInterface {
         return gameState;
     }
 
-    public void displayHand(Player player) {
-        playerService.sortPlayersCards(player);
-        IntStream.range(0, player.getHand().size())
-                .forEach(i -> System.out.println(i + ": " + player.getHand().get(i)));
-    }
-
-    private Card getPlayerCardChoice(Player player, Card topCard) {
+    private Card getPlayerCardChoice(Player player, Card topCard, GameState gameState) {
         while (true) {
             String input = view.promptCardChoice();
             if (input.equalsIgnoreCase("draw")) {
@@ -112,7 +106,7 @@ public class GameUIController implements GameUIInterface {
             try {
                 int cardIndex = Integer.parseInt(input);
                 Card chosenCard = player.getHand().get(cardIndex);
-                if (ruleService.isValidMove(chosenCard, topCard)) {
+                if (ruleService.isValidMove(chosenCard, topCard, gameState.getRules())) {
                     return chosenCard;
                 } else {
                     view.showInvalidMoveMessage();

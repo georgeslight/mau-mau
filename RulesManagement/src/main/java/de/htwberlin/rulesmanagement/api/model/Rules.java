@@ -5,7 +5,7 @@ import de.htwberlin.cardmanagement.api.model.Card;
 
 public class Rules {
     // gameDirection: true = clockwise, false = counter-clockwise
-    private boolean gameDirection;
+//    private boolean gameDirection;
     private Card lastCardPlayed;
     private Suit wishCard;
     // number of cards to be drawn by the next player
@@ -20,13 +20,13 @@ public class Rules {
 
     public Rules() {}
 
-    public boolean isGameDirection() {
-        return gameDirection;
-    }
+//    public boolean isGameDirection() {
+//        return gameDirection;
+//    }
 
-    public void setGameDirection(boolean gameDirection) {
-        this.gameDirection = gameDirection;
-    }
+//    public void setGameDirection(boolean gameDirection) {
+//        this.gameDirection = gameDirection;
+//    }
 
     public Integer getCardsToBeDrawn() {
         return cardsToBeDrawn;

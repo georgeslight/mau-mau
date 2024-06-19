@@ -74,7 +74,7 @@ public class GameService implements GameManagerInterface {
 
     @Override
     public Player nextPlayer(GameState gameState) {
-        int nextPlayerIndex = ruleEngineInterface.calculateNextPlayerIndex(gameState.getCurrentPlayerIndex(), gameState.getPlayers().size());
+        int nextPlayerIndex = ruleEngineInterface.calculateNextPlayerIndex(gameState.getCurrentPlayerIndex(), gameState.getPlayers().size(), gameState.getRules());
         gameState.setCurrentPlayerIndex(nextPlayerIndex);
         return gameState.getPlayers().get(nextPlayerIndex);
     }

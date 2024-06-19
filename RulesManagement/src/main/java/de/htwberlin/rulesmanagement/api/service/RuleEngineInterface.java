@@ -2,6 +2,7 @@ package de.htwberlin.rulesmanagement.api.service;
 
 import de.htwberlin.cardmanagement.api.enums.Suit;
 import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.rulesmanagement.api.model.Rules;
 
 import java.util.List;
 
@@ -14,13 +15,13 @@ public interface RuleEngineInterface {
      * @param topCard the current top card on the discard pile
      * @return true if the play is valid, otherwise false
      */
-    boolean isValidMove(Card card, Card topCard);
+    boolean isValidMove(Card card, Card topCard, Rules rules);
     /**
      * calculates the index of the next player based on the current player index and the total number of players.
      *
      * @return the index of the next player
      */
-    Integer calculateNextPlayerIndex(Integer currentPlayerIndex, Integer playerCount);
+    Integer calculateNextPlayerIndex(Integer currentPlayerIndex, Integer playerCount, Rules rules);
 
     /**
      * Handles the specific rules when a Card with special effects is played.
@@ -30,14 +31,14 @@ public interface RuleEngineInterface {
      * eight: skip next player's turn & reset cardsToBeDrawn to 0
      * ace: player can play another card
      */
-    void applySpecialCardsEffect(Card card);
+    void applySpecialCardsEffect(Card card, Rules rules);
 
     /**
      * applies jack special effect
      * @param card the card being played
      * @param wishedSuit the suit wished by the player
      */
-    void applyJackSpecialEffect(Card card, Suit wishedSuit);
+    void applyJackSpecialEffect(Card card, Suit wishedSuit, Rules rules);
 
     /**
      * Calculates the score of cards given.

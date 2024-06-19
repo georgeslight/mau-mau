@@ -5,7 +5,6 @@ import de.htwberlin.cardmanagement.api.enums.Rank;
 import de.htwberlin.cardmanagement.api.enums.Suit;
 import de.htwberlin.cardmanagement.api.model.Card;
 import de.htwberlin.rulesmanagement.api.model.Rules;
-import de.htwberlin.cardmanagement.impl.CardService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -17,16 +16,8 @@ public class RuleService implements RuleEngineInterface {
 
     private static final Logger LOGGER = LogManager.getLogger(RuleService.class);
 
-//    private Rules rules;
-//    private CardService cardService;
-
-    public RuleService() {
-//        this.rules = new Rules();
-//        this.cardService = new CardService();
-    }
-
     @Override
-    public boolean isValidMove(Card card, Card topCard) {
+    public boolean isValidMove(Card card, Card topCard, Rules rules) {
         // 7 was played
         if (topCard.getRank().equals(Rank.SEVEN)) {
             if (card.getRank().equals(Rank.SEVEN)) return true;
@@ -35,6 +26,9 @@ public class RuleService implements RuleEngineInterface {
                 return false;
             }
         }
+
+        // If 9 was played, Nine can be played on any card
+        if (card.getRank().equals(Rank.NINE)) return true;
 
         // If Jack was played
         if (topCard.getRank().equals(Rank.JACK)) {
@@ -46,9 +40,6 @@ public class RuleService implements RuleEngineInterface {
                 return false;
             }
         }
-
-        // If 9 was played, Nine can be played on any card
-        if (card.getRank().equals(Rank.NINE)) return true;
 
         // Jack rules
         if (card.getRank().equals(Rank.JACK)) {
@@ -67,7 +58,7 @@ public class RuleService implements RuleEngineInterface {
     }
 
     @Override
-    public Integer calculateNextPlayerIndex(Integer currentPlayerIndex, Integer playerCount) {
+    public Integer calculateNextPlayerIndex(Integer currentPlayerIndex, Integer playerCount, Rules rules) {
         int counts = 1;
         // play 8 (skips next player)
         if (rules.isSkipNextPlayerTurn()) {
@@ -94,7 +85,7 @@ public class RuleService implements RuleEngineInterface {
     }
 
     @Override
-    public void applySpecialCardsEffect(Card card) {
+    public void applySpecialCardsEffect(Card card,Rules rules) {
         switch (card.getRank()) {
             case SEVEN:
                 rules.setCardsTObeDrawn(rules.getCardsToBeDrawn() + 2);
@@ -112,7 +103,7 @@ public class RuleService implements RuleEngineInterface {
     }
 
     @Override
-    public void applyJackSpecialEffect(Card card, Suit wishedSuit) {
+    public void applyJackSpecialEffect(Card card, Suit wishedSuit, Rules rules) {
         rules.setWishCard(wishedSuit);
     }
 
