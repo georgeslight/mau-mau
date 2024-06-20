@@ -22,7 +22,7 @@ public class RuleService implements RuleEngineInterface {
         if (topCard.getRank().equals(Rank.SEVEN)) {
             if (card.getRank().equals(Rank.SEVEN)) return true;
             if (rules.getCardsToBeDrawn() != 0) {
-                LOGGER.debug("Either have to draw, or play another 7");
+                LOGGER.info("Either have to draw, or play another 7");
                 return false;
             }
         }
@@ -36,7 +36,7 @@ public class RuleService implements RuleEngineInterface {
                 rules.setWishCard(null);
                 return true;
             } else {
-                LOGGER.debug("Must play a card of the wished suit: {}", rules.getWishCard());
+                LOGGER.info("Must play a card of the wished suit: {}", rules.getWishCard());
                 return false;
             }
         }
@@ -63,7 +63,7 @@ public class RuleService implements RuleEngineInterface {
         // play 8 (skips next player)
         if (rules.isSkipNextPlayerTurn()) {
             counts++;
-            LOGGER.debug("Skipped player at index: {}", (currentPlayerIndex + 1) % playerCount);
+            LOGGER.info("Skipped next player!");
             // reset state
             rules.setSkipNextPlayerTurn(false);
         }
@@ -80,7 +80,6 @@ public class RuleService implements RuleEngineInterface {
         if (nextPlayerIndex < 0) {
             nextPlayerIndex += playerCount;
         }
-        LOGGER.debug("nextPlayerIndex: {}", nextPlayerIndex);
         return nextPlayerIndex;
     }
 

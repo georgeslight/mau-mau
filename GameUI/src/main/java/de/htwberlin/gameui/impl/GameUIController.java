@@ -64,7 +64,7 @@ public class GameUIController implements GameUIInterface {
             }
 
             Card playedCard = null;
-            if (isNumeric(input)) playedCard = currentPlayer.getHand().get(Integer.parseInt(input));
+            if (isNumeric(input)) playedCard = currentPlayer.getHand().get(Integer.parseInt(input) - 1);
 
             if (playedCard != null) {
                 gameService.playCard(currentPlayer, playedCard, gameState);
@@ -149,7 +149,7 @@ public class GameUIController implements GameUIInterface {
             }
 
             try {
-                if (ruleService.isValidMove(player.getHand().get(Integer.parseInt(input)), topCard, gameState.getRules())) {
+                if (ruleService.isValidMove(player.getHand().get(Integer.parseInt(input) - 1), topCard, gameState.getRules())) {
                     return input;
                 } else {
                     view.showInvalidMoveMessage();

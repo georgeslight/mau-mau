@@ -63,7 +63,7 @@ public class GameUIView {
         System.out.println();
         System.out.println(PURPLE + "----- " + player.getName() + "'s turn. Your hand: -----" + RESET);
         IntStream.range(0, player.getHand().size())
-                .forEach(i -> System.out.println(i + ": " + YELLOW + player.getHand().get(i) + RESET));
+                .forEach(i -> System.out.println((i + 1) + ": " + YELLOW + player.getHand().get(i) + RESET));
     }
 
     public void showTopCard(Card card) {
