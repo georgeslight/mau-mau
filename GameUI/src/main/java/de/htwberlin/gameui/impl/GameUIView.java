@@ -1,6 +1,7 @@
 package de.htwberlin.gameui.impl;
 
 import de.htwberlin.cardmanagement.api.enums.Suit;
+import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.cardmanagement.api.model.Card;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,8 @@ public class GameUIView {
     }
 
     public void showCurrentPlayerInfo(Player player) {
-        System.out.println(player.getName() + "'s turn. Your hand: ");
+        System.out.println();
+        System.out.println("----- " + player.getName() + "'s turn. Your hand: -----");
         IntStream.range(0, player.getHand().size())
                 .forEach(i -> System.out.println(i + ": " + player.getHand().get(i)));
     }
@@ -54,6 +56,7 @@ public class GameUIView {
 
     public String promptCardChoice() {
         System.out.println("Enter the index of the card you want to play, or 'draw' to draw a card:");
+        System.out.println("Enter 'mau' before playing your card if you will have one card left!");
         return scanner.next();
     }
 
@@ -72,10 +75,10 @@ public class GameUIView {
     public Suit getPlayerWishedSuit(Player player) {
         while (true) {
             System.out.println(player.getName() + ", choose a suit for your wish:");
-            System.out.println("1: CLUBS");
-            System.out.println("2: DIAMONDS");
-            System.out.println("3: HEARTS");
-            System.out.println("4: SPADES");
+            System.out.println("1: ♣");
+            System.out.println("2: ♦");
+            System.out.println("3: ♥");
+            System.out.println("4: ♠");
 
             try {
                 int choice = scanner.nextInt();
@@ -108,6 +111,35 @@ public class GameUIView {
     }
 
     public void showWinner(Player currentPlayer) {
-        System.out.println(currentPlayer.getName() + " wins the game!");
+        System.out.println("\n----- " + currentPlayer.getName() + " wins the round! -----\n");
+    }
+
+    public void showMauMessage(Player player) {
+        System.out.println(player.getName() +" just said Mau!");
+    }
+
+    public void showMauFailureMessage(Player player) {
+        System.out.println(player.getName() + " failed to say 'Mau' and has to draw two cards!");
+    }
+
+    public void showEndGame(GameState gameState, Player winner) {
+        System.out.println("\nThe game has ended!");
+        System.out.println("Final Ranking Points: ");
+        this.showRankingPoints(gameState);
+
+        if (winner != null) {
+            System.out.println("\n\n");
+            System.out.println("----- The winner is " + winner.getName().toUpperCase() + " with " + winner.getRankingPoints() + " points! -----");
+            System.out.println("\n\n");
+        } else {
+            System.out.println("No winner could be determined.");
+        }
+    }
+
+    public void showRankingPoints(GameState gameState) {
+        System.out.println("Ranking Points: ");
+        gameState.getPlayers().forEach(player -> {
+            System.out.println(player.getName() + ": " + player.getRankingPoints() + " points.");
+        });
     }
 }

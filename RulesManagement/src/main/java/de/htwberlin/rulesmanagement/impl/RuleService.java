@@ -31,12 +31,12 @@ public class RuleService implements RuleEngineInterface {
         if (card.getRank().equals(Rank.NINE)) return true;
 
         // If Jack was played
-        if (topCard.getRank().equals(Rank.JACK)) {
+        if (topCard.getRank().equals(Rank.JACK) && rules.getWishCard() != null) {
             if (card.getSuit().equals(rules.getWishCard())) {
                 rules.setWishCard(null);
                 return true;
             } else {
-                LOGGER.debug("Must play a card of the wished suit: " + rules.getWishCard());
+                LOGGER.debug("Must play a card of the wished suit: {}", rules.getWishCard());
                 return false;
             }
         }

@@ -20,11 +20,9 @@ public interface PlayerManagerInterface {
      */
     void sortPlayersCards(Player player);
 
-
-
     /**
      * Called when a player has only one card left and declares "Mau".
      * @param player the player declaring Mau
-     */ // todo all maybe change name to sayOneCardLeft()
+     */
     void mau(Player player);
 }

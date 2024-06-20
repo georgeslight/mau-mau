@@ -26,7 +26,7 @@ public interface GameManagerInterface {
      * @param game the current game state to end
      * @return the Winner
      */
-    Player endGame(GameState game);
+    void calcRankingPoints(GameState game);
 
     /**
      * Calculates the points of the round and start a new one
@@ -56,5 +56,11 @@ public interface GameManagerInterface {
      * @param player to check for winning condition
      * @return true if the player has won, otherwise false
      */
-    boolean checkWinner(Player player);
+    boolean checkEmptyHand(Player player);
+
+    /**
+     * @param gameState
+     * @return player with the highest ranking points
+     */
+    Player getWinner(GameState gameState);
 }

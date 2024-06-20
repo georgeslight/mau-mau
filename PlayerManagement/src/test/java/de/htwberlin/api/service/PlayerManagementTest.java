@@ -53,16 +53,15 @@ class PlayerManagementTest {
     @Test
     void mau() {
         //        test if player has only one card, if one card keep playing
-        Player playerWithOneCard = new Player("Player 1", List.of(new Card(Suit.HEARTS, Rank.ACE)));
-        playerService.mau(playerWithOneCard);
-        assertTrue(playerWithOneCard.isSaidMau());
-        assertEquals(1, playerWithOneCard.getHand().size());
+        Player playerWithTwoCard = new Player("Player 1", List.of(new Card(Suit.HEARTS, Rank.ACE), new Card(Suit.SPADES, Rank.KING)));
+        playerService.mau(playerWithTwoCard);
+        assertTrue(playerWithTwoCard.isSaidMau());
+        assertEquals(2, playerWithTwoCard.getHand().size());
 
-        Player playerWithMultipleCards = new Player("Player 1", List.of(new Card(Suit.HEARTS, Rank.ACE), new Card(Suit.SPADES, Rank.KING)));
+        Player playerWithMultipleCards = new Player("Player 1", List.of(new Card(Suit.HEARTS, Rank.ACE), new Card(Suit.SPADES, Rank.KING), new Card(Suit.SPADES, Rank.JACK)));
         playerService.mau(playerWithMultipleCards);
-        assertFalse(playerWithMultipleCards.isSaidMau(), "Player should not be able to say Mau with more than one card.");
-        assertEquals(2, playerWithMultipleCards.getHand().size());
-        // todo: expected should be 2. Player doesnt get penalty if says mau with multiple cards. This is already tested in testPlayerMoreThanOneCardAndSaidMau
+        assertFalse(playerWithMultipleCards.isSaidMau(), "Player should not be able to say Mau with more than two card.");
+        assertEquals(3, playerWithMultipleCards.getHand().size());
     }
 
     /**

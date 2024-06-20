@@ -245,6 +245,7 @@ class GameServiceTest {
      */
     @Test
     void testCheckWinner() {
+        GameState gameState = new GameState();
         // Create a player with an empty hand (winning condition)
         Player winningPlayer = new Player("Player 1", new ArrayList<>());
 
@@ -253,13 +254,15 @@ class GameServiceTest {
         hand.add(new Card(Suit.HEARTS, Rank.ACE));
         Player nonWinningPlayer = new Player("Player 2", hand);
 
+        gameState.setPlayers(List.of(winningPlayer, nonWinningPlayer));
         // Check if the winning player has won
-        assertFalse(gameService.checkWinner(winningPlayer));
+        gameService.calcRankingPoints(gameState);
+        assertFalse(gameService.checkEmptyHand(winningPlayer) && winningPlayer.isSaidMau());
         winningPlayer.setSaidMau(true);
-        assertTrue(gameService.checkWinner(winningPlayer));
+        assertTrue(gameService.checkEmptyHand(winningPlayer) && winningPlayer.isSaidMau());
 
         // Check if the non-winning player has not wongameManagerInterface.checkWinner(nonWinningPlayer)
-        assertFalse(gameService.checkWinner(nonWinningPlayer));
+        assertFalse(gameService.checkEmptyHand(nonWinningPlayer));
     }
 
 
@@ -270,25 +273,26 @@ class GameServiceTest {
     void testEndGame() {
         // Create players with different scores
         Player player1 = new Player("Player 1", new ArrayList<>());
-        player1.setScore(Arrays.asList(10, 15, 20)); // total: 45
+        player1.setScore(Arrays.asList(-10, -15, -20)); // total: -45
 
         Player player2 = new Player("Player 2", new ArrayList<>());
-        player2.setScore(Arrays.asList(5, 10, 15)); // total: 30
+        player2.setScore(Arrays.asList(-5, -10, -15)); // total: -30
 
         Player player3 = new Player("Player 3", new ArrayList<>());
-        player3.setScore(Arrays.asList(20, 25, 30)); // total: 75
+        player3.setScore(Arrays.asList(-20, -25, -30)); // total: -75
 
         // Set up the game state
         GameState gameState = new GameState();
         gameState.setPlayers(Arrays.asList(player1, player2, player3));
 
         // End the game and determine the winner
-        Player winner = gameService.endGame(gameState);
+        gameService.calcRankingPoints(gameState);
+        Player winner = gameService.getWinner(gameState);
 
         // Verify the winner
         assertNotNull(winner);
-        assertEquals(player3, winner); // Player 3 has the highest total score
-        assertEquals(75, winner.getRankingPoints());
+        assertEquals(player2, winner); // Player 3 has the highest total score
+        assertEquals(-30, winner.getRankingPoints());
     }
 
     /**
@@ -324,6 +328,7 @@ class GameServiceTest {
             return originalDeck;
         });
 
+        when(ruleEngineInterface.calculateScore(anyList())).thenReturn(anyInt());
         int playersCount = gameState.getPlayers().size();
         gameState.setDiscardPile(new Stack<>());
         gameService.endRound(gameState);

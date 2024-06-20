@@ -6,6 +6,7 @@ import de.htwberlin.cardmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
+import de.htwberlin.rulesmanagement.api.model.Rules;
 import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,6 +64,8 @@ public class GameService implements GameManagerInterface {
         Stack<Card> discardPile = new Stack<>();
         discardPile.push(deck.pop());
         game.setDiscardPile(discardPile);
+        game.setRules(new Rules());
+        game.setGameRunning(true);
 
         game.setDeck(deck);
 
@@ -80,12 +83,15 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
-    public Player endGame(GameState game) {
+    public void calcRankingPoints(GameState game) {
         game.getPlayers().forEach( player -> {
             // Updated rankingPoints with the sum of all scores
             player.setRankingPoints(player.getScore().stream().reduce(0, Integer::sum));
         });
-        // Find the player with the highest ranking points
+    }
+
+    @Override
+    public Player getWinner(GameState game) {
         return game.getPlayers().stream().max(Comparator.comparingInt(Player::getRankingPoints))
                 .orElse(null);
     }
@@ -93,6 +99,8 @@ public class GameService implements GameManagerInterface {
     @Override
     public void endRound(GameState game) {
         game.getPlayers().forEach( player -> {
+            // Updated score
+            player.getScore().add(ruleEngineInterface.calculateScore(player.getHand()));
             // Updated rankingPoints with the sum of all scores
             player.setRankingPoints(player.getScore().stream().reduce(0, Integer::sum));
         });
@@ -116,8 +124,6 @@ public class GameService implements GameManagerInterface {
 
         // Set the current player index to 0
         game.setCurrentPlayerIndex(0);
-        // Set the next player index to 1
-//        game.setNextPlayerIndex(1);
     }
 
     @Override
@@ -162,8 +168,8 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
-    public boolean checkWinner(Player player) {
-        return player.getHand().isEmpty() && player.isSaidMau();
+    public boolean checkEmptyHand(Player player) {
+        return player.getHand().isEmpty();
     }
 
 }

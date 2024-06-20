@@ -42,7 +42,7 @@ public class Player {
     }
 
     public void setScore(List<Integer> score) {
-        this.score = score;
+        this.score = new ArrayList<>(score);
     }
 
     public void setRankingPoints(Integer rankingPoints) {

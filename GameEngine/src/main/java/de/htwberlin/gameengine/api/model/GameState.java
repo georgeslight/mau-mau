@@ -13,6 +13,7 @@ public class GameState {
     private Stack<Card> discardPile;
     private int currentPlayerIndex;
     private Rules rules;
+    private boolean gameRunning;
 
     public List<Player> getPlayers() {
         return players;
@@ -52,5 +53,13 @@ public class GameState {
 
     public void setRules(Rules rules) {
         this.rules = rules;
+    }
+
+    public boolean isGameRunning() {
+        return gameRunning;
+    }
+
+    public void setGameRunning(boolean gameRunning) {
+        this.gameRunning = gameRunning;
     }
 }

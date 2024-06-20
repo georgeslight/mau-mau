@@ -54,7 +54,17 @@ public class GameUIController implements GameUIInterface {
                 view.showAccumulatedDrawCount(accumulatedDrawCount);
             }
 
-            Card playedCard = this.getPlayerCardChoice(currentPlayer, topCard, gameState);
+            String input = this.getPlayerInput(currentPlayer, topCard, gameState);
+
+            // ends game
+            if (!gameState.isGameRunning()) {
+                Player winner = gameService.getWinner(gameState);
+                view.showEndGame(gameState, winner);
+                break;
+            }
+
+            Card playedCard = null;
+            if (isNumeric(input)) playedCard = currentPlayer.getHand().get(Integer.parseInt(input));
 
             if (playedCard != null) {
                 gameService.playCard(currentPlayer, playedCard, gameState);
@@ -62,29 +72,48 @@ public class GameUIController implements GameUIInterface {
                 // Set special card effects
                 ruleService.applySpecialCardsEffect(playedCard, gameState.getRules());
 
-                // Handle drawing cards if the player plays a 7
-                if (playedCard.getRank().equals(Rank.SEVEN)) {
-                    gameService.nextPlayer(gameState);
-                    continue;
-                }
-
                 // Jack played
                 if (playedCard.getRank().equals(Rank.JACK)) {
                     Suit wishedSuit = view.getPlayerWishedSuit(currentPlayer);
                     ruleService.applyJackSpecialEffect(playedCard,wishedSuit, gameState.getRules());
                     view.showWishedSuit(currentPlayer, wishedSuit);
                 }
+
+
             } else {
                 // If player chooses to draw cards
                 this.drawCards(accumulatedDrawCount, gameState, currentPlayer);
+                // if player saidMau last round and didn't win, mau is reset
+                if (currentPlayer.isSaidMau()) {
+                    currentPlayer.setSaidMau(false);
+                }
             }
 
-            if (gameService.checkWinner(currentPlayer)) {
-                view.showWinner(currentPlayer);
-                break;
+            if (gameService.checkEmptyHand(currentPlayer)) {
+                if (currentPlayer.isSaidMau()) {
+                    gameService.endRound(gameState);
+                    view.showWinner(currentPlayer);
+                    view.showRankingPoints(gameState);
+                } else {
+                    view.showMauFailureMessage(currentPlayer);
+                    this.drawCards(2, gameState, currentPlayer);
+                }
             }
+            // If player has no cards but hasn't said mau, draws cards
             gameService.nextPlayer(gameState);
         }
+    }
+
+    private boolean isNumeric(String str) {
+        if (str == null) {
+            return false;
+        }
+        try {
+            Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
     }
 
     public GameState init() {
@@ -97,17 +126,32 @@ public class GameUIController implements GameUIInterface {
         return gameState;
     }
 
-    private Card getPlayerCardChoice(Player player, Card topCard, GameState gameState) {
+    private String getPlayerInput(Player player, Card topCard, GameState gameState) {
         while (true) {
             String input = view.promptCardChoice();
-            if (input.equalsIgnoreCase("draw")) {
-                return null;
+
+            // End game
+            if (input.equalsIgnoreCase("end")) {
+                gameState.setGameRunning(false);
+                gameService.calcRankingPoints(gameState);
+                return input;
             }
+
+            // Handle "mau" input
+            if (input.equalsIgnoreCase("mau")) {
+                player.setSaidMau(true);
+                view.showMauMessage(player);
+                // Continue to prompt for another input
+                input = view.promptCardChoice();
+            }
+
+            if (input.equalsIgnoreCase("draw")) {
+                return input;
+            }
+
             try {
-                int cardIndex = Integer.parseInt(input);
-                Card chosenCard = player.getHand().get(cardIndex);
-                if (ruleService.isValidMove(chosenCard, topCard, gameState.getRules())) {
-                    return chosenCard;
+                if (ruleService.isValidMove(player.getHand().get(Integer.parseInt(input)), topCard, gameState.getRules())) {
+                    return input;
                 } else {
                     view.showInvalidMoveMessage();
                 }

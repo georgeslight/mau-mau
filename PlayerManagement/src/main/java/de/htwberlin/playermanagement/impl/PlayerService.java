@@ -58,7 +58,7 @@ public class PlayerService implements PlayerManagerInterface {
 
     @Override
     public void mau(Player player) {
-        if (player.getHand().size() == 1) {
+        if (player.getHand().size() == 2) {
             player.setSaidMau(true);
         }
     }
