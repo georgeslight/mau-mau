@@ -122,7 +122,6 @@ public class GameUIController implements GameUIInterface {
         String playerName = view.getPlayerName();
         GameState gameState = gameService.initializeGame(playerName, numberOfPlayers);
         view.showPlayers(gameState.getPlayers());
-        gameState.getPlayers().forEach(player -> System.out.println(player.getName()));
         return gameState;
     }
 
