@@ -1,6 +1,6 @@
 package de.htwberlin.playermanagement.api.service;
 
-import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.playermanagement.api.model.Player;
 
 import java.util.List;

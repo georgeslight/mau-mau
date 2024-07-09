@@ -1,6 +1,6 @@
 package de.htwberlin.gameengine.api.service;
 
-import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.playermanagement.api.model.Player;
 

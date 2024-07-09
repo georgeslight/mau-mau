@@ -1,9 +1,9 @@
 package de.htwberlin.rulesmanagement.impl;
 
 import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
-import de.htwberlin.cardmanagement.api.enums.Rank;
-import de.htwberlin.cardmanagement.api.enums.Suit;
-import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.api.enums.Rank;
+import de.htwberlin.cardsmanagement.api.enums.Suit;
+import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.rulesmanagement.api.model.Rules;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

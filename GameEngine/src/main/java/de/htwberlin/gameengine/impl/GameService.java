@@ -1,8 +1,8 @@
 package de.htwberlin.gameengine.impl;
 
-import de.htwberlin.cardmanagement.api.service.CardManagerInterface;
+import de.htwberlin.cardsmanagement.api.service.CardManagerInterface;
 import de.htwberlin.gameengine.api.service.GameManagerInterface;
-import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;

@@ -1,6 +1,6 @@
 package de.htwberlin.playermanagement.api.model;
 
-import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.api.model.Card;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;

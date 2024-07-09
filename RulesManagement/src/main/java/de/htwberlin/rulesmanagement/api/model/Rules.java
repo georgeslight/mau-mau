@@ -1,6 +1,6 @@
 package de.htwberlin.rulesmanagement.api.model;
 
-import de.htwberlin.cardmanagement.api.enums.Suit;
+import de.htwberlin.cardsmanagement.api.enums.Suit;
 import jakarta.persistence.*;
 
 @Entity

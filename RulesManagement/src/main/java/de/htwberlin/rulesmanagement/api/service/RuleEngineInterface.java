@@ -1,7 +1,7 @@
 package de.htwberlin.rulesmanagement.api.service;
 
-import de.htwberlin.cardmanagement.api.enums.Suit;
-import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.api.enums.Suit;
+import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.rulesmanagement.api.model.Rules;
 
 import java.util.List;

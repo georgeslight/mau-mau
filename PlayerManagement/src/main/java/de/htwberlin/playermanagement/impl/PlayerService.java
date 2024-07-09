@@ -1,7 +1,7 @@
 package de.htwberlin.playermanagement.impl;
 
-import de.htwberlin.cardmanagement.impl.CardComparator;
-import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.impl.CardComparator;
+import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
 import org.apache.logging.log4j.LogManager;
