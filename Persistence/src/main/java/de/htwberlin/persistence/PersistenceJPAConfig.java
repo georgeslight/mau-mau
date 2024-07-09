@@ -17,6 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.Objects;
 import java.util.Properties;
 
 @Configuration
@@ -45,7 +46,7 @@ public class PersistenceJPAConfig {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(env.getProperty("dataSource.setDriverClassName"));
+        dataSource.setDriverClassName(Objects.requireNonNull(env.getProperty("dataSource.setDriverClassName")));
         dataSource.setUrl(env.getProperty("dataSource.setUrl"));
         dataSource.setUsername(env.getProperty("dataSource.setUsername"));
         dataSource.setPassword(env.getProperty("dataSource.setPassword"));
