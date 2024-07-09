@@ -17,6 +17,7 @@
 		<module>RulesManagement</module>
 		<module>GameUI</module>
 		<module>Configuration</module>
+		<module>Persistence</module>
 	</modules>
 
 	<properties>

@@ -1,4 +1,4 @@
-package de.htwberlin.configuration;
+package de.htwberlin.persistence;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
