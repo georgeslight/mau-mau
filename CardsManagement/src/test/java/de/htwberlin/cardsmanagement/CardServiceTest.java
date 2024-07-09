@@ -4,7 +4,7 @@ import de.htwberlin.cardsmanagement.api.enums.Rank;
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.cardsmanagement.impl.CardService;
-import de.htwberlin.cardsmanagement.impl.CardRepository;
+import de.htwberlin.cardsmanagement.repo.CardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,12 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CardServiceTest {
 
-    private CardRepository cardRepo;
     private CardService cardService;
 
     @BeforeEach
     void setUp() {
-        this.cardRepo = Mockito.mock(CardRepository.class);
         cardService = new CardService();
     }
 
