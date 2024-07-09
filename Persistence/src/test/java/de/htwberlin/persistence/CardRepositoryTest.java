@@ -1,0 +1,33 @@
+package de.htwberlin.persistence;
+
+import de.htwberlin.cardsmanagement.api.enums.Rank;
+import de.htwberlin.cardsmanagement.api.enums.Suit;
+import de.htwberlin.cardsmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.impl.CardRepository;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringJUnitConfig(classes = PersistenceJPAConfig.class)
+public class CardRepositoryTest {
+
+    @Autowired
+    private CardRepository cardRepository;
+
+    @Test
+    public void testSaveCard() {
+        // Create a new Card entity
+        Card card= new Card(Suit.HEARTS, Rank.ACE);
+
+        // Save the Card entity in db
+        Card savedCard = cardRepository.save(card);
+
+        // Verify
+        assertNotNull(savedCard);
+        assertNotNull(savedCard.getId());
+        assertEquals(Suit.HEARTS, savedCard.getSuit());
+        assertEquals(Rank.ACE, savedCard.getRank());
+    }
+}

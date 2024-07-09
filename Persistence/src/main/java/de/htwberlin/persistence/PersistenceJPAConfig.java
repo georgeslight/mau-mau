@@ -3,6 +3,7 @@ package de.htwberlin.persistence;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -21,7 +22,8 @@ import java.util.Properties;
 @Configuration
 @PropertySource({ "classpath:persistence.properties" })
 @EnableTransactionManagement
-@EnableJpaRepositories
+@EnableJpaRepositories(basePackages = "de.htwberlin")
+@ComponentScan(basePackages = "de.htwberlin")
 public class PersistenceJPAConfig {
 
     @Autowired
