@@ -2,16 +2,27 @@ package de.htwberlin.cardmanagement.api.model;
 
 import de.htwberlin.cardmanagement.api.enums.Rank;
 import de.htwberlin.cardmanagement.api.enums.Suit;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 
+@Entity
 public class Card {
-    private final Suit suit;
-    private final Rank rank;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @Enumerated(EnumType.STRING)
+    private Suit suit;
+    @Enumerated(EnumType.STRING)
+    private Rank rank;
 
     public Card(Suit suit, Rank rank) {
         this.suit = suit;
         this.rank = rank;
+    }
+
+    public Card() {
     }
 
     public Suit getSuit() {

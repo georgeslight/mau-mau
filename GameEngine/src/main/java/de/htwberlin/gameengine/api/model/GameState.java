@@ -3,15 +3,29 @@ package de.htwberlin.gameengine.api.model;
 import de.htwberlin.cardmanagement.api.model.Card;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.rulesmanagement.api.model.Rules;
+import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.Stack;
 
+@Entity
 public class GameState {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @OneToMany
+    @JoinColumn(name = "game_id") // specifies the foreign key in the Player table
     private List<Player> players;
+    @OneToMany
+    @JoinColumn(name = "deck_game_id") // specifies the foreign key in the Card table
     private Stack<Card> deck;
+    @OneToMany
+    @JoinColumn(name = "discard_game_id") // specifies the foreign key in the Card table
     private Stack<Card> discardPile;
     private int currentPlayerIndex;
+    @OneToOne
+    @JoinColumn(name = "rules_id") // Specifies the foreign key in the GameState table
     private Rules rules;
     private boolean gameRunning;
 

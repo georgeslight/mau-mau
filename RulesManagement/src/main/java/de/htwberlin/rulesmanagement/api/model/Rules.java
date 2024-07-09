@@ -1,11 +1,15 @@
 package de.htwberlin.rulesmanagement.api.model;
 
 import de.htwberlin.cardmanagement.api.enums.Suit;
-import de.htwberlin.cardmanagement.api.model.Card;
+import jakarta.persistence.*;
 
+@Entity
 public class Rules {
 
-    private Card lastCardPlayed;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @Enumerated(EnumType.STRING)
     private Suit wishCard;
     private int cardsToBeDrawn = 0;
     private boolean skipNextPlayerTurn;
@@ -19,14 +23,6 @@ public class Rules {
 
     public Integer getCardsToBeDrawn() {
         return cardsToBeDrawn;
-    }
-
-    public Card getLastCardPlayed() {
-        return lastCardPlayed;
-    }
-
-    public void setLastCardPlayed(Card lastCardPlayed) {
-        this.lastCardPlayed = lastCardPlayed;
     }
 
     public Suit getWishCard() {
