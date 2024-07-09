@@ -68,6 +68,12 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
 		</dependency>
+		<!-- Spring Test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<!-- JPA API -->
 		<dependency>
 			<groupId>jakarta.persistence</groupId>
