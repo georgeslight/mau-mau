@@ -13,9 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <name>Configuration</name>
-    <!-- FIXME change it to the project's website -->
     <url>http://www.example.com</url>
-
 
     <dependencies>
         <dependency>
@@ -39,6 +37,17 @@
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-    </dependencies>
 
+        <!-- PostgreSQL Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.3</version>
+        </dependency>
+        <!-- Hibernate Core -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+    </dependencies>
 </project>
