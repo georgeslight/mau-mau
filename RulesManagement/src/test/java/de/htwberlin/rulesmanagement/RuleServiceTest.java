@@ -1,10 +1,10 @@
-package de.htwberlin.service;
+package de.htwberlin.rulesmanagement;
 
 import de.htwberlin.rulesmanagement.api.model.Rules;
 import de.htwberlin.rulesmanagement.impl.RuleService;
-import de.htwberlin.cardmanagement.api.enums.Rank;
-import de.htwberlin.cardmanagement.api.enums.Suit;
-import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.api.enums.Rank;
+import de.htwberlin.cardsmanagement.api.enums.Suit;
+import de.htwberlin.cardsmanagement.api.model.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

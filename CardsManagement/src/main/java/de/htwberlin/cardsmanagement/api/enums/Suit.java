@@ -1,4 +1,4 @@
-package de.htwberlin.cardmanagement.api.enums;
+package de.htwberlin.cardsmanagement.api.enums;
 
 public enum Suit {
     CLUBS,

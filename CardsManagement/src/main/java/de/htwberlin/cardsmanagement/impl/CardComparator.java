@@ -1,6 +1,6 @@
-package de.htwberlin.cardmanagement.impl;
+package de.htwberlin.cardsmanagement.impl;
 
-import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.api.model.Card;
 
 import java.util.*;
 

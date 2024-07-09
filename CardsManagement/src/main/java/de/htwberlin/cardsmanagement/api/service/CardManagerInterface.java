@@ -1,8 +1,8 @@
-package de.htwberlin.cardmanagement.api.service;
+package de.htwberlin.cardsmanagement.api.service;
 
-import de.htwberlin.cardmanagement.api.enums.Rank;
-import de.htwberlin.cardmanagement.api.enums.Suit;
-import de.htwberlin.cardmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.api.enums.Rank;
+import de.htwberlin.cardsmanagement.api.enums.Suit;
+import de.htwberlin.cardsmanagement.api.model.Card;
 
 import java.util.Stack;
 

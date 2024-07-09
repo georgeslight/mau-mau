@@ -1,7 +1,7 @@
-package de.htwberlin.cardmanagement.api.model;
+package de.htwberlin.cardsmanagement.api.model;
 
-import de.htwberlin.cardmanagement.api.enums.Rank;
-import de.htwberlin.cardmanagement.api.enums.Suit;
+import de.htwberlin.cardsmanagement.api.enums.Rank;
+import de.htwberlin.cardsmanagement.api.enums.Suit;
 import jakarta.persistence.*;
 
 import java.util.Objects;

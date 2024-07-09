@@ -1,14 +1,16 @@
-package de.htwberlin.api.service;
+package de.htwberlin.cardsmanagement;
 
-import de.htwberlin.cardmanagement.api.enums.Rank;
-import de.htwberlin.cardmanagement.api.enums.Suit;
-import de.htwberlin.cardmanagement.api.model.Card;
-import de.htwberlin.cardmanagement.impl.CardService;
+import de.htwberlin.cardsmanagement.api.enums.Rank;
+import de.htwberlin.cardsmanagement.api.enums.Suit;
+import de.htwberlin.cardsmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.impl.CardService;
+import de.htwberlin.cardsmanagement.impl.CardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,10 +23,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CardServiceTest {
 
+    private CardRepository cardRepo;
     private CardService cardService;
 
     @BeforeEach
     void setUp() {
+        this.cardRepo = Mockito.mock(CardRepository.class);
         cardService = new CardService();
     }
 
@@ -82,4 +86,7 @@ class CardServiceTest {
         // Verify the deck has all combinations of suits and ranks
         assertTrue(deck.contains(new Card(suit, rank)), "The deck should contain the card: " + suit + " " + rank);
     }
+
+
+
 }
