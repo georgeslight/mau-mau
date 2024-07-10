@@ -25,37 +25,6 @@ public class PlayerService implements PlayerManagerInterface {
         player.getHand().sort(new CardComparator());
     }
 
-    /**
-     * Comparator.comparing(Card::getSuit): This sorts the cards based on their suit. By default, the enum order is used, which is CLUBS, DIAMONDS, HEARTS, SPADES as defined in the Suit enum.
-     * .thenComparing(Card::getRank): This sorts the cards based on their rank within the suit groups.
-     * @param player the player whose cards to sort
-     * @return sortedHand
-     */
-//    @Override
-//    public List<Card> sortPlayersCards(Player player) {
-//        List<Card> hand = player.getHand();
-//        hand.sort(Comparator
-//                .comparing(Card::getSuit, Comparator.comparingInt(this::suitOrder))
-//                .thenComparing(Card::getRank));
-//        player.setHand(hand);
-//        return hand;
-//    }
-
-//    private int suitOrder(Suit suit) {
-//        switch (suit) {
-//            case CLUBS:
-//                return 0;
-//            case DIAMONDS:
-//                return 1;
-//            case HEARTS:
-//                return 2;
-//            case SPADES:
-//                return 3;
-//            default:
-//                throw new IllegalArgumentException("Unknown suit: " + suit);
-//        }
-//    }
-
     @Override
     public void mau(Player player) {
         if (player.getHand().size() == 2) {
