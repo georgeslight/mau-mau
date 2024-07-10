@@ -4,7 +4,6 @@ import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.rulesmanagement.api.model.Rules;
 import jakarta.persistence.*;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
