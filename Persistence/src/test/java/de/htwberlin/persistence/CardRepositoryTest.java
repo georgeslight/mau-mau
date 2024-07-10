@@ -80,4 +80,83 @@ public class CardRepositoryTest {
         assertTrue(cards.contains(card2));
     }
 
+    @Test
+    public void testUpdateCard() {
+        // Create and save a new Card entity
+        Card card = new Card(Suit.HEARTS, Rank.ACE);
+        Card savedCard = cardRepository.save(card);
+
+        // Update the Card entity
+        savedCard.setSuit(Suit.DIAMONDS);
+        Card updatedCard = cardRepository.save(savedCard);
+
+        // Verify
+        assertEquals(Suit.DIAMONDS, updatedCard.getSuit());
+        assertEquals(Rank.ACE, updatedCard.getRank());
+    }
+
+    @Test
+    public void testDeleteById() {
+        // Create and save a new Card entity
+        Card card = new Card(Suit.HEARTS, Rank.ACE);
+        Card savedCard = cardRepository.save(card);
+
+        // Delete the Card entity by its ID
+        cardRepository.deleteById(savedCard.getId());
+
+        // Verify
+        Optional<Card> retrievedCard = cardRepository.findById(savedCard.getId());
+        assertFalse(retrievedCard.isPresent());
+    }
+
+    @Test
+    public void testDeleteAll() {
+        // Save multiple Card entities
+        Card card1 = new Card(Suit.CLUBS, Rank.KING);
+        Card card2 = new Card(Suit.SPADES, Rank.QUEEN);
+        cardRepository.save(card1);
+        cardRepository.save(card2);
+
+        // Delete all Card entities
+        cardRepository.deleteAll();
+
+        // Verify
+        List<Card> cards = cardRepository.findAll();
+        assertTrue(cards.isEmpty());
+    }
+
+    @Test
+    public void testCount() {
+        // Save multiple Card entities
+        Card card1 = new Card(Suit.CLUBS, Rank.KING);
+        Card card2 = new Card(Suit.SPADES, Rank.QUEEN);
+        cardRepository.save(card1);
+        cardRepository.save(card2);
+
+        // Count the number of Card entities
+        long count = cardRepository.count();
+
+        // Verify
+        assertEquals(2, count);
+    }
+
+    @Test
+    public void testExistsById() {
+        // Create and save a new Card entity
+        Card card = new Card(Suit.HEARTS, Rank.ACE);
+        Card savedCard = cardRepository.save(card);
+
+        // Check if the Card entity exists by its ID
+        boolean exists = cardRepository.existsById(savedCard.getId());
+
+        // Verify
+        assertTrue(exists);
+
+        // Delete the Card entity by its ID
+        cardRepository.deleteById(savedCard.getId());
+
+        // Verify
+        exists = cardRepository.existsById(savedCard.getId());
+        assertFalse(exists);
+    }
 }

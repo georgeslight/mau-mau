@@ -33,6 +33,14 @@ public class Card {
         return this.rank;
     }
 
+    public void setSuit(Suit suit) {
+        this.suit = suit;
+    }
+
+    public void setRank(Rank rank) {
+        this.rank = rank;
+    }
+
     @Override
     public String toString() {
         return this.rankToString() + this.suitToSymbol();
