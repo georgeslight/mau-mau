@@ -7,7 +7,6 @@ import de.htwberlin.persistence.repo.CardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +23,6 @@ public class CardRepositoryTest {
 
     @Autowired
     private CardRepository cardRepository;
-
-    @Autowired
-    private Environment env;
 
     @BeforeEach
     public void setUp() {

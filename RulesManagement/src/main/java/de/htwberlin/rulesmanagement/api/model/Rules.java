@@ -48,4 +48,8 @@ public class Rules {
     public void setCanPlayAgain(boolean canPlayAgain) {
         this.canPlayAgain = canPlayAgain;
     }
+
+    public Long getId() {
+        return id;
+    }
 }
