@@ -9,6 +9,7 @@ import de.htwberlin.persistence.repo.PlayerRepository;
 import de.htwberlin.playermanagement.api.model.Player;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-//@Transactional
+@Transactional
+@ActiveProfiles("test")
 @SpringJUnitConfig(classes = PersistenceJPAConfig.class)
 public class GameRepositoryTest {
 
@@ -34,7 +36,6 @@ public class GameRepositoryTest {
 
 
     @Test
-    @Transactional
     public void testFindAllPlayers() {
         List<Card> hand1 = List.of(mock(Card.class));
         List<Card> hand2 = List.of(mock(Card.class));

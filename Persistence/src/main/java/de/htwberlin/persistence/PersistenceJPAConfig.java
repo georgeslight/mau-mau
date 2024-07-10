@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -21,7 +22,10 @@ import java.util.Objects;
 import java.util.Properties;
 
 @Configuration
-@PropertySource({ "classpath:persistence.properties" })
+@PropertySources({
+        @PropertySource("classpath:persistence.properties"),
+        @PropertySource(value = "classpath:persistence-test.properties", ignoreResourceNotFound = true)
+})
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "de.htwberlin.persistence")
 @ComponentScan(basePackages = "de.htwberlin")
