@@ -3,7 +3,7 @@ package de.htwberlin.persistence;
 import de.htwberlin.cardsmanagement.api.enums.Rank;
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
-import de.htwberlin.cardsmanagement.repo.CardRepository;
+import de.htwberlin.persistence.repo.CardRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
