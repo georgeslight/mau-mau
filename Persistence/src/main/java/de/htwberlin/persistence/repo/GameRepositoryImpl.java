@@ -1,26 +1,28 @@
 package de.htwberlin.persistence.repo;
 
-import de.htwberlin.playermanagement.api.model.Player;
+import de.htwberlin.gameengine.api.model.GameState;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
-public class PlayerRepositoryImpl implements PlayerRepositoryCustom {
+@Repository
+public class GameRepositoryImpl implements GameRepositoryCustom{
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public Player customFindMethod(Long id){
-        return (Player) entityManager.createQuery("SELECT p FROM Player p WHERE p.id = :id")
-                .setParameter("id", id)
-                .getSingleResult();
-     }
+    @Transactional
+    public void persistInitGame(GameState gameState) {
+        entityManager.persist(gameState);
+    }
 
     @PostConstruct
     public void postConstruct() {
         Objects.requireNonNull(entityManager);
-     }
+    }
 }

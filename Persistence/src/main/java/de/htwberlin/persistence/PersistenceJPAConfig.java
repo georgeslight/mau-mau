@@ -23,7 +23,7 @@ import java.util.Properties;
 @Configuration
 @PropertySource({ "classpath:persistence.properties" })
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "de.htwberlin")
+@EnableJpaRepositories(basePackages = "de.htwberlin.persistence")
 @ComponentScan(basePackages = "de.htwberlin")
 public class PersistenceJPAConfig {
 
