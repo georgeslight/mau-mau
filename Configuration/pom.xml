@@ -18,17 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>de.htwberlin</groupId>
-            <artifactId>PlayerManagement</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>de.htwberlin</groupId>
-            <artifactId>CardsManagement</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>de.htwberlin</groupId>
-            <artifactId>RulesManagement</artifactId>
+            <artifactId>Persistence</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
