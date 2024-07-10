@@ -46,15 +46,15 @@ class GameServiceTest {
     void testInitGame() {
         String playerName = "Max";
         // Create a valid deck of cards
-        Stack<Card> deck = Stream.of(Suit.values())
+        List<Card> deck = Stream.of(Suit.values())
                 .flatMap(suit -> Stream.of(Rank.values())
                         .map(rank -> new Card(suit, rank)))
-                .collect(Collectors.toCollection(Stack::new));
+                .collect(Collectors.toList());
 
         // Define the behavior of the cardService mocks
         when(cardManagerInterface.createDeck()).thenReturn(deck);
         when(cardManagerInterface.shuffle(any())).thenAnswer(invocation -> {
-            Stack<Card> originalDeck = invocation.getArgument(0);
+            List<Card> originalDeck = invocation.getArgument(0);
             Collections.shuffle(originalDeck);
             return originalDeck;
         });
@@ -118,9 +118,9 @@ class GameServiceTest {
     @Test
     void testDrawCard() {
 //        // Create a valid deck with one card
-//        Stack<Card> deck = new Stack<>();
+//        List<Card> deck = new ArrayList<>();
 //        Card cardToDraw = new Card(Suit.HEARTS, Rank.ACE);
-//        deck.push(cardToDraw);
+//        deck.add(cardToDraw);
 //
 //        // Create a player with one card in hand
 //        List<Card> initialHand = new ArrayList<>();
@@ -146,9 +146,9 @@ class GameServiceTest {
 //        // Test drawing from an empty deck
 //        assertThrows(IllegalStateException.class, () -> gameService.drawCard(gameState, player));
         // Create a valid deck with one card
-        Stack<Card> deck = new Stack<>();
+        List<Card> deck = new ArrayList<>();
         Card cardToDraw = new Card(Suit.HEARTS, Rank.ACE);
-        deck.push(cardToDraw);
+        deck.add(cardToDraw);
 
         // Create a player with one card in hand
         List<Card> initialHand = new ArrayList<>();
@@ -173,17 +173,17 @@ class GameServiceTest {
 
         // Add an additional check for reshuffling
         // Empty the deck and add cards to the discard pile for reshuffling
-        gameState.setDeck(new Stack<>()); // Empty the deck
-        Stack<Card> discardPile = new Stack<>();
-        discardPile.push(new Card(Suit.CLUBS, Rank.SEVEN));
-        discardPile.push(new Card(Suit.DIAMONDS, Rank.EIGHT));
+        gameState.setDeck(new ArrayList<>()); // Empty the deck
+        List<Card> discardPile = new ArrayList<>();
+        discardPile.add(new Card(Suit.CLUBS, Rank.SEVEN));
+        discardPile.add(new Card(Suit.DIAMONDS, Rank.EIGHT));
         gameState.setDiscardPile(discardPile);
 
         // Mock the behavior of reshuffling
-        Stack<Card> shuffledDeck = new Stack<>();
-        shuffledDeck.push(new Card(Suit.DIAMONDS, Rank.EIGHT));
-        shuffledDeck.push(new Card(Suit.CLUBS, Rank.SEVEN));
-        when(cardManagerInterface.shuffle(any(Stack.class))).thenReturn(shuffledDeck);
+        List<Card> shuffledDeck = new ArrayList<>();
+        shuffledDeck.add(new Card(Suit.DIAMONDS, Rank.EIGHT));
+        shuffledDeck.add(new Card(Suit.CLUBS, Rank.SEVEN));
+        when(cardManagerInterface.shuffle(anyList())).thenReturn(shuffledDeck);
 
         // Draw a card which should trigger reshuffling
         drawnCard = gameService.drawCard(gameState, player);
@@ -193,9 +193,9 @@ class GameServiceTest {
         assertEquals(3, player.getHand().size());
         assertTrue(player.getHand().contains(new Card(Suit.CLUBS, Rank.SEVEN)));
         assertEquals(1, gameState.getDeck().size());
-        assertEquals(new Card(Suit.DIAMONDS, Rank.EIGHT), gameState.getDeck().peek());
+        assertEquals(new Card(Suit.DIAMONDS, Rank.EIGHT), gameState.getDeck().get(gameState.getDeck().size() - 1));
         assertEquals(1, gameState.getDiscardPile().size());
-        assertEquals(new Card(Suit.DIAMONDS, Rank.EIGHT), gameState.getDiscardPile().pop());
+        assertEquals(new Card(Suit.DIAMONDS, Rank.EIGHT), gameState.getDiscardPile().remove(gameState.getDeck().size() - 1));
 
         // Draw the last card in the reshuffled deck
         drawnCard = gameService.drawCard(gameState, player);
@@ -219,8 +219,8 @@ class GameServiceTest {
         Player player = new Player("Player 1", initialHand);
 
         // Set up the game state with a discard pile containing one card
-        Stack<Card> discardPile = new Stack<>();
-        discardPile.push(new Card(Suit.CLUBS, Rank.TEN)); // Initial card in the discard pile
+        List<Card> discardPile = new ArrayList<>();
+        discardPile.add(new Card(Suit.CLUBS, Rank.TEN)); // Initial card in the discard pile
 
         GameState gameState = new GameState();
         gameState.setPlayers(List.of(player));
@@ -232,7 +232,7 @@ class GameServiceTest {
         // Verify the card was played correctly
         assertEquals(1, player.getHand().size()); // Player's hand should be empty
         assertTrue(player.getHand().contains(anotherCard)); // Remaining card should be the one not played
-        assertEquals(cardToPlay, gameState.getDiscardPile().peek()); // Discard pile should contain the played card
+        assertEquals(cardToPlay, gameState.getDiscardPile().get(gameState.getDiscardPile().size() - 1)); // Discard pile should contain the played card
         assertEquals(2, gameState.getDiscardPile().size()); // Discard pile should have two cards
 
         // Test playing a card that the player does not have
@@ -316,21 +316,21 @@ class GameServiceTest {
 
 
         // Set up the game state
-        Stack<Card> deck = Stream.of(Suit.values())
+        List<Card> deck = Stream.of(Suit.values())
                 .flatMap(suit -> Stream.of(Rank.values())
                         .map(rank -> new Card(suit, rank)))
-                .collect(Collectors.toCollection(Stack::new));
+                .collect(Collectors.toList());
 
         when(cardManagerInterface.createDeck()).thenReturn(deck);
         when(cardManagerInterface.shuffle(any())).thenAnswer(invocation -> {
-            Stack<Card> originalDeck = invocation.getArgument(0);
+            List<Card> originalDeck = invocation.getArgument(0);
             Collections.shuffle(originalDeck);
             return originalDeck;
         });
 
         when(ruleEngineInterface.calculateScore(anyList())).thenReturn(anyInt());
         int playersCount = gameState.getPlayers().size();
-        gameState.setDiscardPile(new Stack<>());
+        gameState.setDiscardPile(new ArrayList<>());
         gameService.endRound(gameState);
         gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
         assertEquals(32 - (playersCount * 5) - 1, gameState.getDeck().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card

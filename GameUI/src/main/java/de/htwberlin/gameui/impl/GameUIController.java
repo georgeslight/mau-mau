@@ -45,7 +45,7 @@ public class GameUIController implements GameUIInterface {
             playerService.sortPlayersCards(currentPlayer);
             view.showCurrentPlayerInfo(currentPlayer);
 
-            Card topCard = gameState.getDiscardPile().peek();
+            Card topCard = gameState.getDiscardPile().get(gameState.getDiscardPile().size() - 1);
             view.showTopCard(topCard);
 
             // If 7 was played

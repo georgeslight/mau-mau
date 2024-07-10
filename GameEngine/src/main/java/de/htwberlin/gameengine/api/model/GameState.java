@@ -20,9 +20,11 @@ public class GameState {
     @OneToMany
     @JoinColumn(name = "deck_game_id") // specifies the foreign key in the Card table
     private Stack<Card> deck;
+    private List<Card> deck;
     @OneToMany
     @JoinColumn(name = "discard_game_id") // specifies the foreign key in the Card table
     private Stack<Card> discardPile;
+    private List<Card> discardPile;
     private int currentPlayerIndex;
     @OneToOne
     @JoinColumn(name = "rules_id") // Specifies the foreign key in the GameState table
@@ -37,20 +39,24 @@ public class GameState {
         this.players = players;
     }
 
-    public void setDeck(Stack<Card> deck) {
+    public void setDeck(List<Card> deck) {
         this.deck = deck;
     }
 
-    public Stack<Card> getDeck() {
+    public List<Card> getDeck() {
         return deck;
     }
 
-    public Stack<Card> getDiscardPile() {
+    public List<Card> getDiscardPile() {
         return discardPile;
     }
 
-    public void setDiscardPile(Stack<Card> discardPile) {
+    public void setDiscardPile(List<Card> discardPile) {
         this.discardPile = discardPile;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public int getCurrentPlayerIndex() {

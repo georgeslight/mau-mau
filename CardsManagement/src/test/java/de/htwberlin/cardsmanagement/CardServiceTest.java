@@ -11,8 +11,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -31,13 +31,13 @@ class CardServiceTest {
     @Test
     void testShuffle() {
         // Create a deck of cards
-        Stack<Card> deck = Stream.of(Suit.values())
+        List<Card> deck = Stream.of(Suit.values())
                 .flatMap(suit -> Stream.of(Rank.values())
                         .map(rank -> new Card(suit, rank)))
-                        .collect(Collectors.toCollection(Stack::new));
+                        .collect(Collectors.toList());
 
         // Shuffle the deck
-        Stack<Card> shuffleDeck = cardService.shuffle(deck);
+        List<Card> shuffleDeck = cardService.shuffle(deck);
 
         // Check if the shuffled deck has the same size as the original deck
         assertEquals(deck.size(), shuffleDeck.size());
@@ -71,7 +71,7 @@ class CardServiceTest {
     @ParameterizedTest
     @MethodSource("suitAndRank")
     void testCreateDeck(Suit suit, Rank rank) {
-        Stack<Card> deck = cardService.createDeck();
+        List<Card> deck = cardService.createDeck();
         assertNotNull(deck);
         assertEquals(32, deck.size(), "A deck should have 32 cards");
 

@@ -7,7 +7,7 @@ import de.htwberlin.cardsmanagement.api.service.CardManagerInterface;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Stack;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.stream.Collectors;
@@ -19,13 +19,13 @@ public class CardService implements CardManagerInterface {
     private static final Logger LOGGER = LogManager.getLogger(CardService.class);
 
     @Override
-    public Stack<Card> shuffle(Stack<Card> deck) {
+    public List<Card> shuffle(List<Card> deck) {
         return deck.stream()
                 .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
                     Collections.shuffle(collected);
                     return collected.stream();
                 }))
-                .collect(Collectors.toCollection(Stack::new));
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -34,10 +34,10 @@ public class CardService implements CardManagerInterface {
     }
 
     @Override
-    public Stack<Card> createDeck() {
+    public List<Card> createDeck() {
         return Stream.of(Suit.values())
                 .flatMap(suit -> Stream.of(Rank.values())
                         .map(rank -> this.createCard(suit, rank)))
-                .collect(Collectors.toCollection(Stack::new));
+                .collect(Collectors.toList());
     }
 }
