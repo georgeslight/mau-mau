@@ -5,15 +5,19 @@ import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.persistence.repo.PlayerRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyList;
 
 @Transactional
 @ActiveProfiles("test")
@@ -23,49 +27,106 @@ public class PlayerRepositoryTest {
     @Autowired
     PlayerRepository playerRepository;
 
-    @Test
-    public void testSavePlayer() {
-        // Create player
-        List<Card> hand = List.of(new Card(Suit.HEARTS, Rank.ACE), new Card(Suit.CLUBS, Rank.KING));
-        Player player = new Player("John Doe", hand);
-
-        // Save player
-        Player savedPlayer = playerRepository.save(player);
-
-        // Assert player is saved correctly
-        assertNotNull(savedPlayer);
-        assertNotNull(savedPlayer.getId());
-        assertEquals(savedPlayer.getName(), "John Doe");
-        assertEquals(savedPlayer.getHand().size(), 2);
+    @BeforeEach
+    public void setUp() {
+        playerRepository.deleteAll();
     }
 
     @Test
-    public void testDeletePlayer() {
-        // Create and save a player
-        List<Card> hand = List.of(new Card(Suit.SPADES, Rank.TEN), new Card(Suit.CLUBS, Rank.NINE));
-        Player player = new Player("Max Mustermann", hand);
+    public void testFindByName() {
+        // Create and save a new Player entity
+        Player player = new Player("John Doe", new ArrayList<>());
         playerRepository.save(player);
 
-        // Delete player
-        playerRepository.delete(player);
+        // Retrieve the Player entity by its name
+        List<Player> players = playerRepository.findByName("John Doe");
 
-        // Assert player is deleted
-        Player foundPlayer = playerRepository.findById(player.getId()).orElse(null);
-        assertNull(foundPlayer);
+        // Verify
+        assertEquals(1, players.size());
+        assertEquals("John Doe", players.get(0).getName());
     }
 
-    /**
-     * Testing EntityManager in Hibernate
-     */
     @Test
-    public void givenCustomRepository_whenInvokeCustomFindMethod_thenEntityIsFound() {
-        Player player = new Player();
-        player.setHand(List.of(new Card(Suit.CLUBS, Rank.ACE), new Card(Suit.HEARTS, Rank.KING)));
-        player.setName("Max Mustermann");
+    public void testFindByRankingPointsGreaterThan() {
+        // Create and save a new Players entity
+        Player player1 = new Player("Player1", new ArrayList<>());
+        player1.setRankingPoints(10);
+        Player player2 = new Player("Player2", new ArrayList<>());
+        player2.setRankingPoints(15);
+        Player player3 = new Player("Player3", new ArrayList<>());
+        player3.setRankingPoints(20);
+        Player player4 = new Player("Player4", new ArrayList<>());
+        player4.setRankingPoints(30);
+        playerRepository.save(player1);
+        playerRepository.save(player2);
+        playerRepository.save(player3);
+        playerRepository.save(player4);
 
-        Player persistedPlayer = playerRepository.save(player);
+        // Retrieve the Player entity by RankingPoints > 15
+        List<Player> players = playerRepository.findByRankingPointsGreaterThan(15);
 
-        assertEquals(persistedPlayer, playerRepository.customFindMethod(player.getId()));
+        // Verify
+        assertEquals(2, players.size());
+        // Verify that "Player2", "Player3", and "Player4" are in the result
+        assertTrue(players.stream()
+                .map(Player::getName)
+                .collect(Collectors.toList())
+                .containsAll(List.of("Player3", "Player4")));
     }
 
+    @Test
+    public void testFindByHandSuit() {
+        // Create and Save player1
+        List<Card> hand1 = new ArrayList<>();
+        hand1.add(new Card(Suit.HEARTS, Rank.ACE));
+        Player player1 = new Player("Player1", hand1);
+        playerRepository.save(player1);
+
+        // Create and Save player2
+        List<Card> hand2 = new ArrayList<>();
+        hand2.add(new Card(Suit.HEARTS, Rank.KING));
+        Player player2 = new Player("Player2", hand2);
+        playerRepository.save(player2);
+
+        // Create and Save player3
+        List<Card> hand3 = new ArrayList<>();
+        hand3.add(new Card(Suit.CLUBS, Rank.EIGHT));
+        Player player3 = new Player("Player3", hand3);
+        playerRepository.save(player3);
+
+        // Retrieve
+        List<Player> players = playerRepository.findByHandSuit(Suit.HEARTS);
+
+        // Verify
+        assertEquals(2, players.size());
+        assertTrue(players.stream()
+                .map(Player::getName)
+                .collect(Collectors.toList())
+                .containsAll(List.of("Player1", "Player2")));
+    }
+
+    @Test
+    public void testFindBySaidMau() {
+        // Create and Save player1
+        Player player1 = new Player("Player1", anyList());
+        player1.setSaidMau(true);
+        playerRepository.save(player1);
+
+        // Create and Save player2
+        Player player2 = new Player("Player2", anyList());
+        player2.setSaidMau(false);
+        playerRepository.save(player2);
+
+        // Create and Save player3
+        Player player3 = new Player("Player3", anyList());
+        player3.setSaidMau(true);
+        playerRepository.save(player3);
+
+        List<Player> players = playerRepository.findBySaidMau(true);
+        assertEquals(2, players.size());
+        assertTrue(players.stream()
+                .map(Player::getName)
+                .collect(Collectors.toList())
+                .containsAll(List.of("Player1", "Player3")));
+    }
 }
