@@ -4,14 +4,14 @@ import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.cardsmanagement.api.model.Card;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
-@Service
+@Component
 public class GameUIView {
 
     private final Scanner scanner = new Scanner(System.in);
