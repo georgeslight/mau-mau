@@ -40,7 +40,8 @@ public class GameUIController implements GameUIInterface {
     @Override
     public void run() {
         GameState gameState = this.init();
-        while (true) {
+        boolean isRunning = true;
+        while (isRunning) {
             Player currentPlayer = gameState.getPlayers().get(gameState.getCurrentPlayerIndex());
             playerService.sortPlayersCards(currentPlayer);
             view.showCurrentPlayerInfo(currentPlayer);
@@ -60,7 +61,8 @@ public class GameUIController implements GameUIInterface {
             if (!gameState.isGameRunning()) {
                 Player winner = gameService.getWinner(gameState);
                 view.showEndGame(gameState, winner);
-                break;
+                isRunning = false;
+                continue;
             }
 
             Card playedCard = null;
