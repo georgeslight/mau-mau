@@ -23,9 +23,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GameServiceTest {
@@ -68,6 +68,12 @@ class GameServiceTest {
 
         int playersCount = 4;
         GameState gameState = gameService.initializeGame(playerName, playersCount);
+
+        // Verify interactions with the mocks
+        verify(cardManagerInterface).createDeck();
+        verify(cardManagerInterface).shuffle(deck);
+        verify(playerManagerInterface, times(playersCount)).createPlayer(anyString(), anyList());
+
         gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
         assertEquals(32 - (playersCount * 5) - 1, gameState.getDeck().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
         assertEquals(playersCount, gameState.getPlayers().size());
@@ -97,17 +103,29 @@ class GameServiceTest {
 
         // Call nextPlayer and verify the state change
         Player nextPlayer = gameService.nextPlayer(gameState);
+
+        // Verify interactions with the mocks
+        verify(ruleEngineInterface).calculateNextPlayerIndex(eq(0), eq(4), eq(gameState.getRules()));
+
         assertEquals(1, gameState.getCurrentPlayerIndex());
         assertEquals(players.get(1), nextPlayer);
 
         // Call nextPlayer again to verify circular behavior
         nextPlayer = gameService.nextPlayer(gameState);
+
+        // Verify interactions with the mocks
+        verify(ruleEngineInterface).calculateNextPlayerIndex(eq(1), eq(4), eq(gameState.getRules()));
+
         assertEquals(2, gameState.getCurrentPlayerIndex());
         assertEquals(players.get(2), nextPlayer);
 
         // Simulate wrapping around to the first player
         gameState.setCurrentPlayerIndex(3);
         nextPlayer = gameService.nextPlayer(gameState);
+
+        // Verify interactions with the mocks
+        verify(ruleEngineInterface).calculateNextPlayerIndex(eq(3), eq(4), eq(gameState.getRules()));
+
         assertEquals(0, gameState.getCurrentPlayerIndex());
         assertEquals(players.get(0), nextPlayer);
     }
@@ -117,34 +135,6 @@ class GameServiceTest {
      */
     @Test
     void testDrawCard() {
-//        // Create a valid deck with one card
-//        List<Card> deck = new ArrayList<>();
-//        Card cardToDraw = new Card(Suit.HEARTS, Rank.ACE);
-//        deck.add(cardToDraw);
-//
-//        // Create a player with one card in hand
-//        List<Card> initialHand = new ArrayList<>();
-//        initialHand.add(new Card(Suit.SPADES, Rank.JACK));
-//        Player player = new Player("Player 1", initialHand);
-//
-//        // Set up the game state
-//        GameState gameState = new GameState();
-//        gameState.setDeck(deck);
-//        gameState.setPlayers(List.of(player));
-//        gameState.setCurrentPlayerIndex(0);
-//
-//        // Draw the card
-//        Card drawnCard = gameService.drawCard(gameState, player);
-//
-//        // Verify the card was drawn correctly
-//        assertEquals(cardToDraw, drawnCard);
-//        assertEquals(2, player.getHand().size());
-//        assertTrue(player.getHand().contains(cardToDraw));
-//        assertTrue(player.getHand().contains(new Card(Suit.SPADES, Rank.JACK)));
-//        assertTrue(gameState.getDeck().isEmpty());
-//
-//        // Test drawing from an empty deck
-//        assertThrows(IllegalStateException.class, () -> gameService.drawCard(gameState, player));
         // Create a valid deck with one card
         List<Card> deck = new ArrayList<>();
         Card cardToDraw = new Card(Suit.HEARTS, Rank.ACE);
@@ -185,8 +175,14 @@ class GameServiceTest {
         shuffledDeck.add(new Card(Suit.CLUBS, Rank.SEVEN));
         when(cardManagerInterface.shuffle(anyList())).thenReturn(shuffledDeck);
 
+        // Verify no interaction with the card manager
+        verify(cardManagerInterface, times(0)).shuffle(anyList());
+
         // Draw a card which should trigger reshuffling
         drawnCard = gameService.drawCard(gameState, player);
+
+        // Verify interaction with the card manager for reshuffling
+        verify(cardManagerInterface).shuffle(anyList());
 
         // Verify the reshuffled card
         assertEquals(new Card(Suit.CLUBS, Rank.SEVEN), drawnCard); // The last card in the discard pile becomes the top card in the deck after reshuffling
@@ -265,7 +261,6 @@ class GameServiceTest {
         assertFalse(gameService.checkEmptyHand(nonWinningPlayer));
     }
 
-
     /**
      * Test ending the game and determining the winner.
      */
@@ -291,13 +286,12 @@ class GameServiceTest {
 
         // Verify the winner
         assertNotNull(winner);
-        assertEquals(player2, winner); // Player 3 has the highest total score
+        assertEquals(player2, winner); // Player 2 has the highest total score
         assertEquals(-30, winner.getRankingPoints());
     }
 
     /**
-     * tests the end of a round
-     *
+     * Test ending the round and reinitializing game state.
      */
     @Test
     void testEndRound() {
@@ -313,7 +307,6 @@ class GameServiceTest {
         Player player3 = new Player("Player 3", new ArrayList<>());
         player3.setScore(Arrays.asList(20, 25, 30)); // total: 75
         gameState.setPlayers(Arrays.asList(player1, player2, player3));
-
 
         // Set up the game state
         List<Card> deck = Stream.of(Suit.values())
@@ -332,6 +325,13 @@ class GameServiceTest {
         int playersCount = gameState.getPlayers().size();
         gameState.setDiscardPile(new ArrayList<>());
         gameService.endRound(gameState);
+
+        // Verify the interactions
+        verify(cardManagerInterface).createDeck();
+        verify(cardManagerInterface).shuffle(deck);
+        verify(ruleEngineInterface, times(playersCount)).calculateScore(anyList());
+
+        // Verify the game state after ending the round
         gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
         assertEquals(32 - (playersCount * 5) - 1, gameState.getDeck().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
         assertEquals(playersCount, gameState.getPlayers().size());
