@@ -3,7 +3,7 @@ package de.htwberlin.persistence;
 import de.htwberlin.cardsmanagement.api.enums.Rank;
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
-import de.htwberlin.persistence.repo.CardRepository;
+import de.htwberlin.persistence.service.CardService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CardRepositoryTest {
 
     @Autowired
-    private CardRepository cardRepository;
+    private CardService cardService;
 
     @BeforeEach
     public void setUp() {
-        cardRepository.deleteAll();
+        cardService.deleteAllCards();
     }
 
     @Test
@@ -35,7 +35,7 @@ public class CardRepositoryTest {
         Card card = new Card(Suit.HEARTS, Rank.ACE);
 
         // Save the Card entity in db
-        Card savedCard = cardRepository.save(card);
+        Card savedCard = cardService.saveCard(card);
 
         // Verify
         assertNotNull(savedCard);
@@ -48,10 +48,10 @@ public class CardRepositoryTest {
     public void testFindById() {
         // Create and save a new Card entity
         Card card = new Card(Suit.CLUBS, Rank.KING);
-        Card savedCard = cardRepository.save(card);
+        Card savedCard = cardService.saveCard(card);
 
         // Retrieve the Card entity by its ID
-        Optional<Card> retrievedCard = cardRepository.findById(savedCard.getId());
+        Optional<Card> retrievedCard = cardService.findCardById(savedCard.getId());
 
         // Verify
         assertTrue(retrievedCard.isPresent());
@@ -64,11 +64,11 @@ public class CardRepositoryTest {
         // Save multiple Card entities
         Card card1 = new Card(Suit.CLUBS, Rank.KING);
         Card card2 = new Card(Suit.SPADES, Rank.QUEEN);
-        cardRepository.save(card1);
-        cardRepository.save(card2);
+        cardService.saveCard(card1);
+        cardService.saveCard(card2);
 
         // Retrieve all Card entities
-        List<Card> cards = cardRepository.findAll();
+        List<Card> cards = cardService.findAllCards();
 
         // Verify
         assertEquals(2, cards.size());
@@ -80,11 +80,11 @@ public class CardRepositoryTest {
     public void testUpdateCard() {
         // Create and save a new Card entity
         Card card = new Card(Suit.HEARTS, Rank.ACE);
-        Card savedCard = cardRepository.save(card);
+        Card savedCard = cardService.saveCard(card);
 
         // Update the Card entity
         savedCard.setSuit(Suit.DIAMONDS);
-        Card updatedCard = cardRepository.save(savedCard);
+        Card updatedCard = cardService.saveCard(savedCard);
 
         // Verify
         assertEquals(Suit.DIAMONDS, updatedCard.getSuit());
@@ -95,13 +95,13 @@ public class CardRepositoryTest {
     public void testDeleteById() {
         // Create and save a new Card entity
         Card card = new Card(Suit.HEARTS, Rank.ACE);
-        Card savedCard = cardRepository.save(card);
+        Card savedCard = cardService.saveCard(card);
 
         // Delete the Card entity by its ID
-        cardRepository.deleteById(savedCard.getId());
+        cardService.deleteCardById(savedCard.getId());
 
         // Verify
-        Optional<Card> retrievedCard = cardRepository.findById(savedCard.getId());
+        Optional<Card> retrievedCard = cardService.findCardById(savedCard.getId());
         assertFalse(retrievedCard.isPresent());
     }
 
@@ -110,14 +110,14 @@ public class CardRepositoryTest {
         // Save multiple Card entities
         Card card1 = new Card(Suit.CLUBS, Rank.KING);
         Card card2 = new Card(Suit.SPADES, Rank.QUEEN);
-        cardRepository.save(card1);
-        cardRepository.save(card2);
+        cardService.saveCard(card1);
+        cardService.saveCard(card2);
 
         // Delete all Card entities
-        cardRepository.deleteAll();
+        cardService.deleteAllCards();
 
         // Verify
-        List<Card> cards = cardRepository.findAll();
+        List<Card> cards = cardService.findAllCards();
         assertTrue(cards.isEmpty());
     }
 
@@ -126,11 +126,11 @@ public class CardRepositoryTest {
         // Save multiple Card entities
         Card card1 = new Card(Suit.CLUBS, Rank.KING);
         Card card2 = new Card(Suit.SPADES, Rank.QUEEN);
-        cardRepository.save(card1);
-        cardRepository.save(card2);
+        cardService.saveCard(card1);
+        cardService.saveCard(card2);
 
         // Count the number of Card entities
-        long count = cardRepository.count();
+        long count = cardService.countCards();
 
         // Verify
         assertEquals(2, count);
@@ -140,19 +140,19 @@ public class CardRepositoryTest {
     public void testExistsById() {
         // Create and save a new Card entity
         Card card = new Card(Suit.HEARTS, Rank.ACE);
-        Card savedCard = cardRepository.save(card);
+        Card savedCard = cardService.saveCard(card);
 
         // Check if the Card entity exists by its ID
-        boolean exists = cardRepository.existsById(savedCard.getId());
+        boolean exists = cardService.existsCardById(savedCard.getId());
 
         // Verify
         assertTrue(exists);
 
         // Delete the Card entity by its ID
-        cardRepository.deleteById(savedCard.getId());
+        cardService.deleteCardById(savedCard.getId());
 
         // Verify
-        exists = cardRepository.existsById(savedCard.getId());
+        exists = cardService.existsCardById(savedCard.getId());
         assertFalse(exists);
     }
 }
