@@ -113,6 +113,7 @@ public class GameUIController implements GameUIInterface {
         try {
             Integer.parseInt(str);
         } catch (NumberFormatException e) {
+            LOGGER.warn("Invalid numeric input: {}", str, e);
             return false;
         }
         return true;
@@ -143,7 +144,7 @@ public class GameUIController implements GameUIInterface {
                 player.setSaidMau(true);
                 view.showMauMessage(player);
                 // Continue to prompt for another input
-                input = view.promptCardChoice();
+                continue;
             }
 
             if (input.equalsIgnoreCase("d")) {
@@ -151,12 +152,20 @@ public class GameUIController implements GameUIInterface {
             }
 
             try {
+                // Added an explicit check for valid card index range
+                int cardIndex = Integer.parseInt(input) - 1;
+                if (cardIndex < 0 || cardIndex >= player.getHand().size()) throw new IndexOutOfBoundsException();
+
                 if (ruleService.isValidMove(player.getHand().get(Integer.parseInt(input) - 1), topCard, gameState.getRules())) {
                     return input;
                 } else {
                     view.showInvalidMoveMessage();
                 }
-            } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            } catch (NumberFormatException e) {
+                LOGGER.warn("Invalid input: {}", input);
+                view.showInvalidInputMessage();
+            } catch (IndexOutOfBoundsException e) {
+                LOGGER.warn("Invalid card index: {}", input);
                 view.showInvalidInputMessage();
             }
         }
