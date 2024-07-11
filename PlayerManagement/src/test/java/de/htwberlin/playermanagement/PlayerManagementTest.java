@@ -4,6 +4,7 @@ import de.htwberlin.cardsmanagement.api.enums.Rank;
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.cardsmanagement.api.service.CardManagerInterface;
+import de.htwberlin.cardsmanagement.impl.CardService;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.playermanagement.impl.PlayerService;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,18 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 class PlayerManagementTest {
 
-    private CardManagerInterface cardManagerInterface;
-    //todo Ghazi: mocked interface must be used somehow?!
+    private CardManagerInterface cardService;
     private PlayerService playerService;
 
 
     @BeforeEach
     void setUp() {
-        this.cardManagerInterface = mock(CardManagerInterface.class);
+        this.cardService = new CardService();
         this.playerService = new PlayerService();
     }
 
@@ -35,11 +34,11 @@ class PlayerManagementTest {
 
     @Test
     void createPlayer() {
-        Player player = playerService.createPlayer("Player 1", List.of(new Card(Suit.CLUBS, Rank.EIGHT),
-                new Card(Suit.SPADES, Rank.JACK),
-                new Card(Suit.DIAMONDS, Rank.NINE),
-                new Card(Suit.CLUBS, Rank.QUEEN),
-                new Card(Suit.HEARTS, Rank.QUEEN)));
+        Player player = playerService.createPlayer("Player 1", List.of(cardService.createCard(Suit.CLUBS, Rank.EIGHT),
+                cardService.createCard(Suit.SPADES, Rank.JACK),
+                cardService.createCard(Suit.DIAMONDS, Rank.NINE),
+                cardService.createCard(Suit.CLUBS, Rank.QUEEN),
+                cardService.createCard(Suit.HEARTS, Rank.QUEEN)));
         assertNotNull(player);
         assertEquals("Player 1", player.getName());
         assertEquals(5, player.getHand().size());
@@ -53,12 +52,12 @@ class PlayerManagementTest {
     @Test
     void mau() {
         //        test if player has only one card, if one card keep playing
-        Player playerWithTwoCard = new Player("Player 1", List.of(new Card(Suit.HEARTS, Rank.ACE), new Card(Suit.SPADES, Rank.KING)));
+        Player playerWithTwoCard = new Player("Player 1", List.of(cardService.createCard(Suit.HEARTS, Rank.ACE), new Card(Suit.SPADES, Rank.KING)));
         playerService.mau(playerWithTwoCard);
         assertTrue(playerWithTwoCard.isSaidMau());
         assertEquals(2, playerWithTwoCard.getHand().size());
 
-        Player playerWithMultipleCards = new Player("Player 1", List.of(new Card(Suit.HEARTS, Rank.ACE), new Card(Suit.SPADES, Rank.KING), new Card(Suit.SPADES, Rank.JACK)));
+        Player playerWithMultipleCards = new Player("Player 1", List.of(cardService.createCard(Suit.HEARTS, Rank.ACE), cardService.createCard(Suit.SPADES, Rank.KING), cardService.createCard(Suit.SPADES, Rank.JACK)));
         playerService.mau(playerWithMultipleCards);
         assertFalse(playerWithMultipleCards.isSaidMau(), "Player should not be able to say Mau with more than two card.");
         assertEquals(3, playerWithMultipleCards.getHand().size());
@@ -70,24 +69,24 @@ class PlayerManagementTest {
     @Test
     void sortPlayersCards() {
         List<Card> hand = new ArrayList<>();
-        hand.add(new Card(Suit.SPADES, Rank.TEN));
-        hand.add(new Card(Suit.HEARTS, Rank.SEVEN));
-        hand.add(new Card(Suit.CLUBS, Rank.ACE));
-        hand.add(new Card(Suit.SPADES, Rank.SEVEN));
-        hand.add(new Card(Suit.HEARTS, Rank.KING));
-        hand.add(new Card(Suit.DIAMONDS, Rank.KING));
+        hand.add(cardService.createCard(Suit.SPADES, Rank.TEN));
+        hand.add(cardService.createCard(Suit.HEARTS, Rank.SEVEN));
+        hand.add(cardService.createCard(Suit.CLUBS, Rank.ACE));
+        hand.add(cardService.createCard(Suit.SPADES, Rank.SEVEN));
+        hand.add(cardService.createCard(Suit.HEARTS, Rank.KING));
+        hand.add(cardService.createCard(Suit.DIAMONDS, Rank.KING));
 
         Player player = new Player("test", hand);
         playerService.sortPlayersCards(player);
 
         List<Card> sortedHand = player.getHand();
 
-        assertEquals(new Card(Suit.CLUBS, Rank.ACE), sortedHand.get(0));
-        assertEquals(new Card(Suit.DIAMONDS, Rank.KING), sortedHand.get(1));
-        assertEquals(new Card(Suit.HEARTS, Rank.SEVEN), sortedHand.get(2));
-        assertEquals(new Card(Suit.HEARTS, Rank.KING), sortedHand.get(3));
-        assertEquals(new Card(Suit.SPADES, Rank.SEVEN), sortedHand.get(4));
-        assertEquals(new Card(Suit.SPADES, Rank.TEN), sortedHand.get(5));
+        assertEquals(cardService.createCard(Suit.CLUBS, Rank.ACE), sortedHand.get(0));
+        assertEquals(cardService.createCard(Suit.DIAMONDS, Rank.KING), sortedHand.get(1));
+        assertEquals(cardService.createCard(Suit.HEARTS, Rank.SEVEN), sortedHand.get(2));
+        assertEquals(cardService.createCard(Suit.HEARTS, Rank.KING), sortedHand.get(3));
+        assertEquals(cardService.createCard(Suit.SPADES, Rank.SEVEN), sortedHand.get(4));
+        assertEquals(cardService.createCard(Suit.SPADES, Rank.TEN), sortedHand.get(5));
     }
 //    /**
 //     * Tests the surrender operation for a player.
