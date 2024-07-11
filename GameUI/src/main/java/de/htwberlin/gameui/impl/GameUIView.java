@@ -75,8 +75,8 @@ public class GameUIView {
     }
 
     public String promptCardChoice() {
-        System.out.println( CYAN + "Enter the index of the card you want to play, or 'draw' to draw a card:");
-        System.out.println("Enter 'mau' before playing your card if you will have one card left!" + RESET);
+        System.out.println( CYAN + "Enter the index of the card you want to play, or 'd' to draw a card:");
+        System.out.println("Enter 'm' (mau) before playing your card if you will have one card left!" + RESET);
         return scanner.next();
     }
 
@@ -85,7 +85,7 @@ public class GameUIView {
     }
 
     public void showInvalidInputMessage() {
-        System.out.println(RED + "Invalid input. Please enter a valid card index or 'draw'." + RESET);
+        System.out.println(RED + "Invalid input. Please enter a valid card index or 'd' (draw)." + RESET);
     }
 
     public void showPlayedCard(Player currentPlayer, Card playedCard) {

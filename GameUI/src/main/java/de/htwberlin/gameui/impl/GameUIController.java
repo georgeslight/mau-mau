@@ -138,15 +138,15 @@ public class GameUIController implements GameUIInterface {
                 return input;
             }
 
-            // Handle "mau" input
-            if (input.equalsIgnoreCase("mau")) {
+            // Handle "m" input
+            if (input.equalsIgnoreCase("m")) {
                 player.setSaidMau(true);
                 view.showMauMessage(player);
                 // Continue to prompt for another input
                 input = view.promptCardChoice();
             }
 
-            if (input.equalsIgnoreCase("draw")) {
+            if (input.equalsIgnoreCase("d")) {
                 return input;
             }
 
