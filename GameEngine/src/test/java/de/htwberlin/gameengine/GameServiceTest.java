@@ -60,11 +60,12 @@ class GameServiceTest {
         });
 
         // Define the behavior of the playerService mock to return valid players
-        when(playerManagerInterface.createPlayer(anyString(), anyList(), false)).thenAnswer(invocation -> {
+        when(playerManagerInterface.createPlayer(anyString(), anyList(), anyBoolean())).thenAnswer(invocation -> {
             String name = invocation.getArgument(0);
             List<Card> hand = invocation.getArgument(1);
             return new Player(name, hand, false);
         });
+
 
         int playersCount = 4;
         GameState gameState = gameService.initializeGame(playerName, playersCount);
@@ -72,7 +73,7 @@ class GameServiceTest {
         // Verify interactions with the mocks
         verify(cardManagerInterface).createDeck();
         verify(cardManagerInterface).shuffle(deck);
-        verify(playerManagerInterface, times(playersCount)).createPlayer(anyString(), anyList(), false);
+        verify(playerManagerInterface, times(playersCount)).createPlayer(anyString(), anyList(), anyBoolean());
 
         gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
         assertEquals(32 - (playersCount * 5) - 1, gameState.getDeck().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card

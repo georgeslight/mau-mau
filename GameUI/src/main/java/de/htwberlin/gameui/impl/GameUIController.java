@@ -1,6 +1,7 @@
 package de.htwberlin.gameui.impl;
 
 import de.htwberlin.gameui.api.GameUIInterface;
+import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
 import de.htwberlin.cardsmanagement.api.enums.Rank;
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
@@ -34,9 +35,6 @@ public class GameUIController implements GameUIInterface {
         this.gameService = gameManagerInterface;
     }
 
-    public GameUIController() {
-    }
-
     @Override
     public void run() {
         LOGGER.info("Game started");
@@ -45,6 +43,11 @@ public class GameUIController implements GameUIInterface {
         while (isRunning) {
             Player currentPlayer = gameState.getPlayers().get(gameState.getCurrentPlayerIndex());
             LOGGER.debug("Current player: {}", currentPlayer.getName());
+
+            if (currentPlayer.isVirtual()) {
+                gameService.nextPlayer(gameState);
+                continue;
+            }
 
             playerService.sortPlayersCards(currentPlayer);
             view.showCurrentPlayerInfo(currentPlayer);
