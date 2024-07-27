@@ -16,8 +16,8 @@ public class PlayerService implements PlayerManagerInterface {
     private static final Logger LOGGER = LogManager.getLogger(PlayerService.class);
 
     @Override
-    public Player createPlayer(String name, List<Card> hand) {
-        return new Player(name, hand);
+    public Player createPlayer(String name, List<Card> hand, boolean isVirtual) {
+        return new Player(name, hand, isVirtual);
     }
 
     @Override

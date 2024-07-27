@@ -2,6 +2,7 @@ package de.htwberlin.gameengine.impl;
 
 import de.htwberlin.cardsmanagement.api.service.CardManagerInterface;
 import de.htwberlin.gameengine.api.service.GameManagerInterface;
+import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.playermanagement.api.model.Player;
@@ -27,12 +28,15 @@ public class GameService implements GameManagerInterface {
     private PlayerManagerInterface playerManagerInterface;
     private CardManagerInterface cardManagerInterface;
     private RuleEngineInterface ruleEngineInterface;
+    private VirtualPlayerInterface virtualPlayerInterface;
 
     @Autowired
-    public GameService(PlayerManagerInterface playerManagerInterface, CardManagerInterface cardManagerInterface, RuleEngineInterface ruleEngineInterface) {
+    public GameService(PlayerManagerInterface playerManagerInterface, CardManagerInterface cardManagerInterface, RuleEngineInterface ruleEngineInterface, VirtualPlayerInterface virtualPlayerInterface) {
         this.playerManagerInterface = playerManagerInterface;
         this.cardManagerInterface = cardManagerInterface;
         this.ruleEngineInterface = ruleEngineInterface;
+        this.virtualPlayerInterface = virtualPlayerInterface;
+
     }
 
     public GameService() {
@@ -47,15 +51,15 @@ public class GameService implements GameManagerInterface {
         List<Card> firstPlayerHand = IntStream.range(0, 5)
                 .mapToObj(i -> deck.remove(deck.size() - 1))
                 .collect(Collectors.toList());
-        Player firstPlayer = playerManagerInterface.createPlayer(playerName, firstPlayerHand);
+        Player firstPlayer = playerManagerInterface.createPlayer(playerName, firstPlayerHand, false);
 
-        // Create remaining players with default names
+        // Create remaining players with default names, including virtual players
         List<Player> players = IntStream.range(1, numberOfPlayers)
                 .mapToObj(i -> {
                     List<Card> hand = IntStream.range(0, 5)
                             .mapToObj(j -> deck.remove(deck.size() - 1))
                             .collect(Collectors.toList());
-                    return playerManagerInterface.createPlayer("Player " + (i + 1), hand);
+                    return playerManagerInterface.createPlayer("Player " + (i + 1), hand, true);
                 })
                 .collect(Collectors.toList());
 
@@ -66,11 +70,8 @@ public class GameService implements GameManagerInterface {
         game.setDiscardPile(discardPile);
         game.setRules(new Rules());
         game.setGameRunning(true);
-
         game.setDeck(deck);
-
         game.setCurrentPlayerIndex(0);
-//        game.setNextPlayerIndex(1);
 
         return game;
     }
@@ -79,7 +80,14 @@ public class GameService implements GameManagerInterface {
     public Player nextPlayer(GameState gameState) {
         int nextPlayerIndex = ruleEngineInterface.calculateNextPlayerIndex(gameState.getCurrentPlayerIndex(), gameState.getPlayers().size(), gameState.getRules());
         gameState.setCurrentPlayerIndex(nextPlayerIndex);
-        return gameState.getPlayers().get(nextPlayerIndex);
+
+        Player nextPlayer = gameState.getPlayers().get(nextPlayerIndex);
+        if (nextPlayer.isVirtual()) {
+            virtualPlayerInterface.makeMove();
+            //todo: implement virtual player move
+        }
+
+        return nextPlayer;
     }
 
     @Override

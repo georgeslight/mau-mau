@@ -11,7 +11,7 @@ public interface PlayerManagerInterface {
      * Creates a player and adds them to the game.
      * @return new Player
      */
-    Player createPlayer(String name, List<Card> hand);
+    Player createPlayer(String name, List<Card> hand, boolean isVirtual);
 
     /**
      * Sort cards in the player's hand to optimize game experience.
