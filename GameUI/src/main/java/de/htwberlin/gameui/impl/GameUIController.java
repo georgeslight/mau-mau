@@ -5,6 +5,7 @@ import de.htwberlin.cardsmanagement.api.enums.Rank;
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
+import de.htwberlin.persistence.repo.GameRepository;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.gameengine.api.service.GameManagerInterface;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
@@ -25,13 +26,15 @@ public class GameUIController implements GameUIInterface {
     private RuleEngineInterface ruleService;
     private PlayerManagerInterface playerService;
     private GameUIView view;
+    private GameRepository gameRepository;
 
     @Autowired
-    public GameUIController(GameManagerInterface gameManagerInterface, PlayerManagerInterface playerManagerInterface, RuleEngineInterface ruleService, GameUIView view) {
+    public GameUIController(GameManagerInterface gameManagerInterface, PlayerManagerInterface playerManagerInterface, RuleEngineInterface ruleService, GameUIView view, GameRepository gameRepository) {
         this.view = view;
         this.playerService = playerManagerInterface;
         this.ruleService = ruleService;
         this.gameService = gameManagerInterface;
+        this.gameRepository = gameRepository;
     }
 
     public GameUIController() {
@@ -41,6 +44,8 @@ public class GameUIController implements GameUIInterface {
     public void run() {
         LOGGER.info("Game started");
         GameState gameState = this.init();
+        // Save initialized Game
+        gameRepository.saveGame(gameState);
         boolean isRunning = true;
         while (isRunning) {
             Player currentPlayer = gameState.getPlayers().get(gameState.getCurrentPlayerIndex());
@@ -68,6 +73,8 @@ public class GameUIController implements GameUIInterface {
                 LOGGER.info("Game ended. Winner: {}", winner.getName());
                 view.showEndGame(gameState, winner);
                 isRunning = false;
+//                Save end of Game
+                gameRepository.saveGame(gameState); // not working with @Transactional updating automatically
                 continue;
             }
 
@@ -107,14 +114,15 @@ public class GameUIController implements GameUIInterface {
                     gameService.endRound(gameState);
                     view.showWinner(currentPlayer);
                     view.showRankingPoints(gameState);
-                } else {
+                } else {  // If player has no cards but hasn't said mau, draws cards
                     LOGGER.warn("Player {} failed to say 'mau'", currentPlayer.getName());
                     view.showMauFailureMessage(currentPlayer);
                     this.drawCards(2, gameState, currentPlayer);
                 }
             }
-            // If player has no cards but hasn't said mau, draws cards
             gameService.nextPlayer(gameState);
+            // save game after Player turn
+            gameRepository.saveGame(gameState); // not working with @Transactional updating automatically
             LOGGER.debug("Next player: {}", gameState.getPlayers().get(gameState.getCurrentPlayerIndex()).getName());
         }
         LOGGER.info("Game ended");
@@ -144,6 +152,7 @@ public class GameUIController implements GameUIInterface {
     }
 
     private String getPlayerInput(Player player, Card topCard, GameState gameState) {
+//        todo: while (true)
         while (true) {
             String input = view.promptCardChoice();
             LOGGER.debug("Player input: {}", input);
