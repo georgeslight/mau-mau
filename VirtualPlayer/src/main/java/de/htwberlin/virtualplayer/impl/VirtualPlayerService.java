@@ -1,8 +1,11 @@
 package de.htwberlin.virtualplayer.impl;
 
+import de.htwberlin.cardsmanagement.api.enums.Rank;
+import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
-import de.htwberlin.cardsmanagement.impl.CardComparator;
 import de.htwberlin.playermanagement.api.model.Player;
+import de.htwberlin.rulesmanagement.api.model.Rules;
+import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
 import de.htwberlin.rulesmanagement.impl.RuleService;
 import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
 import org.apache.logging.log4j.LogManager;
@@ -16,32 +19,33 @@ import java.util.Random;
 public class VirtualPlayerService implements VirtualPlayerInterface {
 
     private static final Logger LOGGER = LogManager.getLogger(VirtualPlayerService.class);
-
-
-    @Override
-    public void makeMove() {
-
-        LOGGER.info("Virtual player makes a move");
-    }
+    private final Random random = new Random();
 
     @Override
-    public Card decideCardToPlay(Player player, Card topCard, RuleService ruleService) {
+    public Card decideCardToPlay(Player player, Card topCard, RuleEngineInterface ruleService) {
+        List<Card> hand = player.getHand();
+        for (Card card : hand) {
+            if (ruleService.isValidMove(card, topCard, new Rules())) {
+                return card;
+            }
+        }
         return null;
     }
 
     @Override
-    public void decideSuit(Player player, RuleService ruleService) {
-
+    public Suit decideSuit(Player player, RuleEngineInterface ruleService) {
+        Suit[] suits = Suit.values();
+        return suits[random.nextInt(suits.length)];
     }
 
     @Override
-    public void drawCard(Player player) {
-
+    public boolean shouldDrawCard(Player player, Card topCard, RuleEngineInterface ruleService, Rules rules) {
+        Card cardToPlay = decideCardToPlay(player, topCard, ruleService);
+        return cardToPlay == null;
     }
 
     @Override
-    public void sayMau(Player player) {
-
+    public boolean shouldSayMau(Player player) {
+        return player.getHand().size() == 1;
     }
 }
-

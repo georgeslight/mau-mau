@@ -1,14 +1,17 @@
 package de.htwberlin.gameengine.impl;
 
-import de.htwberlin.cardsmanagement.api.service.CardManagerInterface;
-import de.htwberlin.gameengine.api.service.GameManagerInterface;
-import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
+import de.htwberlin.cardsmanagement.api.enums.Rank;
+import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.api.service.CardManagerInterface;
 import de.htwberlin.gameengine.api.model.GameState;
+import de.htwberlin.gameengine.api.service.GameManagerInterface;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
 import de.htwberlin.rulesmanagement.api.model.Rules;
 import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
+import de.htwberlin.rulesmanagement.impl.RuleService;
+import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +39,6 @@ public class GameService implements GameManagerInterface {
         this.cardManagerInterface = cardManagerInterface;
         this.ruleEngineInterface = ruleEngineInterface;
         this.virtualPlayerInterface = virtualPlayerInterface;
-
     }
 
     public GameService() {
@@ -83,16 +85,59 @@ public class GameService implements GameManagerInterface {
 
         Player nextPlayer = gameState.getPlayers().get(nextPlayerIndex);
         if (nextPlayer.isVirtual()) {
-            virtualPlayerInterface.makeMove();
-            //todo: implement virtual player move
+            handleVirtualPlayerTurn(nextPlayer, gameState);
         }
 
         return nextPlayer;
     }
 
+    private void handleVirtualPlayerTurn(Player currentPlayer, GameState gameState) {
+        LOGGER.info("Virtual player {} makes a move", currentPlayer.getName());
+        Card topCard = gameState.getDiscardPile().get(gameState.getDiscardPile().size() - 1);
+        Rules rules = gameState.getRules();
+
+        // Decide whether to say "Mau"
+        if (virtualPlayerInterface.shouldSayMau(currentPlayer)) {
+            currentPlayer.setSaidMau(true);
+            // Inform UI about the Mau declaration
+        }
+
+        // Decide which card to play
+        Card cardToPlay = virtualPlayerInterface.decideCardToPlay(currentPlayer, topCard,  ruleEngineInterface);
+        if (cardToPlay != null) {
+            playCard(currentPlayer, cardToPlay, gameState);
+            // Inform UI about the played card
+
+            if (cardToPlay.getRank().equals(Rank.JACK)) {
+                Suit wishedSuit = virtualPlayerInterface.decideSuit(currentPlayer, ruleEngineInterface);
+                ruleEngineInterface.applyJackSpecialEffect(cardToPlay, wishedSuit, rules);
+                // Inform UI about the wished suit
+                LOGGER.info("Player wished suit: {}", wishedSuit);
+            }
+        } else {
+            drawCard(gameState, currentPlayer);
+        }
+
+        if (checkEmptyHand(currentPlayer)) {
+            if (currentPlayer.isSaidMau()) {
+                LOGGER.info("Player {} has won the round", currentPlayer.getName());
+                endRound(gameState);
+                // Inform UI about the round winner and update ranking points
+            } else {
+                LOGGER.warn("Player {} failed to say 'mau'", currentPlayer.getName());
+                // Inform UI about the Mau failure
+                drawCard(gameState, currentPlayer);
+                drawCard(gameState, currentPlayer);
+            }
+        }
+
+        nextPlayer(gameState);
+        LOGGER.debug("Next player: {}", gameState.getPlayers().get(gameState.getCurrentPlayerIndex()).getName());
+    }
+
     @Override
     public void calcRankingPoints(GameState game) {
-        game.getPlayers().forEach( player -> {
+        game.getPlayers().forEach(player -> {
             // Updated rankingPoints with the sum of all scores
             player.setRankingPoints(player.getScore().stream().reduce(0, Integer::sum));
         });
@@ -106,7 +151,7 @@ public class GameService implements GameManagerInterface {
 
     @Override
     public void endRound(GameState game) {
-        game.getPlayers().forEach( player -> {
+        game.getPlayers().forEach(player -> {
             // Updated score
             player.getScore().add(ruleEngineInterface.calculateScore(player.getHand()));
             // Updated rankingPoints with the sum of all scores
@@ -179,6 +224,4 @@ public class GameService implements GameManagerInterface {
     public boolean checkEmptyHand(Player player) {
         return player.getHand().isEmpty();
     }
-
 }
-

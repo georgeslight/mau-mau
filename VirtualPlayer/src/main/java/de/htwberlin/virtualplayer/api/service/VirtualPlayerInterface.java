@@ -1,42 +1,39 @@
 package de.htwberlin.virtualplayer.api.service;
 
+import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.playermanagement.api.model.Player;
+import de.htwberlin.rulesmanagement.api.model.Rules;
+import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
 import de.htwberlin.rulesmanagement.impl.RuleService;
-
-import java.util.List;
 
 public interface VirtualPlayerInterface {
 
-
-    void makeMove();
-
     /**
-     * choose a card to play
+     * Choose a card to play.
      * @param player
      * @param topCard
      * @param ruleService
      * @return the card to play
      */
-    Card decideCardToPlay(Player player, Card topCard, RuleService ruleService);
+    Card decideCardToPlay(Player player, Card topCard, RuleEngineInterface ruleService);
 
     /**
-     * decide a suit to play
+     * Decide a suit to play.
      * @param player
      * @param ruleService
      */
-    void decideSuit(Player player, RuleService ruleService);
+    Suit decideSuit(Player player, RuleEngineInterface ruleService);
 
     /**
-     * decide weither to draw a card from the deck or not
+     * Decide whether to draw a card from the deck or not.
      * @param player
      */
-    void drawCard(Player player);
+    boolean shouldDrawCard(Player player, Card topCard, RuleEngineInterface ruleService, Rules rules);
 
     /**
-     * decide weither to say "Mau" or not
+     * Decide whether to say "Mau" or not.
      * @param player
      */
-    void sayMau(Player player);
-
+    boolean shouldSayMau(Player player);
 }

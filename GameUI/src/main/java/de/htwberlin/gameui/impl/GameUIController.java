@@ -22,13 +22,14 @@ public class GameUIController implements GameUIInterface {
 
     private static final Logger LOGGER = LogManager.getLogger(GameUIController.class);
 
-    private GameManagerInterface gameService;
-    private RuleEngineInterface ruleService;
-    private PlayerManagerInterface playerService;
-    private GameUIView view;
+    private final GameManagerInterface gameService;
+    private final RuleEngineInterface ruleService;
+    private final PlayerManagerInterface playerService;
+    private final GameUIView view;
 
     @Autowired
-    public GameUIController(GameManagerInterface gameManagerInterface, PlayerManagerInterface playerManagerInterface, RuleEngineInterface ruleService, GameUIView view) {
+    public GameUIController(GameManagerInterface gameManagerInterface, PlayerManagerInterface playerManagerInterface,
+                            RuleEngineInterface ruleService, GameUIView view) {
         this.view = view;
         this.playerService = playerManagerInterface;
         this.ruleService = ruleService;
@@ -44,83 +45,78 @@ public class GameUIController implements GameUIInterface {
             Player currentPlayer = gameState.getPlayers().get(gameState.getCurrentPlayerIndex());
             LOGGER.debug("Current player: {}", currentPlayer.getName());
 
-            if (currentPlayer.isVirtual()) {
-                gameService.nextPlayer(gameState);
-                continue;
+            if (!currentPlayer.isVirtual()) {
+                handleHumanPlayerTurn(currentPlayer, gameState);
             }
 
-            playerService.sortPlayersCards(currentPlayer);
-            view.showCurrentPlayerInfo(currentPlayer);
-
-            Card topCard = gameState.getDiscardPile().get(gameState.getDiscardPile().size() - 1);
-            LOGGER.debug("Top card on the discard pile: {}", topCard);
-            view.showTopCard(topCard);
-
-            // If 7 was played
-            int accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
-            if (accumulatedDrawCount > 0) {
-                LOGGER.info("Accumulated draw count: {}", accumulatedDrawCount);
-                view.showAccumulatedDrawCount(accumulatedDrawCount);
-            }
-
-            String input = this.getPlayerInput(currentPlayer, topCard, gameState);
-
-            // ends game
             if (!gameState.isGameRunning()) {
                 Player winner = gameService.getWinner(gameState);
                 LOGGER.info("Game ended. Winner: {}", winner.getName());
                 view.showEndGame(gameState, winner);
                 isRunning = false;
-                continue;
             }
-
-            Card playedCard = null;
-            if (isNumeric(input)) {
-                playedCard = currentPlayer.getHand().get(Integer.parseInt(input) - 1);
-                LOGGER.debug("Played card: {}", playedCard);
-            }
-
-            if (playedCard != null) {
-                gameService.playCard(currentPlayer, playedCard, gameState);
-                view.showPlayedCard(currentPlayer, playedCard);
-                // Set special card effects
-                ruleService.applySpecialCardsEffect(playedCard, gameState.getRules());
-
-                // Jack played
-                if (playedCard.getRank().equals(Rank.JACK)) {
-                    Suit wishedSuit = view.getPlayerWishedSuit(currentPlayer);
-                    ruleService.applyJackSpecialEffect(playedCard, wishedSuit, gameState.getRules());
-                    view.showWishedSuit(currentPlayer, wishedSuit);
-                    LOGGER.info("Player wished suit: {}", wishedSuit);
-                }
-            } else {
-                // If player chooses to draw cards
-                LOGGER.info("Player chose to draw cards");
-                this.drawCards(accumulatedDrawCount, gameState, currentPlayer);
-                // if player saidMau last round and didn't win, mau is reset
-                if (currentPlayer.isSaidMau()) {
-                    currentPlayer.setSaidMau(false);
-                    LOGGER.debug("Player {} reset 'mau'", currentPlayer.getName());
-                }
-            }
-
-            if (gameService.checkEmptyHand(currentPlayer)) {
-                if (currentPlayer.isSaidMau()) {
-                    LOGGER.info("Player {} has won the round", currentPlayer.getName());
-                    gameService.endRound(gameState);
-                    view.showWinner(currentPlayer);
-                    view.showRankingPoints(gameState);
-                } else {
-                    LOGGER.warn("Player {} failed to say 'mau'", currentPlayer.getName());
-                    view.showMauFailureMessage(currentPlayer);
-                    this.drawCards(2, gameState, currentPlayer);
-                }
-            }
-            // If player has no cards but hasn't said mau, draws cards
-            gameService.nextPlayer(gameState);
-            LOGGER.debug("Next player: {}", gameState.getPlayers().get(gameState.getCurrentPlayerIndex()).getName());
         }
         LOGGER.info("Game ended");
+    }
+
+    private void handleHumanPlayerTurn(Player currentPlayer, GameState gameState) {
+        playerService.sortPlayersCards(currentPlayer);
+        view.showCurrentPlayerInfo(currentPlayer);
+
+        Card topCard = gameState.getDiscardPile().get(gameState.getDiscardPile().size() - 1);
+        LOGGER.debug("Top card on the discard pile: {}", topCard);
+        view.showTopCard(topCard);
+
+        // If 7 was played
+        int accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
+        if (accumulatedDrawCount > 0) {
+            LOGGER.info("Accumulated draw count: {}", accumulatedDrawCount);
+            view.showAccumulatedDrawCount(accumulatedDrawCount);
+        }
+
+        String input = this.getPlayerInput(currentPlayer, topCard, gameState);
+
+        Card playedCard = null;
+        if (isNumeric(input)) {
+            playedCard = currentPlayer.getHand().get(Integer.parseInt(input) - 1);
+            LOGGER.debug("Played card: {}", playedCard);
+        }
+
+        if (playedCard != null) {
+            gameService.playCard(currentPlayer, playedCard, gameState);
+            view.showPlayedCard(currentPlayer, playedCard);
+            ruleService.applySpecialCardsEffect(playedCard, gameState.getRules());
+
+            if (playedCard.getRank().equals(Rank.JACK)) {
+                Suit wishedSuit = view.getPlayerWishedSuit(currentPlayer);
+                ruleService.applyJackSpecialEffect(playedCard, wishedSuit, gameState.getRules());
+                view.showWishedSuit(currentPlayer, wishedSuit);
+                LOGGER.info("Player wished suit: {}", wishedSuit);
+            }
+        } else {
+            LOGGER.info("Player chose to draw cards");
+            this.drawCards(accumulatedDrawCount, gameState, currentPlayer);
+            if (currentPlayer.isSaidMau()) {
+                currentPlayer.setSaidMau(false);
+                LOGGER.debug("Player {} reset 'mau'", currentPlayer.getName());
+            }
+        }
+
+        if (gameService.checkEmptyHand(currentPlayer)) {
+            if (currentPlayer.isSaidMau()) {
+                LOGGER.info("Player {} has won the round", currentPlayer.getName());
+                gameService.endRound(gameState);
+                view.showWinner(currentPlayer);
+                view.showRankingPoints(gameState);
+            } else {
+                LOGGER.warn("Player {} failed to say 'mau'", currentPlayer.getName());
+                view.showMauFailureMessage(currentPlayer);
+                this.drawCards(2, gameState, currentPlayer);
+            }
+        }
+
+        gameService.nextPlayer(gameState);
+        LOGGER.debug("Next player: {}", gameState.getPlayers().get(gameState.getCurrentPlayerIndex()).getName());
     }
 
     private boolean isNumeric(String str) {
@@ -163,7 +159,6 @@ public class GameUIController implements GameUIInterface {
                 player.setSaidMau(true);
                 view.showMauMessage(player);
                 LOGGER.info("Player {} said 'mau'", player.getName());
-                // Continue to prompt for another input
                 continue;
             }
 
@@ -172,7 +167,6 @@ public class GameUIController implements GameUIInterface {
             }
 
             try {
-                // Added an explicit check for valid card index range
                 int cardIndex = Integer.parseInt(input) - 1;
                 if (cardIndex < 0 || cardIndex >= player.getHand().size()) {
                     throw new IndexOutOfBoundsException();
@@ -183,11 +177,8 @@ public class GameUIController implements GameUIInterface {
                     view.showInvalidMoveMessage();
                     LOGGER.warn("Invalid move: card {} on top card {}", player.getHand().get(cardIndex), topCard);
                 }
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException | IndexOutOfBoundsException e) {
                 LOGGER.warn("Invalid input: {}", input);
-                view.showInvalidInputMessage();
-            } catch (IndexOutOfBoundsException e) {
-                LOGGER.warn("Invalid card index: {}", input);
                 view.showInvalidInputMessage();
             }
         }
@@ -200,7 +191,6 @@ public class GameUIController implements GameUIInterface {
                     view.showDrawnCard(currentPlayer, drawnCard);
                     LOGGER.debug("Player {} drew card {}", currentPlayer.getName(), drawnCard);
                 });
-        // reset state
         gameState.getRules().setCardsTObeDrawn(0);
         LOGGER.info("Reset accumulated draw count to 0");
     }
