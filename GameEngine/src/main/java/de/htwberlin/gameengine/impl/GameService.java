@@ -92,7 +92,7 @@ public class GameService implements GameManagerInterface {
     }
 
     private void handleVirtualPlayerTurn(Player currentPlayer, GameState gameState) {
-        LOGGER.info("Virtual player {} makes a move", currentPlayer.getName());
+        LOGGER.debug("Virtual player {} turn", currentPlayer.getName());
         Card topCard = gameState.getDiscardPile().get(gameState.getDiscardPile().size() - 1);
         Rules rules = gameState.getRules();
 
@@ -107,7 +107,7 @@ public class GameService implements GameManagerInterface {
         if (cardToPlay != null) {
             playCard(currentPlayer, cardToPlay, gameState);
             // Inform UI about the played card
-
+            System.out.println("Virtual player " + currentPlayer.getName() + " played: " + cardToPlay);
             if (cardToPlay.getRank().equals(Rank.JACK)) {
                 Suit wishedSuit = virtualPlayerInterface.decideSuit(currentPlayer, ruleEngineInterface);
                 ruleEngineInterface.applyJackSpecialEffect(cardToPlay, wishedSuit, rules);
