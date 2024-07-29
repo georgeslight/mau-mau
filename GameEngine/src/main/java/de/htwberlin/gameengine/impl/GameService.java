@@ -85,58 +85,10 @@ public class GameService implements GameManagerInterface {
     public Player nextPlayer(GameState gameState) {
         int nextPlayerIndex = ruleEngineInterface.calculateNextPlayerIndex(gameState.getCurrentPlayerIndex(), gameState.getPlayers().size(), gameState.getRules());
         gameState.setCurrentPlayerIndex(nextPlayerIndex);
-
-        Player nextPlayer = gameState.getPlayers().get(nextPlayerIndex);
-        if (nextPlayer.isVirtual()) {
-            handleVirtualPlayerTurn(nextPlayer, gameState);
-        }
-
-        return nextPlayer;
+        return  gameState.getPlayers().get(nextPlayerIndex);
     }
 
-    private void handleVirtualPlayerTurn(Player currentPlayer, GameState gameState) {
-        LOGGER.debug("Virtual player {} turn", currentPlayer.getName());
-        Card topCard = gameState.getDiscardPile().get(gameState.getDiscardPile().size() - 1);
-        Rules rules = gameState.getRules();
 
-        // Decide whether to say "Mau"
-        if (virtualPlayerInterface.shouldSayMau(currentPlayer)) {
-            currentPlayer.setSaidMau(true);
-            // Inform UI about the Mau declaration
-        }
-
-        // Decide which card to play
-        Card cardToPlay = virtualPlayerInterface.decideCardToPlay(currentPlayer, topCard,  ruleEngineInterface);
-        if (cardToPlay != null) {
-            playCard(currentPlayer, cardToPlay, gameState);
-            // Inform UI about the played card
-            System.out.println("Virtual player " + currentPlayer.getName() + " played: " + cardToPlay);
-            if (cardToPlay.getRank().equals(Rank.JACK)) {
-                Suit wishedSuit = virtualPlayerInterface.decideSuit(currentPlayer, ruleEngineInterface);
-                ruleEngineInterface.applyJackSpecialEffect(cardToPlay, wishedSuit, rules);
-                // Inform UI about the wished suit
-                LOGGER.info("Player wished suit: {}", wishedSuit);
-            }
-        } else {
-            drawCard(gameState, currentPlayer);
-        }
-
-        if (checkEmptyHand(currentPlayer)) {
-            if (currentPlayer.isSaidMau()) {
-                LOGGER.info("Player {} has won the round", currentPlayer.getName());
-                endRound(gameState);
-                // Inform UI about the round winner and update ranking points
-            } else {
-                LOGGER.warn("Player {} failed to say 'mau'", currentPlayer.getName());
-                // Inform UI about the Mau failure
-                drawCard(gameState, currentPlayer);
-                drawCard(gameState, currentPlayer);
-            }
-        }
-
-        nextPlayer(gameState);
-        LOGGER.debug("Next player: {}", gameState.getPlayers().get(gameState.getCurrentPlayerIndex()).getName());
-    }
 
     @Override
     @Transactional

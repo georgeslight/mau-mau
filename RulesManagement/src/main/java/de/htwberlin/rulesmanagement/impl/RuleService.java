@@ -87,11 +87,11 @@ public class RuleService implements RuleEngineInterface {
     public void applySpecialCardsEffect(Card card,Rules rules) {
         switch (card.getRank()) {
             case SEVEN:
-                rules.setCardsTObeDrawn(rules.getCardsToBeDrawn() + 2);
+                rules.setCardsToBeDrawn(rules.getCardsToBeDrawn() + 2);
                 break;
             case EIGHT:
                 rules.setSkipNextPlayerTurn(true);
-                rules.setCardsTObeDrawn(0);
+                rules.setCardsToBeDrawn(0);
                 break;
             case ACE:
                 rules.setCanPlayAgain(true);

@@ -15,7 +15,7 @@ public class Rules {
     private boolean skipNextPlayerTurn;
     private boolean canPlayAgain;
 
-    public void setCardsTObeDrawn(Integer cardsTObeDrawn) {
+    public void setCardsToBeDrawn(Integer cardsTObeDrawn) {
         this.cardsToBeDrawn = cardsTObeDrawn;
     }
 
