@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -45,6 +46,7 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
+    @Transactional
     public GameState initializeGame(String playerName, int numberOfPlayers) {
         GameState game = new GameState();
         List<Card> deck = cardManagerInterface.shuffle(cardManagerInterface.createDeck());
@@ -79,6 +81,7 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
+    @Transactional
     public Player nextPlayer(GameState gameState) {
         int nextPlayerIndex = ruleEngineInterface.calculateNextPlayerIndex(gameState.getCurrentPlayerIndex(), gameState.getPlayers().size(), gameState.getRules());
         gameState.setCurrentPlayerIndex(nextPlayerIndex);
@@ -136,6 +139,7 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
+    @Transactional
     public void calcRankingPoints(GameState game) {
         game.getPlayers().forEach(player -> {
             // Updated rankingPoints with the sum of all scores
@@ -150,6 +154,7 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
+    @Transactional
     public void endRound(GameState game) {
         game.getPlayers().forEach(player -> {
             // Updated score
@@ -180,6 +185,7 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
+    @Transactional
     public Card drawCard(GameState game, Player player) {
         // Check if deck is empty
         if (game.getDeck().isEmpty()) {
@@ -212,6 +218,7 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
+    @Transactional
     public void playCard(Player player, Card card, GameState gameState) {
         if (player.getHand().remove(card)) {
             gameState.getDiscardPile().add(card);

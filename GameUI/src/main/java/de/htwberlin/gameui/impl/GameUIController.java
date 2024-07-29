@@ -6,6 +6,7 @@ import de.htwberlin.cardsmanagement.api.enums.Rank;
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
+import de.htwberlin.persistence.repo.GameRepository;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.gameengine.api.service.GameManagerInterface;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
@@ -17,29 +18,36 @@ import org.springframework.stereotype.Controller;
 
 import java.util.stream.IntStream;
 
+
 @Controller
 public class GameUIController implements GameUIInterface {
 
     private static final Logger LOGGER = LogManager.getLogger(GameUIController.class);
 
-    private final GameManagerInterface gameService;
-    private final RuleEngineInterface ruleService;
-    private final PlayerManagerInterface playerService;
-    private final GameUIView view;
+    private GameManagerInterface gameService;
+    private RuleEngineInterface ruleService;
+    private PlayerManagerInterface playerService;
+    private GameUIView view;
+    private GameRepository gameRepository;
 
     @Autowired
-    public GameUIController(GameManagerInterface gameManagerInterface, PlayerManagerInterface playerManagerInterface,
-                            RuleEngineInterface ruleService, GameUIView view) {
+    public GameUIController(GameManagerInterface gameManagerInterface, PlayerManagerInterface playerManagerInterface, RuleEngineInterface ruleService, GameUIView view, GameRepository gameRepository) {
         this.view = view;
         this.playerService = playerManagerInterface;
         this.ruleService = ruleService;
         this.gameService = gameManagerInterface;
+        this.gameRepository = gameRepository;
+    }
+
+    public GameUIController() {
     }
 
     @Override
     public void run() {
         LOGGER.info("Game started");
         GameState gameState = this.init();
+        // Save initialized Game
+        gameRepository.saveGame(gameState);
         boolean isRunning = true;
         while (isRunning) {
             Player currentPlayer = gameState.getPlayers().get(gameState.getCurrentPlayerIndex());
@@ -54,6 +62,8 @@ public class GameUIController implements GameUIInterface {
                 LOGGER.info("Game ended. Winner: {}", winner.getName());
                 view.showEndGame(gameState, winner);
                 isRunning = false;
+                //Save end of Game
+                gameRepository.saveGame(gameState); //todo: not working with @Transactional updating automatically
             }
         }
         LOGGER.info("Game ended");
@@ -116,6 +126,8 @@ public class GameUIController implements GameUIInterface {
         }
 
         gameService.nextPlayer(gameState);
+        // save game after Player turn
+        gameRepository.saveGame(gameState); // not working with @Transactional updating automatically
         LOGGER.debug("Next player: {}", gameState.getPlayers().get(gameState.getCurrentPlayerIndex()).getName());
     }
 
@@ -143,6 +155,7 @@ public class GameUIController implements GameUIInterface {
     }
 
     private String getPlayerInput(Player player, Card topCard, GameState gameState) {
+        //        todo: while (true)
         while (true) {
             String input = view.promptCardChoice();
             LOGGER.debug("Player input: {}", input);
@@ -159,6 +172,7 @@ public class GameUIController implements GameUIInterface {
                 player.setSaidMau(true);
                 view.showMauMessage(player);
                 LOGGER.info("Player {} said 'mau'", player.getName());
+                // Continue to prompt for another input
                 continue;
             }
 
@@ -167,6 +181,7 @@ public class GameUIController implements GameUIInterface {
             }
 
             try {
+                // Added an explicit check for valid card index range
                 int cardIndex = Integer.parseInt(input) - 1;
                 if (cardIndex < 0 || cardIndex >= player.getHand().size()) {
                     throw new IndexOutOfBoundsException();
@@ -191,6 +206,7 @@ public class GameUIController implements GameUIInterface {
                     view.showDrawnCard(currentPlayer, drawnCard);
                     LOGGER.debug("Player {} drew card {}", currentPlayer.getName(), drawnCard);
                 });
+        // reset state
         gameState.getRules().setCardsTObeDrawn(0);
         LOGGER.info("Reset accumulated draw count to 0");
     }

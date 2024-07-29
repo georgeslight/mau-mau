@@ -4,63 +4,75 @@ import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.playermanagement.api.model.Player;
 
+/**
+ * Schnittstelle zur Verwaltung des Spielzustands und des Spielablaufs.
+ */
 public interface GameManagerInterface {
 
     /**
-     * Initializes the game with the specified number of players.
-     * Sets up the deck, shuffles it, and distributes cards to each player.
+     * Initialisiert das Spiel mit der angegebenen Anzahl von Spielern.
+     * Bereitet das Kartendeck vor, mischt es und verteilt Karten an jeden Spieler.
      *
-     * @param numberOfPlayers the number of players in the game
-     * @return GameState the state of the game after initialization
+     * @param playerName der Name des Hauptspielers
+     * @param numberOfPlayers die Anzahl der Spieler im Spiel
+     * @return der Spielzustand nach der Initialisierung
      */
     GameState initializeGame(String playerName, int numberOfPlayers);
 
     /**
-     * Moves the game control to the next player in the sequence.
+     * Wechselt die Spielkontrolle zum nächsten Spieler in der Reihenfolge.
+     *
+     * @param gameState der aktuelle Spielzustand
+     * @return der nächste Spieler
      */
     Player nextPlayer(GameState gameState);
 
     /**
-     * Calculates the winner and displays the result
+     * Berechnet die Ranglistenpunkte für jeden Spieler.
      *
-     * @param game the current game state to end
-     * @return the Winner
+     * @param game der aktuelle Spielzustand
      */
     void calcRankingPoints(GameState game);
 
     /**
-     * Calculates the points of the round and start a new one
+     * Beendet die aktuelle Runde und startet eine neue.
      *
-     * @param game the current game state to end
+     * @param game der aktuelle Spielzustand
      */
     void endRound(GameState game);
 
     /**
-     * Handles the action of a player drawing a card from the draw pile.
+     * Handelt das Ziehen einer Karte durch einen Spieler vom Zugstapel.
      *
-     * @param player the index of the player who is drawing a card
+     * @param gameState der aktuelle Spielzustand
+     * @param player der Spieler, der eine Karte zieht
+     * @return die gezogene Karte
      */
     Card drawCard(GameState gameState, Player player);
 
     /**
-     * Allows a player to play a card from their hand onto the discard pile.
+     * Erlaubt einem Spieler, eine Karte aus seiner Hand auf den Ablagestapel zu legen.
      *
-     * @param player the player playing the card
-     * @param card the card to be played
+     * @param player der Spieler, der die Karte spielt
+     * @param card die zu spielende Karte
+     * @param gameState der aktuelle Spielzustand
      */
     void playCard(Player player, Card card, GameState gameState);
 
     /**
-     * Checks if the specified player has won the game.
-     * Handles the penalty for a player who fails to call "Mau" when they have one card left.
-     * @param player to check for winning condition
-     * @return true if the player has won, otherwise false
+     * Überprüft, ob der angegebene Spieler das Spiel gewonnen hat.
+     * Handhabt die Strafe für einen Spieler, der es versäumt, "Mau" zu rufen, wenn er nur noch eine Karte hat.
+     *
+     * @param player der zu überprüfende Spieler
+     * @return true, wenn der Spieler gewonnen hat, andernfalls false
      */
     boolean checkEmptyHand(Player player);
 
     /**
-     * @param gameState
-     * @return player with the highest ranking points
+     * Gibt den Spieler mit den höchsten Ranglistenpunkten zurück.
+     *
+     * @param gameState der aktuelle Spielzustand
+     * @return der Spieler mit den höchsten Punkten
      */
     Player getWinner(GameState gameState);
 }
