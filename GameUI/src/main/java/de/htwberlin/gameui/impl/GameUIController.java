@@ -1,7 +1,6 @@
 package de.htwberlin.gameui.impl;
 
 import de.htwberlin.gameui.api.GameUIInterface;
-import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
 import de.htwberlin.cardsmanagement.api.enums.Rank;
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;

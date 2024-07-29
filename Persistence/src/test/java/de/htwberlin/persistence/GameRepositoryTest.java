@@ -2,7 +2,7 @@ package de.htwberlin.persistence;
 
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
-import de.htwberlin.gameengine.impl.GameService;
+import de.htwberlin.gameengine.api.service.GameManagerInterface;
 import de.htwberlin.persistence.repo.CardRepository;
 import de.htwberlin.persistence.repo.GameRepository;
 import de.htwberlin.persistence.repo.PlayerRepository;
@@ -35,7 +35,7 @@ public class GameRepositoryTest {
     @Autowired
     private RulesRepository rulesRepository;
     @Autowired
-    private GameService gameService;
+    private GameManagerInterface gameService;
 
     @BeforeEach
     public void setUp() {
