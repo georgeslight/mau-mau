@@ -1,6 +1,10 @@
 package de.htwberlin.persistence;
 
+import de.htwberlin.persistence.exception.DataSourceException;
+import de.htwberlin.persistence.exception.EntityManagerFactoryException;
 import jakarta.persistence.EntityManagerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,30 +35,42 @@ import java.util.Properties;
 @ComponentScan(basePackages = "de.htwberlin")
 public class PersistenceJPAConfig {
 
+    private static final Logger LOGGER = LogManager.getLogger(PersistenceJPAConfig.class);
+
     @Autowired
     private Environment env;
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setDataSource(dataSource());
-        factoryBean.setPackagesToScan("de.htwberlin");
+        try{
+            LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+            factoryBean.setDataSource(dataSource());
+            factoryBean.setPackagesToScan("de.htwberlin");
 
-        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        factoryBean.setJpaVendorAdapter(vendorAdapter);
-        factoryBean.setEntityManagerFactoryInterface(EntityManagerFactory.class);
-        factoryBean.setJpaProperties(additionalProperties());
-        return factoryBean;
+            HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+            factoryBean.setJpaVendorAdapter(vendorAdapter);
+            factoryBean.setEntityManagerFactoryInterface(EntityManagerFactory.class);
+            factoryBean.setJpaProperties(additionalProperties());
+            return factoryBean;
+        } catch (Exception e) {
+            LOGGER.error("Failed to configure the EntityManagerFactory: {}", e.getMessage(), e);
+            throw new EntityManagerFactoryException("Configuration error for EntityManagerFactory", e);
+        }
     }
 
     @Bean
     public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(Objects.requireNonNull(env.getProperty("dataSource.setDriverClassName")));
-        dataSource.setUrl(env.getProperty("dataSource.setUrl"));
-        dataSource.setUsername(env.getProperty("dataSource.setUsername"));
-        dataSource.setPassword(env.getProperty("dataSource.setPassword"));
-        return dataSource;
+        try {
+            DriverManagerDataSource dataSource = new DriverManagerDataSource();
+            dataSource.setDriverClassName(Objects.requireNonNull(env.getProperty("dataSource.setDriverClassName")));
+            dataSource.setUrl(env.getProperty("dataSource.setUrl"));
+            dataSource.setUsername(env.getProperty("dataSource.setUsername"));
+            dataSource.setPassword(env.getProperty("dataSource.setPassword"));
+            return dataSource;
+        } catch (Exception e) {
+            LOGGER.error("Failed to configure the DataSource: {}", e.getMessage(), e);
+            throw new DataSourceException("Configuration error for DataSource", e);
+        }
     }
 
     @Bean
