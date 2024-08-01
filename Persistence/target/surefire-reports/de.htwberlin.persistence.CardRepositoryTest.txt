@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: de.htwberlin.persistence.CardRepositoryTest
 -------------------------------------------------------------------------------
-Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.079 s - in de.htwberlin.persistence.CardRepositoryTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.149 s - in de.htwberlin.persistence.CardRepositoryTest
