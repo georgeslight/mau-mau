@@ -9,7 +9,9 @@ import de.htwberlin.persistence.repo.GameRepository;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.gameengine.api.service.GameManagerInterface;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
+import de.htwberlin.rulesmanagement.api.model.Rules;
 import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
+import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,110 +24,150 @@ public class GameUIController implements GameUIInterface {
 
     private static final Logger LOGGER = LogManager.getLogger(GameUIController.class);
 
-    private GameManagerInterface gameService;
-    private RuleEngineInterface ruleService;
-    private PlayerManagerInterface playerService;
-    private GameUIView view;
-    private GameRepository gameRepository;
+    private final GameManagerInterface gameService;
+    private final RuleEngineInterface ruleService;
+    private final PlayerManagerInterface playerService;
+    private final GameUIView view;
+    private final GameRepository gameRepository;
+    private final VirtualPlayerInterface virtualPlayerInterface;
 
     @Autowired
-    public GameUIController(GameManagerInterface gameManagerInterface, PlayerManagerInterface playerManagerInterface, RuleEngineInterface ruleService, GameUIView view, GameRepository gameRepository) {
-        this.view = view;
-        this.playerService = playerManagerInterface;
+    public GameUIController(GameManagerInterface gameService, PlayerManagerInterface playerService,
+                            RuleEngineInterface ruleService, GameUIView view, GameRepository gameRepository,
+                            VirtualPlayerInterface virtualPlayerInterface) {
+        this.gameService = gameService;
+        this.playerService = playerService;
         this.ruleService = ruleService;
-        this.gameService = gameManagerInterface;
+        this.view = view;
         this.gameRepository = gameRepository;
-    }
-
-    public GameUIController() {
+        this.virtualPlayerInterface = virtualPlayerInterface;
     }
 
     @Override
     public void run() {
         LOGGER.info("Game started");
         GameState gameState = this.init();
-        // Save initialized Game
         gameRepository.saveGame(gameState);
         boolean isRunning = true;
+
         while (isRunning) {
             Player currentPlayer = gameState.getPlayers().get(gameState.getCurrentPlayerIndex());
             LOGGER.debug("Current player: {}", currentPlayer.getName());
 
-            playerService.sortPlayersCards(currentPlayer);
-            view.showCurrentPlayerInfo(currentPlayer);
-
-            Card topCard = gameState.getDiscardPile().get(gameState.getDiscardPile().size() - 1);
-            LOGGER.debug("Top card on the discard pile: {}", topCard);
-            view.showTopCard(topCard);
-
-            // If 7 was played
-            int accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
-            if (accumulatedDrawCount > 0) {
-                LOGGER.info("Accumulated draw count: {}", accumulatedDrawCount);
-                view.showAccumulatedDrawCount(accumulatedDrawCount);
+            if (!currentPlayer.isVirtual()) {
+                handleHumanPlayerTurn(currentPlayer, gameState);
+            } else {
+                handleVirtualPlayerTurn(currentPlayer, gameState);
             }
 
-            String input = this.getPlayerInput(currentPlayer, topCard, gameState);
-
-            // ends game
             if (!gameState.isGameRunning()) {
                 Player winner = gameService.getWinner(gameState);
                 LOGGER.info("Game ended. Winner: {}", winner.getName());
                 view.showEndGame(gameState, winner);
                 isRunning = false;
-//                Save end of Game
-                gameRepository.saveGame(gameState); // not working with @Transactional updating automatically
-                continue;
+                gameRepository.saveGame(gameState);
             }
-
-            Card playedCard = null;
-            if (isNumeric(input)) {
-                playedCard = currentPlayer.getHand().get(Integer.parseInt(input) - 1);
-                LOGGER.debug("Played card: {}", playedCard);
-            }
-
-            if (playedCard != null) {
-                gameService.playCard(currentPlayer, playedCard, gameState);
-                view.showPlayedCard(currentPlayer, playedCard);
-                // Set special card effects
-                ruleService.applySpecialCardsEffect(playedCard, gameState.getRules());
-
-                // Jack played
-                if (playedCard.getRank().equals(Rank.JACK)) {
-                    Suit wishedSuit = view.getPlayerWishedSuit(currentPlayer);
-                    ruleService.applyJackSpecialEffect(playedCard, wishedSuit, gameState.getRules());
-                    view.showWishedSuit(currentPlayer, wishedSuit);
-                    LOGGER.info("Player wished suit: {}", wishedSuit);
-                }
-            } else {
-                // If player chooses to draw cards
-                LOGGER.info("Player chose to draw cards");
-                this.drawCards(accumulatedDrawCount, gameState, currentPlayer);
-                // if player saidMau last round and didn't win, mau is reset
-                if (currentPlayer.isSaidMau()) {
-                    currentPlayer.setSaidMau(false);
-                    LOGGER.debug("Player {} reset 'mau'", currentPlayer.getName());
-                }
-            }
-
-            if (gameService.checkEmptyHand(currentPlayer)) {
-                if (currentPlayer.isSaidMau()) {
-                    LOGGER.info("Player {} has won the round", currentPlayer.getName());
-                    gameService.endRound(gameState);
-                    view.showWinner(currentPlayer);
-                    view.showRankingPoints(gameState);
-                } else {  // If player has no cards but hasn't said mau, draws cards
-                    LOGGER.warn("Player {} failed to say 'mau'", currentPlayer.getName());
-                    view.showMauFailureMessage(currentPlayer);
-                    this.drawCards(2, gameState, currentPlayer);
-                }
-            }
-            gameService.nextPlayer(gameState);
-            // save game after Player turn
-            gameRepository.saveGame(gameState); // not working with @Transactional updating automatically
-            LOGGER.debug("Next player: {}", gameState.getPlayers().get(gameState.getCurrentPlayerIndex()).getName());
         }
         LOGGER.info("Game ended");
+    }
+
+    private void handleVirtualPlayerTurn(Player currentPlayer, GameState gameState) {
+        LOGGER.debug("Virtual player {} turn", currentPlayer.getName());
+        Card topCard = gameState.getDiscardPile().get(gameState.getDiscardPile().size() - 1);
+        Rules rules = gameState.getRules();
+
+        view.showCurrentPlayerInfo(currentPlayer);
+        view.showTopCard(topCard);
+
+        if (virtualPlayerInterface.shouldSayMau(currentPlayer)) {
+            currentPlayer.setSaidMau(true);
+            view.showMauMessage(currentPlayer);
+        }
+
+        Card cardToPlay = virtualPlayerInterface.decideCardToPlay(currentPlayer, topCard, ruleService);
+        if (cardToPlay != null) {
+            gameService.playCard(currentPlayer, cardToPlay, gameState);
+            view.showPlayedCard(currentPlayer, cardToPlay);
+
+            if (cardToPlay.getRank().equals(Rank.JACK)) {
+                Suit wishedSuit = virtualPlayerInterface.decideSuit(currentPlayer, ruleService);
+                ruleService.applyJackSpecialEffect(cardToPlay, wishedSuit, rules);
+                view.showWishedSuit(currentPlayer, wishedSuit);
+                LOGGER.info("Player wished suit: {}", wishedSuit);
+            }
+        } else {
+            gameService.drawCard(gameState, currentPlayer);
+            view.showDrawnCard(currentPlayer, gameService.drawCard(gameState, currentPlayer));
+        }
+
+        handleEndOfTurnTasks(currentPlayer, gameState);
+    }
+
+    private void handleHumanPlayerTurn(Player currentPlayer, GameState gameState) {
+        playerService.sortPlayersCards(currentPlayer);
+        view.showCurrentPlayerInfo(currentPlayer);
+
+        Card topCard = gameState.getDiscardPile().get(gameState.getDiscardPile().size() - 1);
+        LOGGER.debug("Top card on the discard pile: {}", topCard);
+        view.showTopCard(topCard);
+
+        int accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
+        if (accumulatedDrawCount > 0) {
+            LOGGER.info("Accumulated draw count: {}", accumulatedDrawCount);
+            view.showAccumulatedDrawCount(accumulatedDrawCount);
+        }
+
+        String input = this.getPlayerInput(currentPlayer, topCard, gameState);
+
+        if (isNumeric(input)) {
+            Card playedCard = currentPlayer.getHand().get(Integer.parseInt(input) - 1);
+            LOGGER.debug("Played card: {}", playedCard);
+            playHumanCard(currentPlayer, playedCard, gameState);
+        } else {
+            LOGGER.info("Player chose to draw cards");
+            this.drawCards(accumulatedDrawCount, gameState, currentPlayer);
+        }
+
+        handleEndOfTurnTasks(currentPlayer, gameState);
+    }
+
+    private void playHumanCard(Player currentPlayer, Card playedCard, GameState gameState) {
+        if (playedCard != null) {
+            gameService.playCard(currentPlayer, playedCard, gameState);
+            view.showPlayedCard(currentPlayer, playedCard);
+            ruleService.applySpecialCardsEffect(playedCard, gameState.getRules());
+
+            if (playedCard.getRank().equals(Rank.JACK)) {
+                Suit wishedSuit = view.getPlayerWishedSuit(currentPlayer);
+                ruleService.applyJackSpecialEffect(playedCard, wishedSuit, gameState.getRules());
+                view.showWishedSuit(currentPlayer, wishedSuit);
+                LOGGER.info("Player wished suit: {}", wishedSuit);
+            }
+        } else {
+            if (currentPlayer.isSaidMau()) {
+                currentPlayer.setSaidMau(false);
+                LOGGER.debug("Player {} reset 'mau'", currentPlayer.getName());
+            }
+        }
+    }
+
+    private void handleEndOfTurnTasks(Player currentPlayer, GameState gameState) {
+        if (gameService.checkEmptyHand(currentPlayer)) {
+            if (currentPlayer.isSaidMau()) {
+                LOGGER.info("Player {} has won the round", currentPlayer.getName());
+                gameService.endRound(gameState);
+                view.showWinner(currentPlayer);
+                view.showRankingPoints(gameState);
+            } else {
+                LOGGER.warn("Player {} failed to say 'mau'", currentPlayer.getName());
+                view.showMauFailureMessage(currentPlayer);
+                this.drawCards(2, gameState, currentPlayer);
+            }
+        }
+
+        gameService.nextPlayer(gameState);
+        gameRepository.saveGame(gameState);
+        LOGGER.debug("Next player: {}", gameState.getPlayers().get(gameState.getCurrentPlayerIndex()).getName());
     }
 
     private boolean isNumeric(String str) {
@@ -152,24 +194,20 @@ public class GameUIController implements GameUIInterface {
     }
 
     private String getPlayerInput(Player player, Card topCard, GameState gameState) {
-//        todo: while (true)
         while (true) {
             String input = view.promptCardChoice();
             LOGGER.debug("Player input: {}", input);
 
-            // End game
             if (input.equalsIgnoreCase("end")) {
                 gameState.setGameRunning(false);
                 gameService.calcRankingPoints(gameState);
                 return input;
             }
 
-            // Handle "m" input
             if (input.equalsIgnoreCase("m")) {
                 player.setSaidMau(true);
                 view.showMauMessage(player);
                 LOGGER.info("Player {} said 'mau'", player.getName());
-                // Continue to prompt for another input
                 continue;
             }
 
@@ -178,7 +216,6 @@ public class GameUIController implements GameUIInterface {
             }
 
             try {
-                // Added an explicit check for valid card index range
                 int cardIndex = Integer.parseInt(input) - 1;
                 if (cardIndex < 0 || cardIndex >= player.getHand().size()) {
                     throw new IndexOutOfBoundsException();
@@ -189,11 +226,8 @@ public class GameUIController implements GameUIInterface {
                     view.showInvalidMoveMessage();
                     LOGGER.warn("Invalid move: card {} on top card {}", player.getHand().get(cardIndex), topCard);
                 }
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException | IndexOutOfBoundsException e) {
                 LOGGER.warn("Invalid input: {}", input);
-                view.showInvalidInputMessage();
-            } catch (IndexOutOfBoundsException e) {
-                LOGGER.warn("Invalid card index: {}", input);
                 view.showInvalidInputMessage();
             }
         }
@@ -206,8 +240,7 @@ public class GameUIController implements GameUIInterface {
                     view.showDrawnCard(currentPlayer, drawnCard);
                     LOGGER.debug("Player {} drew card {}", currentPlayer.getName(), drawnCard);
                 });
-        // reset state
-        gameState.getRules().setCardsTObeDrawn(0);
+        gameState.getRules().setCardsToBeDrawn(0);
         LOGGER.info("Reset accumulated draw count to 0");
     }
 }

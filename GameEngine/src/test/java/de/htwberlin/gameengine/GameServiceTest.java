@@ -60,11 +60,12 @@ class GameServiceTest {
         });
 
         // Define the behavior of the playerService mock to return valid players
-        when(playerManagerInterface.createPlayer(anyString(), anyList())).thenAnswer(invocation -> {
+        when(playerManagerInterface.createPlayer(anyString(), anyList(), anyBoolean())).thenAnswer(invocation -> {
             String name = invocation.getArgument(0);
             List<Card> hand = invocation.getArgument(1);
-            return new Player(name, hand);
+            return new Player(name, hand, false);
         });
+
 
         int playersCount = 4;
         GameState gameState = gameService.initializeGame(playerName, playersCount);
@@ -72,7 +73,7 @@ class GameServiceTest {
         // Verify interactions with the mocks
         verify(cardManagerInterface).createDeck();
         verify(cardManagerInterface).shuffle(deck);
-        verify(playerManagerInterface, times(playersCount)).createPlayer(anyString(), anyList());
+        verify(playerManagerInterface, times(playersCount)).createPlayer(anyString(), anyList(), anyBoolean());
 
         gameState.getPlayers().forEach(player -> assertEquals(5, player.getHand().size())); // checks that every player has 5 cards on hand
         assertEquals(32 - (playersCount * 5) - 1, gameState.getDeck().size()); // checks deck has 32 cards - 5 cards for every player - initial discardPile card
@@ -95,7 +96,7 @@ class GameServiceTest {
 
         // Set up a GameState with 4 players
         List<Player> players = IntStream.range(0, 4)
-                .mapToObj(i -> new Player("Player " + i, new ArrayList<>()))
+                .mapToObj(i -> new Player("Player " + i, new ArrayList<>(), false))
                 .collect(Collectors.toList());
 
         gameState.setPlayers(players);
@@ -143,7 +144,7 @@ class GameServiceTest {
         // Create a player with one card in hand
         List<Card> initialHand = new ArrayList<>();
         initialHand.add(new Card(Suit.SPADES, Rank.JACK));
-        Player player = new Player("Player 1", initialHand);
+        Player player = new Player("Player 1", initialHand, false);
 
         // Set up the game state
         GameState gameState = new GameState();
@@ -212,7 +213,7 @@ class GameServiceTest {
         List<Card> initialHand = new ArrayList<>();
         initialHand.add(cardToPlay);
         initialHand.add(anotherCard);
-        Player player = new Player("Player 1", initialHand);
+        Player player = new Player("Player 1", initialHand, false);
 
         // Set up the game state with a discard pile containing one card
         List<Card> discardPile = new ArrayList<>();
@@ -243,12 +244,12 @@ class GameServiceTest {
     void testCheckWinner() {
         GameState gameState = new GameState();
         // Create a player with an empty hand (winning condition)
-        Player winningPlayer = new Player("Player 1", new ArrayList<>());
+        Player winningPlayer = new Player("Player 1", new ArrayList<>(), false);
 
         // Create a player with cards in hand (non-winning condition)
         List<Card> hand = new ArrayList<>();
         hand.add(new Card(Suit.HEARTS, Rank.ACE));
-        Player nonWinningPlayer = new Player("Player 2", hand);
+        Player nonWinningPlayer = new Player("Player 2", hand, false);
 
         gameState.setPlayers(List.of(winningPlayer, nonWinningPlayer));
         // Check if the winning player has won
@@ -267,13 +268,13 @@ class GameServiceTest {
     @Test
     void testEndGame() {
         // Create players with different scores
-        Player player1 = new Player("Player 1", new ArrayList<>());
+        Player player1 = new Player("Player 1", new ArrayList<>(),false);
         player1.setScore(Arrays.asList(-10, -15, -20)); // total: -45
 
-        Player player2 = new Player("Player 2", new ArrayList<>());
+        Player player2 = new Player("Player 2", new ArrayList<>(), false);
         player2.setScore(Arrays.asList(-5, -10, -15)); // total: -30
 
-        Player player3 = new Player("Player 3", new ArrayList<>());
+        Player player3 = new Player("Player 3", new ArrayList<>(), false);
         player3.setScore(Arrays.asList(-20, -25, -30)); // total: -75
 
         // Set up the game state
@@ -298,13 +299,13 @@ class GameServiceTest {
         GameState gameState = new GameState();
         //test updated rankingPoints & test players have 5 cards each & test Deck Pile is full - 1 & test discard pile is 1
         // Create players with different scores
-        Player player1 = new Player("Player 1", new ArrayList<>());
+        Player player1 = new Player("Player 1", new ArrayList<>(), false);
         player1.setScore(Arrays.asList(10, 15, 20)); // total: 45
 
-        Player player2 = new Player("Player 2", new ArrayList<>());
+        Player player2 = new Player("Player 2", new ArrayList<>(), false);
         player2.setScore(Arrays.asList(5, 10, 15)); // total: 30
 
-        Player player3 = new Player("Player 3", new ArrayList<>());
+        Player player3 = new Player("Player 3", new ArrayList<>(), false);
         player3.setScore(Arrays.asList(20, 25, 30)); // total: 75
         gameState.setPlayers(Arrays.asList(player1, player2, player3));
 

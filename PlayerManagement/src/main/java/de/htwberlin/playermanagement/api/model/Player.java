@@ -21,13 +21,15 @@ public class Player {
     private boolean saidMau;
     @ElementCollection
     private List<Integer> score;
+    private boolean isVirtual;
 
-    public Player(String name, List<Card> hand) {
+    public Player(String name, List<Card> hand, boolean isVirtual) {
         this.score = new ArrayList<>();
         this.saidMau = false;
         this.rankingPoints = 0;
         this.hand = hand;
         this.name = name;
+        this.isVirtual = isVirtual;
     }
 
     public Player() {
@@ -71,6 +73,14 @@ public class Player {
 
     public void setSaidMau(boolean saidMau) {
         this.saidMau = saidMau;
+    }
+
+    public boolean isVirtual() {
+        return isVirtual;
+    }
+
+    public void setVirtual(boolean virtual) {
+        isVirtual = virtual;
     }
 
     public Long getId() {

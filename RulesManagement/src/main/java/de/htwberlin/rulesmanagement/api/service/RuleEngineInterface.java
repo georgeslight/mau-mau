@@ -6,44 +6,59 @@ import de.htwberlin.rulesmanagement.api.model.Rules;
 
 import java.util.List;
 
+/**
+ * Die RuleEngineInterface-Schnittstelle definiert die Regeln und Logik des Spiels.
+ * Sie überprüft die Gültigkeit von Spielzügen, berechnet den nächsten Spieler,
+ * wendet spezielle Karteneffekte an und berechnet die Punktzahlen der Karten.
+ */
 public interface RuleEngineInterface {
 
     /**
-     * Checks if the card played is valid based on the current top card of the discard pile.
+     * Überprüft, ob der gespielte Zug gültig ist, basierend auf der aktuellen obersten Karte des Ablagestapels und den Spielregeln.
      *
-     * @param card the card being played
-     * @param topCard the current top card on the discard pile
-     * @return true if the play is valid, otherwise false
+     * @param card die gespielte Karte
+     * @param topCard die aktuelle oberste Karte auf dem Ablagestapel
+     * @param rules die Spielregeln
+     * @return true, wenn der Zug gültig ist, andernfalls false
      */
     boolean isValidMove(Card card, Card topCard, Rules rules);
+
     /**
-     * calculates the index of the next player based on the current player index and the total number of players.
+     * Berechnet den Index des nächsten Spielers basierend auf dem aktuellen Spielerindex und der Gesamtzahl der Spieler.
      *
-     * @return the index of the next player
+     * @param currentPlayerIndex der Index des aktuellen Spielers
+     * @param playerCount die Gesamtzahl der Spieler
+     * @param rules die Spielregeln
+     * @return der Index des nächsten Spielers
      */
     Integer calculateNextPlayerIndex(Integer currentPlayerIndex, Integer playerCount, Rules rules);
 
     /**
-     * Handles the specific rules when a Card with special effects is played.
-     * @param card the card being played
-     * jack: change the wished suit
-     * seven: next player draws 2 cards (Cardstobedrawn + 2)
-     * eight: skip next player's turn & reset cardsToBeDrawn to 0
-     * ace: player can play another card
+     * Handhabt die spezifischen Regeln, wenn eine Karte mit speziellen Effekten gespielt wird.
+     *
+     * @param card die gespielte Karte
+     * @param rules die Spielregeln
+     * Jack: ändert die gewünschte Farbe
+     * Seven: der nächste Spieler zieht 2 Karten (cardsToBeDrawn + 2)
+     * Eight: überspringt den Zug des nächsten Spielers und setzt cardsToBeDrawn auf 0 zurück
+     * Ace: der Spieler kann eine weitere Karte spielen
      */
     void applySpecialCardsEffect(Card card, Rules rules);
 
     /**
-     * applies jack special effect
-     * @param card the card being played
-     * @param wishedSuit the suit wished by the player
+     * Wendet den speziellen Effekt der Bube-Karte an, indem die gewünschte Farbe gesetzt wird.
+     *
+     * @param card die gespielte Karte
+     * @param wishedSuit die gewünschte Farbe
+     * @param rules die Spielregeln
      */
     void applyJackSpecialEffect(Card card, Suit wishedSuit, Rules rules);
 
     /**
-     * Calculates the score of cards given.
-     * @param cards
-     * @return sum of the scores of the cards
+     * Berechnet die Punktzahl der gegebenen Karten.
+     *
+     * @param cards die Karten, deren Punktzahl berechnet werden soll
+     * @return die Summe der Punktzahlen der Karten
      */
     Integer calculateScore(List<Card> cards);
 }
