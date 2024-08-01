@@ -47,7 +47,7 @@ public class GameUIController implements GameUIInterface {
     public void run() {
         LOGGER.info("Game started");
         GameState gameState = this.init();
-        gameRepository.saveGame(gameState);
+        gameRepository.save(gameState);
         boolean isRunning = true;
 
         while (isRunning) {
@@ -65,7 +65,7 @@ public class GameUIController implements GameUIInterface {
                 LOGGER.info("Game ended. Winner: {}", winner.getName());
                 view.showEndGame(gameState, winner);
                 isRunning = false;
-                gameRepository.saveGame(gameState);
+                gameRepository.save(gameState);
             }
         }
         LOGGER.info("Game ended");
@@ -166,7 +166,7 @@ public class GameUIController implements GameUIInterface {
         }
 
         gameService.nextPlayer(gameState);
-        gameRepository.saveGame(gameState);
+        gameRepository.save(gameState);
         LOGGER.debug("Next player: {}", gameState.getPlayers().get(gameState.getCurrentPlayerIndex()).getName());
     }
 

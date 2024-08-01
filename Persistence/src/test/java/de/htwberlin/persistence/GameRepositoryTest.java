@@ -51,7 +51,7 @@ public class GameRepositoryTest {
         GameState game = gameService.initializeGame("MainPlayer", 4);
 
         // Save the game state
-        gameRepository.saveGame(game);
+        gameRepository.save(game);
 
         // Verify that the game state is saved
         assertNotNull(game.getId());
