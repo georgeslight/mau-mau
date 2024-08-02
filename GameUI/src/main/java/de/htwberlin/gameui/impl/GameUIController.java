@@ -1,11 +1,13 @@
 package de.htwberlin.gameui.impl;
 
+import de.htwberlin.gameengine.exception.EmptyPileException;
 import de.htwberlin.gameui.api.GameUIInterface;
 import de.htwberlin.cardsmanagement.api.enums.Rank;
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.persistence.repo.GameRepository;
+import de.htwberlin.playermanagement.api.exception.EmptyHandException;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.gameengine.api.service.GameManagerInterface;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
@@ -104,17 +106,25 @@ public class GameUIController implements GameUIInterface {
     }
 
     private void handleHumanPlayerTurn(Player currentPlayer, GameState gameState) {
-        playerService.sortPlayersCards(currentPlayer);
-        view.showCurrentPlayerInfo(currentPlayer);
+        try {
+            playerService.sortPlayersCards(currentPlayer);
+            view.showCurrentPlayerInfo(currentPlayer);
 
-        Card topCard = gameState.getDiscardPile().get(gameState.getDiscardPile().size() - 1);
-        LOGGER.debug("Top card on the discard pile: {}", topCard);
-        view.showTopCard(topCard);
+            Card topCard = gameService.getTopCard(gameState.getDiscardPile());
+            LOGGER.debug("Top card on the discard pile: {}", topCard);
+            view.showTopCard(topCard);
 
-        int accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
-        if (accumulatedDrawCount > 0) {
-            LOGGER.info("Accumulated draw count: {}", accumulatedDrawCount);
-            view.showAccumulatedDrawCount(accumulatedDrawCount);
+            int accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
+            if (accumulatedDrawCount > 0) {
+                LOGGER.info("Accumulated draw count: {}", accumulatedDrawCount);
+                view.showAccumulatedDrawCount(accumulatedDrawCount);
+            }
+        } catch (EmptyHandException e) {
+            LOGGER.warn("Player has no cards to sort: {}", e.getMessage());
+            this.handleEndOfTurnTasks(currentPlayer, gameState);
+        } catch (EmptyPileException e) {
+            LOGGER.warn("The discard pile is empty: {}", e.getMessage());
+            gameService.reshuffleDeck(gameState);
         }
 
         String input = this.getPlayerInput(currentPlayer, topCard, gameState);
