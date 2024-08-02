@@ -1,16 +1,14 @@
 package de.htwberlin.gameengine.impl;
 
-import de.htwberlin.cardsmanagement.api.enums.Rank;
-import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.cardsmanagement.api.service.CardManagerInterface;
 import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.gameengine.api.service.GameManagerInterface;
+import de.htwberlin.gameengine.exception.EmptyPileException;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
 import de.htwberlin.rulesmanagement.api.model.Rules;
 import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
-import de.htwberlin.rulesmanagement.impl.RuleService;
 import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -149,7 +147,8 @@ public class GameService implements GameManagerInterface {
         return drawCard;
     }
 
-    private void reshuffleDeck(GameState game) {
+    @Override
+    public void reshuffleDeck(GameState game) {
         LOGGER.info("Deck is empty, reshuffling Deck");
 
         // Save the last card from the discard pile
@@ -182,5 +181,13 @@ public class GameService implements GameManagerInterface {
     @Override
     public boolean checkEmptyHand(Player player) {
         return player.getHand().isEmpty();
+    }
+
+    @Override
+    public Card getTopCard(List<Card> stack) {
+        if (stack == null || stack.isEmpty()) {
+            throw new EmptyPileException("The pile is empty.");
+        }
+        return stack.get(stack.size() - 1);
     }
 }

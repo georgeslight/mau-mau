@@ -14,12 +14,12 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "player_id") // specifies the foreign key in the Card table
     private List<Card> hand;
     private Integer rankingPoints;
     private boolean saidMau;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<Integer> score;
     private boolean isVirtual;
 

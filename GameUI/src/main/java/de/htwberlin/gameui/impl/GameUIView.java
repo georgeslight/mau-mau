@@ -2,6 +2,8 @@ package de.htwberlin.gameui.impl;
 
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.gameengine.api.model.GameState;
+import de.htwberlin.gameui.exception.InvalidNameException;
+import de.htwberlin.gameui.exception.InvalidNumberOfPlayersException;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import org.springframework.stereotype.Component;
@@ -41,20 +43,46 @@ public class GameUIView {
 
     public int getNumberOfPlayers() {
         System.out.println(CYAN + "Enter the number of players (2-4): " + RESET);
-        int numberOfPlayers = scanner.nextInt();
-        while (numberOfPlayers < 2 || numberOfPlayers > 4) {
-            System.out.println(YELLOW + "Invalid number. Please enter a number between 2 and 4: " + RESET);
-            numberOfPlayers = scanner.nextInt();
+        int numberOfPlayers = 0;
+        boolean validInput = false;
+
+        while (!validInput) {
+            try {
+                numberOfPlayers = scanner.nextInt();
+
+                if (numberOfPlayers < 2 || numberOfPlayers > 4) {
+                    throw new InvalidNumberOfPlayersException("Invalid number. Please enter a number between 2 and 4.");
+                } else {
+                    validInput = true;
+                }
+            } catch (InvalidNumberOfPlayersException e) {
+                System.out.println(YELLOW + e.getMessage() + RESET);
+            } catch (InputMismatchException e) {
+                System.out.println(RED + "Invalid input. Please enter a numeric value." + RESET);
+                scanner.next(); // Clear the invalid input from the scanner buffer
+            }
         }
+
         return numberOfPlayers;
     }
 
     public String getPlayerName() {
-        System.out.println(CYAN + "Enter your name: " + RESET);
-        return scanner.next();
+        String playerName = "";
+        try {
+            System.out.println(CYAN + "Enter your name: " + RESET);
+            playerName = scanner.next();
+            if (playerName == null || playerName.trim().isEmpty() || playerName.contains(" ")) throw new InvalidNameException("Name must be a non-empty single word without spaces.");
+        } catch (InvalidNameException e) {
+            System.out.println(RED + "Invalid input: " + e.getMessage() + RESET);
+            return this.getPlayerName();
+        }
+        return playerName;
     }
 
     public void showPlayers(List<Player> players) {
+        if (players == null || players.isEmpty()) {
+            throw new IllegalArgumentException("Cannot shuffle an empty or null deck");
+        }
         System.out.println(PURPLE + "\nPlayers:" + RESET);
         players.forEach(player -> System.out.println(player.getName()));
     }

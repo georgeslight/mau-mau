@@ -4,6 +4,8 @@ import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.playermanagement.api.model.Player;
 
+import java.util.List;
+
 /**
  * Schnittstelle zur Verwaltung des Spielzustands und des Spielablaufs.
  */
@@ -75,4 +77,22 @@ public interface GameManagerInterface {
      * @return der Spieler mit den höchsten Punkten
      */
     Player getWinner(GameState gameState);
+
+    /**
+     * Ruft die oberste Karte vom angegebenen Kartenstapel ab.
+     * Wirft eine Ausnahme, wenn der Stapel leer ist.
+     *
+     * @param stack der Kartenstapel, aus dem die Karte abgerufen werden soll
+     * @return die oberste Karte des Stapels
+     * @throws EmptyPileException wenn der Stapel leer ist
+     */
+    Card getTopCard(List<Card> stack);
+
+    /**
+     * Mischt das Deck neu, indem Karten vom Ablagestapel zurück ins Deck gelegt werden.
+     * Der Stapel wird gemischt, um die Kartenreihenfolge zu randomisieren.
+     *
+     * @param game der aktuelle Spielzustand
+     */
+    void reshuffleDeck(GameState game);
 }
