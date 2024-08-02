@@ -184,12 +184,18 @@ public class GameUIController implements GameUIInterface {
     }
 
     public GameState init() {
+        GameState gameState = null;
         view.showWelcomeMessage();
-        int numberOfPlayers = view.getNumberOfPlayers();
-        String playerName = view.getPlayerName();
-        LOGGER.info("Initializing game for {} players with first player named {}", numberOfPlayers, playerName);
-        GameState gameState = gameService.initializeGame(playerName, numberOfPlayers);
-        view.showPlayers(gameState.getPlayers());
+        try {
+            int numberOfPlayers = view.getNumberOfPlayers();
+            String playerName = view.getPlayerName();
+            LOGGER.info("Initializing game for {} players with first player named {}", numberOfPlayers, playerName);
+            gameState = gameService.initializeGame(playerName, numberOfPlayers);
+            view.showPlayers(gameState.getPlayers());
+        } catch (Exception e) {
+            LOGGER.error("An unexpected error occurred initializing the game: {}", e.getMessage());
+            return init();
+        }
         return gameState;
     }
 
