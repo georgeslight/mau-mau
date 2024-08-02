@@ -18,12 +18,15 @@ public class RuleService implements RuleEngineInterface {
 
     @Override
     public boolean isValidMove(Card card, Card topCard, Rules rules) {
+        // normal rules
+        boolean isValid = card.getSuit().equals(topCard.getSuit()) || card.getRank().equals(topCard.getRank());
         // 7 was played
-        if (topCard.getRank().equals(Rank.SEVEN)) {
+        if (topCard.getRank().equals(Rank.SEVEN) && rules.getCardsToBeDrawn() > 0) {
             if (card.getRank().equals(Rank.SEVEN)) return true;
-            if (rules.getCardsToBeDrawn() != 0) {
-                LOGGER.info("Either have to draw, or play another 7");
-                return false;
+            else if (card.getRank().equals(Rank.EIGHT)) return true;
+            else {
+            LOGGER.info("Either have to draw, or play another 7");
+            return false;
             }
         }
 
@@ -40,21 +43,16 @@ public class RuleService implements RuleEngineInterface {
                 return false;
             }
         }
-
         // Jack rules
+        // J can be played on any card except another Jack
         if (card.getRank().equals(Rank.JACK)) {
-            // J can be played on any card except another Jack
-            if (topCard.getRank().equals(Rank.JACK)) {
+            if (topCard.getRank().equals(Rank.JACK) && rules.getWishCard() != null) {
                 LOGGER.warn("Cannot play Jack on Jack");
                 return false;
             }
             return true;
         }
-
-
-        // normal rules
-        return card.getSuit().equals(topCard.getSuit()) || card.getRank().equals(topCard.getRank());
-
+        return isValid;
     }
 
     @Override
