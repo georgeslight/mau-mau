@@ -1,17 +1,16 @@
 package de.htwberlin.gameui.impl;
 
-import de.htwberlin.gameengine.exception.EmptyPileException;
-import de.htwberlin.gameui.api.GameUIInterface;
 import de.htwberlin.cardsmanagement.api.enums.Rank;
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
+import de.htwberlin.gameengine.api.service.GameManagerInterface;
+import de.htwberlin.gameengine.exception.EmptyPileException;
+import de.htwberlin.gameui.api.GameUIInterface;
 import de.htwberlin.persistence.repo.GameRepository;
 import de.htwberlin.playermanagement.api.exception.EmptyHandException;
 import de.htwberlin.playermanagement.api.model.Player;
-import de.htwberlin.gameengine.api.service.GameManagerInterface;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
-import de.htwberlin.rulesmanagement.api.model.Rules;
 import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
 import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
 import org.apache.logging.log4j.LogManager;
@@ -83,7 +82,7 @@ public class GameUIController implements GameUIInterface {
             view.showTopCard(topCard);
 
             accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
-            Card playedCard = virtualPlayerInterface.decideCardToPlay(currentPlayer, topCard, ruleService);
+            Card playedCard = virtualPlayerInterface.decideCardToPlay(currentPlayer, topCard, ruleService, gameState.getRules());
             if (playedCard != null) {
                 playVirtualCard(currentPlayer, gameState, playedCard);
             } else {
@@ -116,13 +115,6 @@ public class GameUIController implements GameUIInterface {
             view.showWishedSuit(currentPlayer, wishedSuit);
             LOGGER.info("Virtual player {} wished suit: {}", currentPlayer.getName(), wishedSuit);
         }
-
-    }
-
-    private Card getTopCard(GameState gameState) {
-        Card topCard = gameState.getDiscardPile().get(gameState.getDiscardPile().size() - 1);
-        LOGGER.debug("Top card: {}", topCard);
-        return topCard;
     }
 
     private void handleHumanPlayerTurn(Player currentPlayer, GameState gameState) {
@@ -152,9 +144,20 @@ public class GameUIController implements GameUIInterface {
         String input = this.getPlayerInput(currentPlayer, topCard, gameState);
 
         if (isNumeric(input)) {
-            Card playedCard = currentPlayer.getHand().get(Integer.parseInt(input) - 1);
-            LOGGER.debug("Played card: {}", playedCard);
-            playHumanCard(currentPlayer, playedCard, gameState);
+            try {
+                int cardIndex = Integer.parseInt(input) - 1;
+                if (cardIndex >= 0 && cardIndex < currentPlayer.getHand().size()) {
+                    Card playedCard = currentPlayer.getHand().get(cardIndex);
+                    LOGGER.debug("Played card: {}", playedCard);
+                    playHumanCard(currentPlayer, playedCard, gameState);
+                } else {
+                    LOGGER.warn("Invalid card index: {}", input);
+                    view.showInvalidInputMessage();
+                }
+            } catch (NumberFormatException e) {
+                LOGGER.warn("Invalid numeric input: {}", input);
+                view.showInvalidInputMessage();
+            }
         } else {
             LOGGER.info("Player chose to draw cards");
             this.drawCards(accumulatedDrawCount, gameState, currentPlayer);
@@ -196,28 +199,12 @@ public class GameUIController implements GameUIInterface {
                 this.drawCards(2, gameState, currentPlayer);
             }
         }
-        GameState debuggerGameState = gameRepository.findById(gameState.getId()).get();
-        LOGGER.debug("Refreshed GameState: ID={}, \n" +
-                        "CurrentPlayerIndex={}, CardsToBeDrawn={}, WishCard={}, \n" +
-                        "Players=[{}], TopCard={}, GameRunning={}",
-                debuggerGameState.getId(),
-                debuggerGameState.getCurrentPlayerIndex(),
-                debuggerGameState.getRules().getCardsToBeDrawn(),
-                debuggerGameState.getRules().getWishCard(),
-                debuggerGameState.getPlayers().stream()
-                        .map(player -> String.format("ID=%d, Name=%s, Hand=%s, SaidMau=%s, IsVirtual=%s",
-                                player.getId(),
-                                player.getName(),
-                                player.getHand(),
-                                player.isSaidMau(),
-                                player.isVirtual()))
-                        .reduce((p1, p2) -> p1 + "; " + p2)
-                        .orElse(""),
-                getTopCard(debuggerGameState),
-                debuggerGameState.isGameRunning()
-        );
         gameService.nextPlayer(gameState);
+        LOGGER.debug("Saving this game state");
+        debugger(gameState);
         gameRepository.save(gameState);
+        LOGGER.debug("Data in Database:");
+        debugger(gameRepository.findById(gameState.getId()).orElse(null));
         LOGGER.debug("Next player: {}", gameState.getPlayers().get(gameState.getCurrentPlayerIndex()).getName());
     }
 
@@ -245,7 +232,7 @@ public class GameUIController implements GameUIInterface {
             view.showPlayers(gameState.getPlayers());
         } catch (Exception e) {
             LOGGER.error("An unexpected error occurred initializing the game: {}", e.getMessage());
-            return init();
+            return init(); // Retry initialization
         }
         return gameState;
     }
@@ -306,15 +293,22 @@ public class GameUIController implements GameUIInterface {
 
     private GameState refreshState(GameState gameState) {
         LOGGER.debug("Refreshing game state");
-        GameState debuggerGameState = gameRepository.findById(gameState.getId()).get();
-        LOGGER.debug("Refreshed GameState: ID={}, \n" +
+        GameState refreshedGameState = gameRepository.findById(gameState.getId()).orElse(null);
+        if (refreshedGameState != null) {
+            debugger(refreshedGameState);
+        }
+        return refreshedGameState != null ? refreshedGameState : gameState;
+    }
+
+    private void debugger(GameState gameState) {
+        LOGGER.debug("GameState: ID={}, \n" +
                         "CurrentPlayerIndex={}, CardsToBeDrawn={}, WishCard={}, \n" +
                         "Players=[{}], TopCard={}, GameRunning={}",
-                debuggerGameState.getId(),
-                debuggerGameState.getCurrentPlayerIndex(),
-                debuggerGameState.getRules().getCardsToBeDrawn(),
-                debuggerGameState.getRules().getWishCard(),
-                debuggerGameState.getPlayers().stream()
+                gameState.getId(),
+                gameState.getCurrentPlayerIndex(),
+                gameState.getRules().getCardsToBeDrawn(),
+                gameState.getRules().getWishCard(),
+                gameState.getPlayers().stream()
                         .map(player -> String.format("ID=%d, Name=%s, Hand=%s, SaidMau=%s, IsVirtual=%s",
                                 player.getId(),
                                 player.getName(),
@@ -323,9 +317,8 @@ public class GameUIController implements GameUIInterface {
                                 player.isVirtual()))
                         .reduce((p1, p2) -> p1 + "; " + p2)
                         .orElse(""),
-                getTopCard(debuggerGameState),
-                debuggerGameState.isGameRunning()
+                gameService.getTopCard(gameState.getDiscardPile()),
+                gameState.isGameRunning()
         );
-        return debuggerGameState;
     }
 }

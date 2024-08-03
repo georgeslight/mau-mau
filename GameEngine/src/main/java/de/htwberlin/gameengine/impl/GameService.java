@@ -1,10 +1,13 @@
 package de.htwberlin.gameengine.impl;
 
+import de.htwberlin.cardsmanagement.api.enums.Rank;
+import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.cardsmanagement.api.service.CardManagerInterface;
 import de.htwberlin.gameengine.api.model.GameState;
 import de.htwberlin.gameengine.api.service.GameManagerInterface;
 import de.htwberlin.gameengine.exception.EmptyPileException;
+import de.htwberlin.playermanagement.api.exception.EmptyHandException;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
 import de.htwberlin.rulesmanagement.api.model.Rules;
@@ -83,10 +86,8 @@ public class GameService implements GameManagerInterface {
     public Player nextPlayer(GameState gameState) {
         int nextPlayerIndex = ruleEngineInterface.calculateNextPlayerIndex(gameState.getCurrentPlayerIndex(), gameState.getPlayers().size(), gameState.getRules());
         gameState.setCurrentPlayerIndex(nextPlayerIndex);
-        return  gameState.getPlayers().get(nextPlayerIndex);
+        return gameState.getPlayers().get(nextPlayerIndex);
     }
-
-
 
     @Override
     @Transactional
@@ -173,6 +174,7 @@ public class GameService implements GameManagerInterface {
     public void playCard(Player player, Card card, GameState gameState) {
         if (player.getHand().remove(card)) {
             gameState.getDiscardPile().add(card);
+            gameState.getRules().setWishCard(null);
         } else {
             throw new IllegalArgumentException("The player does not have the specified card.");
         }
@@ -189,5 +191,124 @@ public class GameService implements GameManagerInterface {
             throw new EmptyPileException("The pile is empty.");
         }
         return stack.get(stack.size() - 1);
+    }
+
+    // New methods to handle player turns and other game logic
+    @Override
+    @Transactional
+    public void handleVirtualPlayerTurn(Player currentPlayer, GameState gameState) {
+        Card topCard = null;
+        int accumulatedDrawCount = 0;
+        try {
+            topCard = this.getTopCard(gameState.getDiscardPile());
+            LOGGER.debug("Top card on the discard pile: {}", topCard);
+
+            accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
+            Card playedCard = virtualPlayerInterface.decideCardToPlay(currentPlayer, topCard, ruleEngineInterface, gameState.getRules());
+            if (playedCard != null) {
+                playVirtualCard(currentPlayer, gameState, playedCard);
+            } else {
+                LOGGER.info("Virtual player {} chose to draw cards", currentPlayer.getName());
+                this.drawCards(accumulatedDrawCount, gameState, currentPlayer);
+            }
+
+        } catch (EmptyHandException e) {
+            LOGGER.warn("Player has no cards to sort: {}", e.getMessage());
+            this.handleEndOfTurnTasks(currentPlayer, gameState);
+        } catch (EmptyPileException e) {
+            LOGGER.warn("The discard pile is empty: {}", e.getMessage());
+            reshuffleDeck(gameState);
+        }
+        handleEndOfTurnTasks(currentPlayer, gameState);
+    }
+    @Override
+    @Transactional
+    public void handleHumanPlayerTurn(Player currentPlayer, GameState gameState, String input) {
+        Card topCard = null;
+        int accumulatedDrawCount = 0;
+        try {
+            playerManagerInterface.sortPlayersCards(currentPlayer);
+
+            topCard = this.getTopCard(gameState.getDiscardPile());
+            LOGGER.debug("Top card on the discard pile: {}", topCard);
+
+            accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
+        } catch (EmptyHandException e) {
+            LOGGER.warn("Player has no cards to sort: {}", e.getMessage());
+            this.handleEndOfTurnTasks(currentPlayer, gameState);
+        } catch (EmptyPileException e) {
+            LOGGER.warn("The discard pile is empty: {}", e.getMessage());
+            reshuffleDeck(gameState);
+        }
+
+        if (isNumeric(input)) {
+            Card playedCard = currentPlayer.getHand().get(Integer.parseInt(input) - 1);
+            LOGGER.debug("Played card: {}", playedCard);
+            playHumanCard(currentPlayer, playedCard, gameState);
+        } else {
+            LOGGER.info("Player chose to draw cards");
+            this.drawCards(accumulatedDrawCount, gameState, currentPlayer);
+        }
+
+        handleEndOfTurnTasks(currentPlayer, gameState);
+    }
+
+    private void playVirtualCard(Player currentPlayer, GameState gameState, Card cardToPlay) {
+        LOGGER.debug("Playing virtual card: {}", cardToPlay);
+        this.playCard(currentPlayer, cardToPlay, gameState);
+
+        if (cardToPlay.getRank().equals(Rank.JACK)) {
+            Suit wishedSuit = virtualPlayerInterface.decideSuit(currentPlayer, ruleEngineInterface);
+            ruleEngineInterface.applyJackSpecialEffect(cardToPlay, wishedSuit, gameState.getRules());
+            LOGGER.info("Virtual player {} wished suit: {}", currentPlayer.getName(), wishedSuit);
+        }
+    }
+
+    private void playHumanCard(Player currentPlayer, Card playedCard, GameState gameState) {
+        if (playedCard != null) {
+            this.playCard(currentPlayer, playedCard, gameState);
+            ruleEngineInterface.applySpecialCardsEffect(playedCard, gameState.getRules());
+        }
+    }
+
+    private void handleEndOfTurnTasks(Player currentPlayer, GameState gameState) {
+        if (this.checkEmptyHand(currentPlayer)) {
+            if (currentPlayer.isSaidMau()) {
+                LOGGER.info("Player {} has won the round", currentPlayer.getName());
+                this.endRound(gameState);
+            } else {
+                LOGGER.warn("Player {} failed to say 'mau'", currentPlayer.getName());
+                this.drawCards(2, gameState, currentPlayer);
+            }
+        }
+        if (currentPlayer.isSaidMau() && currentPlayer.getHand().size() > 1) {
+            currentPlayer.setSaidMau(false);
+            LOGGER.debug("Player {} reset 'mau'", currentPlayer.getName());
+        }
+
+        nextPlayer(gameState);
+    }
+
+    public void drawCards(int accumulatedDrawCount, GameState gameState, Player currentPlayer) {
+        IntStream.range(0, Math.max(accumulatedDrawCount, 1))
+                .forEach(i -> {
+                    Card drawnCard = this.drawCard(gameState, currentPlayer);
+                    LOGGER.debug("Player {} drew card {}", currentPlayer.getName(), drawnCard);
+                });
+        gameState.getRules().setCardsToBeDrawn(0);
+        LOGGER.info("Reset accumulated draw count to 0");
+    }
+
+    public boolean isNumeric(String str) {
+        if (str == null) {
+            return false;
+        }
+        try {
+            Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            LOGGER.warn("Invalid numeric input: {}", str);
+            return false;
+        }
+        return true;
     }
 }

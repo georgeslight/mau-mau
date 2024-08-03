@@ -2,7 +2,9 @@ package de.htwberlin.gameengine.api.service;
 
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.gameengine.api.model.GameState;
+import de.htwberlin.gameengine.exception.EmptyPileException;
 import de.htwberlin.playermanagement.api.model.Player;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -95,4 +97,10 @@ public interface GameManagerInterface {
      * @param game der aktuelle Spielzustand
      */
     void reshuffleDeck(GameState game);
+
+    // New methods to handle player turns and other game logic
+    void handleVirtualPlayerTurn(Player currentPlayer, GameState gameState);
+
+    @Transactional
+    void handleHumanPlayerTurn(Player currentPlayer, GameState gameState, String input);
 }

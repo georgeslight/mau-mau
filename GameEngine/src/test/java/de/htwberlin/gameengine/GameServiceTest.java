@@ -10,6 +10,7 @@ import de.htwberlin.gameengine.api.service.GameManagerInterface;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
 import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
 import de.htwberlin.gameengine.impl.GameService;
+import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,14 +31,18 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class GameServiceTest {
 
-    @InjectMocks
-    private GameManagerInterface gameService = new GameService();
     @Mock
     private PlayerManagerInterface playerManagerInterface;
     @Mock
     private CardManagerInterface cardManagerInterface;
     @Mock
     private RuleEngineInterface ruleEngineInterface;
+    @Mock
+    private VirtualPlayerInterface virtualPlayerInterface;
+
+
+    @InjectMocks
+    private GameManagerInterface gameService = new GameService();
 
     /**
      * Test initializing the game with a specified number of players.
