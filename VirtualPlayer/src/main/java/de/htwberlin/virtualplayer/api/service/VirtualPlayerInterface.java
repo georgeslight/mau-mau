@@ -9,14 +9,7 @@ import de.htwberlin.rulesmanagement.impl.RuleService;
 
 public interface VirtualPlayerInterface {
 
-    /**
-     * Choose a card to play.
-     * @param player
-     * @param topCard
-     * @param ruleService
-     * @return the card to play
-     */
-    Card decideCardToPlay(Player player, Card topCard, RuleEngineInterface ruleService);
+    Card decideCardToPlay(Player player, Card topCard, RuleEngineInterface ruleService, Rules rules);
 
     /**
      * Decide a suit to play.

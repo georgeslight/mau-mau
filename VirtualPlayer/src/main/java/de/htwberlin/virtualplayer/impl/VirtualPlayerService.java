@@ -1,12 +1,10 @@
 package de.htwberlin.virtualplayer.impl;
 
-import de.htwberlin.cardsmanagement.api.enums.Rank;
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.rulesmanagement.api.model.Rules;
 import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
-import de.htwberlin.rulesmanagement.impl.RuleService;
 import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,10 +20,10 @@ public class VirtualPlayerService implements VirtualPlayerInterface {
     private final Random random = new Random();
 
     @Override
-    public Card decideCardToPlay(Player player, Card topCard, RuleEngineInterface ruleService) {
+    public Card decideCardToPlay(Player player, Card topCard, RuleEngineInterface ruleService, Rules rules) {
         List<Card> hand = player.getHand();
         for (Card card : hand) {
-            if (ruleService.isValidMove(card, topCard, new Rules())) {
+            if (ruleService.isValidMove(card, topCard, rules)) {
                 return card;
             }
         }
@@ -40,7 +38,7 @@ public class VirtualPlayerService implements VirtualPlayerInterface {
 
     @Override
     public boolean shouldDrawCard(Player player, Card topCard, RuleEngineInterface ruleService, Rules rules) {
-        Card cardToPlay = decideCardToPlay(player, topCard, ruleService);
+        Card cardToPlay = decideCardToPlay(player, topCard, ruleService, rules);
         return cardToPlay == null;
     }
 
