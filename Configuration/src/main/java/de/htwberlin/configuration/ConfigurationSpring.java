@@ -12,6 +12,10 @@ public class ConfigurationSpring {
     private static final ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(ConfigurationSpring.class);
 
     public static void main(String[] args) {
-        context.getBean(GameUIController.class).run();
+        try {
+            context.getBean(GameUIController.class).run();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

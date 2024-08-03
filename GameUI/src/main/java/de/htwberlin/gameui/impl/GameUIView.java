@@ -70,8 +70,10 @@ public class GameUIView {
         String playerName = "";
         try {
             System.out.println(CYAN + "Enter your name: " + RESET);
-            playerName = scanner.next();
-            if (playerName == null || playerName.trim().isEmpty() || playerName.contains(" ")) throw new InvalidNameException("Name must be a non-empty single word without spaces.");
+            playerName = scanner.nextLine().trim();
+            if (playerName == null || playerName.isEmpty() || playerName.contains(" ")) {
+                throw new InvalidNameException("Name must be a non-empty single word without spaces.");
+            }
         } catch (InvalidNameException e) {
             System.out.println(RED + "Invalid input: " + e.getMessage() + RESET);
             return this.getPlayerName();
@@ -88,6 +90,10 @@ public class GameUIView {
     }
 
     public void showCurrentPlayerInfo(Player player) {
+        System.out.println();
+        System.out.println(PURPLE + "----- " + player.getName() + "'s turn" + RESET);
+    }
+    public void showActivePlayersHand(Player player) {
         System.out.println();
         System.out.println(PURPLE + "----- " + player.getName() + "'s turn. Your hand: -----" + RESET);
         IntStream.range(0, player.getHand().size())
@@ -189,5 +195,68 @@ public class GameUIView {
         gameState.getPlayers().forEach(player -> {
             System.out.println(player.getName() + ": " + player.getRankingPoints() + " points.");
         });
+    }
+
+    public Integer showCreateOrJoinGameMessage() {
+        System.out.println(CYAN + "Do you want to create a new game or join an existing game?");
+        System.out.println("1: Create a new game");
+        System.out.println("2: Join an existing game" + RESET);
+
+        int choice = -1;
+        boolean validInput = false;
+
+        while (!validInput) {
+            try {
+                choice = Integer.parseInt(scanner.nextLine().trim());
+                if (choice == 1 || choice == 2) {
+                    validInput = true;
+                } else {
+                    System.out.println(RED + "Invalid choice. Please enter 1 or 2." + RESET);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println(RED + "Invalid input. Please enter a number." + RESET);
+            }
+        }
+
+        return choice;
+    }
+
+
+    public GameState getGame(List<GameState> games) {
+        System.out.println(CYAN + "Select a game to continue: " + RESET);
+        IntStream.range(0, games.size())
+                .forEach(i -> System.out.println((i + 1) + ": " + games.get(i).getId()+ " - " + games.get(i).getPlayers().size() + " players" + " - Host:" + games.get(i).getPlayers().get(0).getName() ) );
+
+        return games.get(scanner.nextInt() - 1);
+    }
+
+    public int getWaitingForPlayersToJoin() {
+        System.out.println(CYAN + "Enter 1 if you want to wait for more players to join, or 0 to start the game:" + RESET);
+        return scanner.nextInt();
+    }
+
+//    public void showWaitingForOtherPlayersToPlay(GameState gameState) {
+//        System.out.println(PURPLE + "Waiting for other players to play..." + RESET);
+//        System.out.println("Players who have played: ");
+//        gameState.getPlayers().forEach(player -> {
+//            if (player.getHand().isEmpty()) {
+//                System.out.println(player.getName() + " has finished playing.");
+//            }
+//        });
+//    }
+    public void showWaitingForPlayer(Player currentPlayer) {
+        System.out.println(PURPLE + "Waiting for " + currentPlayer.getName() + " to make a move..." + RESET);
+    }
+
+    public void showVirtualPlayersTurn(Player currentPlayer) {
+        System.out.println(PURPLE + "Virtual " + currentPlayer.getName() + "'s turn." + RESET);
+    }
+
+    public void showFailedToJoinGame() {
+        System.out.println(RED + "Failed to join the game. Please try again." + RESET);
+    }
+
+    public void showInvalidPlayerNameMessage() {
+        System.out.println(RED + "Invalid player name. Please enter a valid name." + RESET);
     }
 }

@@ -10,5 +10,5 @@ public interface GameUIInterface {
         /**
          * Startet die Benutzeroberfläche des Spiels und koordiniert die Interaktion mit dem Benutzer.
          */
-        void run();
+        void run() throws InterruptedException;
 }

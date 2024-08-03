@@ -19,12 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
 public class GameUIController implements GameUIInterface {
 
     private static final Logger LOGGER = LogManager.getLogger(GameUIController.class);
+    private static final int POLLING_DELAY_MS = 3000;
 
     private final GameManagerInterface gameService;
     private final RuleEngineInterface ruleService;
@@ -45,13 +48,67 @@ public class GameUIController implements GameUIInterface {
         this.virtualPlayerInterface = virtualPlayerInterface;
     }
 
-    @Override
-    public void run() {
-        LOGGER.info("Game started");
-        GameState gameState = this.init();
+    private GameState handleCreatingNewGame(String playerName) {
+        GameState gameState = this.init(playerName);
+        gameState.setJoiningAllowed(true);
         gameRepository.saveAndFlush(gameState);
-        boolean isRunning = true;
+        boolean isWaitingForPlayers = true;
+        while (isWaitingForPlayers) {
+            view.showPlayers(gameState.getPlayers());
+        if (view.getWaitingForPlayersToJoin()==1) {
+            try {
+                Thread.sleep(5000);
+                gameState = refreshState(gameState);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            isWaitingForPlayers = false;
+        }
+        }
+        gameState = refreshState(gameState);
+        gameState.setJoiningAllowed(false);
+        gameRepository.saveAndFlush(gameState);
+        debugger(gameState);
+        return gameState;
+    }
 
+    private GameState joinExistingGame(GameState gameState, String playerName) {
+        Optional<Player> player = replaceVirtualPlayer(gameState, playerName);
+        if (player.isEmpty()) {
+            LOGGER.error("Failed to replace virtual player");
+            view.showFailedToJoinGame();
+            return null;
+        }
+        gameRepository.saveAndFlush(gameState);
+        debugger(gameRepository.findById(gameState.getId()).orElse(null));
+        return gameState;
+    }
+
+    @Override
+    public void run() throws InterruptedException {
+            Player thisPlayer;
+            view.showWelcomeMessage();
+            String playerName = view.getPlayerName();
+
+            Integer wantToCreateGame = view.showCreateOrJoinGameMessage();
+            GameState gameState = null;
+            if (wantToCreateGame == 1) {//handle creating new Game
+                gameState = handleCreatingNewGame(playerName);
+                thisPlayer = gameState.getPlayers().stream().filter(player -> player.getName().equals(playerName)).findFirst().orElse(null);
+            } else if (wantToCreateGame == 2) {//handle joining existing game
+
+
+                List<GameState> games = gameRepository.findAll().stream().filter(GameState::isJoiningAllowed).collect(Collectors.toList()); //get all join able games
+                GameState gameState1 = view.getGame(games);
+                gameState = joinExistingGame(gameState1, playerName); //join the selected game and save the player
+                thisPlayer = gameState.getPlayers().stream().filter(player -> player.getName().equals(playerName)).findFirst().orElse(null);
+                waiterOtherPlayersToPlay(gameState1, thisPlayer); //wait till turn comes
+            } else {
+                LOGGER.error("Invalid input. please enter 1 or 2");
+                return;//todo: check if this is correct
+            }
+        boolean isRunning = true;
         while (isRunning) {
             LOGGER.debug("------------------------------------- New turn -------------------------------------");
             gameState = refreshState(gameState);
@@ -64,10 +121,16 @@ public class GameUIController implements GameUIInterface {
             }
             LOGGER.debug("Current player: {}", currentPlayer.getName());
 
-            if (!currentPlayer.isVirtual()) {
+            if (currentPlayer.getId().equals(thisPlayer.getId())) {
                 handleHumanPlayerTurn(currentPlayer, gameState);
-            } else {
+            } else if (currentPlayer.isVirtual()) {
                 handleVirtualPlayerTurn(currentPlayer, gameState);
+            }else {//wait for other players to play
+                try {
+                    waiterOtherPlayersToPlay(gameState, thisPlayer);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             if (!gameState.isGameRunning()) {
@@ -80,6 +143,59 @@ public class GameUIController implements GameUIInterface {
         }
         LOGGER.info("Game ended");
     }
+
+    private boolean waiterOtherPlayersToPlay(GameState gameState, Player player) throws InterruptedException {
+        boolean isWaitingForPlayers = true;
+        while (isWaitingForPlayers) {
+            gameState = refreshState(gameState);
+            if (player.getId().equals(gameState.getPlayers().get(gameState.getCurrentPlayerIndex()).getId())) {
+                isWaitingForPlayers = false;
+            } else {
+                //current player
+                view.showCurrentPlayerInfo(gameState.getPlayers().get(gameState.getCurrentPlayerIndex()));
+                //top card
+                view.showTopCard(gameState.getTopCard());
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return isWaitingForPlayers;
+    }
+
+    private void showCurrentPlayerWaiting(Player currentPlayer, GameState gameState) {
+        LOGGER.debug("Showing waiting message for player: {}", currentPlayer.getName());
+        view.showCurrentPlayerInfo(currentPlayer);
+        view.showTopCard(gameState.getTopCard());
+        view.showWaitingForPlayer(currentPlayer);
+        delayPolling();
+    }
+
+    private void delayPolling() {
+        try {
+            Thread.sleep(POLLING_DELAY_MS);
+        } catch (InterruptedException e) {
+            LOGGER.error("Thread interrupted", e);
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private Optional<Player> replaceVirtualPlayer(GameState gameState, String playerName) {
+        LOGGER.debug("Replacing virtual player with name: {}", playerName);
+        for (Player p : gameState.getPlayers()) {
+            if (p.isVirtual()) {
+                p.setName(playerName);
+                p.setVirtual(false);
+                LOGGER.debug("Virtual player replaced: {}", p);
+                return Optional.of(p);
+            }
+        }
+        LOGGER.error("No virtual player found for replacement");
+        return Optional.empty();
+    }
+
 
     private void handleVirtualPlayerTurn(Player currentPlayer, GameState gameState) {
         Card topCard = gameState.getTopCard();
@@ -134,7 +250,7 @@ public class GameUIController implements GameUIInterface {
         int accumulatedDrawCount = 0;
         try {
             playerService.sortPlayersCards(currentPlayer);
-            view.showCurrentPlayerInfo(currentPlayer);
+            view.showActivePlayersHand(currentPlayer);
 
             LOGGER.debug("Top card on the discard pile: {}", topCard);
             view.showTopCard(topCard);
@@ -232,18 +348,16 @@ public class GameUIController implements GameUIInterface {
         return true;
     }
 
-    public GameState init() {
+    public GameState init(String playerName) {
         GameState gameState = null;
-        view.showWelcomeMessage();
         try {
             int numberOfPlayers = view.getNumberOfPlayers();
-            String playerName = view.getPlayerName();
             LOGGER.info("Initializing game for {} players with first player named {}", numberOfPlayers, playerName);
             gameState = gameService.initializeGame(playerName, numberOfPlayers);
             view.showPlayers(gameState.getPlayers());
         } catch (Exception e) {
             LOGGER.error("An unexpected error occurred initializing the game: {}", e.getMessage());
-            return init(); // Retry initialization
+            return init(playerName); // Retry initialization
         }
         return gameState;
     }

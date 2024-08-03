@@ -30,6 +30,7 @@ public class GameState {
     @JoinColumn(name = "rules_id") // specifies the foreign key in the GameState table
     private Rules rules;
     private boolean gameRunning;
+    private boolean joiningAllowed;
 
     public List<Player> getPlayers() {
         return players;
@@ -89,5 +90,13 @@ public class GameState {
 
     public void setTopCard(Card topCard) {
         this.topCard = topCard;
+    }
+
+    public boolean isJoiningAllowed() {
+        return joiningAllowed;
+    }
+
+    public void setJoiningAllowed(boolean joiningAllowed) {
+        this.joiningAllowed = joiningAllowed;
     }
 }

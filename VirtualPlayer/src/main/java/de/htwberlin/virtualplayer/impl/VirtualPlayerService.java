@@ -46,6 +46,6 @@ public class VirtualPlayerService implements VirtualPlayerInterface {
 
     @Override
     public boolean shouldSayMau(Player player) {
-        return player.getHand().size() == 1;
+        return player.getHand().size() == 2;
     }
 }
