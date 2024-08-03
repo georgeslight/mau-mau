@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
 import java.util.stream.IntStream;
 
 @Controller
@@ -48,12 +49,19 @@ public class GameUIController implements GameUIInterface {
     public void run() {
         LOGGER.info("Game started");
         GameState gameState = this.init();
-        gameRepository.save(gameState);
+        gameRepository.saveAndFlush(gameState);
         boolean isRunning = true;
 
         while (isRunning) {
+            LOGGER.debug("------------------------------------- New turn -------------------------------------");
             gameState = refreshState(gameState);
-            Player currentPlayer = gameState.getPlayers().get(gameState.getCurrentPlayerIndex());
+            debugger(gameState);
+            List<Player> players = gameService.getSortedPlayersList(gameState);
+            Player currentPlayer = players.get(gameState.getCurrentPlayerIndex());
+            LOGGER.debug("PlayerNamesList: {}",players.stream().map(Player::getName).reduce((p1, p2) -> p1 + ", " + p2).orElse(""));
+            for (Card card : gameState.getDiscardPile()){
+                LOGGER.debug("DiscardPile: {}", card);
+            }
             LOGGER.debug("Current player: {}", currentPlayer.getName());
 
             if (!currentPlayer.isVirtual()) {
@@ -67,17 +75,16 @@ public class GameUIController implements GameUIInterface {
                 LOGGER.info("Game ended. Winner: {}", winner.getName());
                 view.showEndGame(gameState, winner);
                 isRunning = false;
-                gameRepository.save(gameState);
+                gameRepository.saveAndFlush(gameState);
             }
         }
         LOGGER.info("Game ended");
     }
 
     private void handleVirtualPlayerTurn(Player currentPlayer, GameState gameState) {
-        Card topCard = null;
+        Card topCard = gameState.getTopCard();
         int accumulatedDrawCount = 0;
         try {
-            topCard = gameService.getTopCard(gameState.getDiscardPile());
             LOGGER.debug("Top card on the discard pile: {}", topCard);
             view.showTopCard(topCard);
 
@@ -107,6 +114,7 @@ public class GameUIController implements GameUIInterface {
     private void playVirtualCard(Player currentPlayer, GameState gameState, Card cardToPlay) {
         LOGGER.debug("Playing virtual card: {}", cardToPlay);
         gameService.playCard(currentPlayer, cardToPlay, gameState);
+        ruleService.applySpecialCardsEffect(cardToPlay, gameState.getRules());
         view.showPlayedCard(currentPlayer, cardToPlay);
 
         if (cardToPlay.getRank().equals(Rank.JACK)) {
@@ -118,13 +126,12 @@ public class GameUIController implements GameUIInterface {
     }
 
     private void handleHumanPlayerTurn(Player currentPlayer, GameState gameState) {
-        Card topCard = null;
+        Card topCard = gameState.getTopCard();
         int accumulatedDrawCount = 0;
         try {
             playerService.sortPlayersCards(currentPlayer);
             view.showCurrentPlayerInfo(currentPlayer);
 
-            topCard = gameService.getTopCard(gameState.getDiscardPile());
             LOGGER.debug("Top card on the discard pile: {}", topCard);
             view.showTopCard(topCard);
 
@@ -202,7 +209,7 @@ public class GameUIController implements GameUIInterface {
         gameService.nextPlayer(gameState);
         LOGGER.debug("Saving this game state");
         debugger(gameState);
-        gameRepository.save(gameState);
+        gameRepository.saveAndFlush(gameState);
         LOGGER.debug("Data in Database:");
         debugger(gameRepository.findById(gameState.getId()).orElse(null));
         LOGGER.debug("Next player: {}", gameState.getPlayers().get(gameState.getCurrentPlayerIndex()).getName());
@@ -294,9 +301,6 @@ public class GameUIController implements GameUIInterface {
     private GameState refreshState(GameState gameState) {
         LOGGER.debug("Refreshing game state");
         GameState refreshedGameState = gameRepository.findById(gameState.getId()).orElse(null);
-        if (refreshedGameState != null) {
-            debugger(refreshedGameState);
-        }
         return refreshedGameState != null ? refreshedGameState : gameState;
     }
 
@@ -317,7 +321,7 @@ public class GameUIController implements GameUIInterface {
                                 player.isVirtual()))
                         .reduce((p1, p2) -> p1 + "; " + p2)
                         .orElse(""),
-                gameService.getTopCard(gameState.getDiscardPile()),
+                gameState.getTopCard(),
                 gameState.isGameRunning()
         );
     }

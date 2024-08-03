@@ -23,7 +23,10 @@ public class GameState {
     @JoinColumn(name = "pile_id") // specifies the foreign key in the Card table
     private List<Card> discardPile;
     private int currentPlayerIndex;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "top_card_id") // specifies the foreign key in the Card table
+    private Card topCard;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "rules_id") // specifies the foreign key in the GameState table
     private Rules rules;
     private boolean gameRunning;
@@ -78,5 +81,13 @@ public class GameState {
 
     public void setGameRunning(boolean gameRunning) {
         this.gameRunning = gameRunning;
+    }
+
+    public Card getTopCard() {
+        return topCard;
+    }
+
+    public void setTopCard(Card topCard) {
+        this.topCard = topCard;
     }
 }

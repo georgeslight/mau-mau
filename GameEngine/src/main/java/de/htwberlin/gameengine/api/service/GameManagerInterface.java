@@ -80,15 +80,6 @@ public interface GameManagerInterface {
      */
     Player getWinner(GameState gameState);
 
-    /**
-     * Ruft die oberste Karte vom angegebenen Kartenstapel ab.
-     * Wirft eine Ausnahme, wenn der Stapel leer ist.
-     *
-     * @param stack der Kartenstapel, aus dem die Karte abgerufen werden soll
-     * @return die oberste Karte des Stapels
-     * @throws EmptyPileException wenn der Stapel leer ist
-     */
-    Card getTopCard(List<Card> stack);
 
     /**
      * Mischt das Deck neu, indem Karten vom Ablagestapel zurück ins Deck gelegt werden.
@@ -103,4 +94,7 @@ public interface GameManagerInterface {
 
     @Transactional
     void handleHumanPlayerTurn(Player currentPlayer, GameState gameState, String input);
+
+    @Transactional
+    List<Player> getSortedPlayersList(GameState gameState);
 }

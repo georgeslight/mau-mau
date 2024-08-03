@@ -1,5 +1,6 @@
 package de.htwberlin.virtualplayer.impl;
 
+import de.htwberlin.cardsmanagement.api.enums.Rank;
 import de.htwberlin.cardsmanagement.api.enums.Suit;
 import de.htwberlin.cardsmanagement.api.model.Card;
 import de.htwberlin.playermanagement.api.model.Player;
@@ -21,6 +22,7 @@ public class VirtualPlayerService implements VirtualPlayerInterface {
 
     @Override
     public Card decideCardToPlay(Player player, Card topCard, RuleEngineInterface ruleService, Rules rules) {
+
         List<Card> hand = player.getHand();
         for (Card card : hand) {
             if (ruleService.isValidMove(card, topCard, rules)) {

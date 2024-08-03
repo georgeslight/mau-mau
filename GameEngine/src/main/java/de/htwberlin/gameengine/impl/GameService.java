@@ -77,6 +77,7 @@ public class GameService implements GameManagerInterface {
         game.setGameRunning(true);
         game.setDeck(deck);
         game.setCurrentPlayerIndex(0);
+        game.setTopCard(discardPile.get(0));
 
         return game;
     }
@@ -99,6 +100,7 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
+    @Transactional
     public Player getWinner(GameState game) {
         return game.getPlayers().stream().max(Comparator.comparingInt(Player::getRankingPoints))
                 .orElse(null);
@@ -149,6 +151,7 @@ public class GameService implements GameManagerInterface {
     }
 
     @Override
+    @Transactional
     public void reshuffleDeck(GameState game) {
         LOGGER.info("Deck is empty, reshuffling Deck");
 
@@ -175,6 +178,10 @@ public class GameService implements GameManagerInterface {
         if (player.getHand().remove(card)) {
             gameState.getDiscardPile().add(card);
             gameState.getRules().setWishCard(null);
+            gameState.setTopCard(card);
+            if (player.isSaidMau()&&player.getHand().size()>1) {
+                player.setSaidMau(false);
+            }
         } else {
             throw new IllegalArgumentException("The player does not have the specified card.");
         }
@@ -185,22 +192,17 @@ public class GameService implements GameManagerInterface {
         return player.getHand().isEmpty();
     }
 
-    @Override
-    public Card getTopCard(List<Card> stack) {
-        if (stack == null || stack.isEmpty()) {
-            throw new EmptyPileException("The pile is empty.");
-        }
-        return stack.get(stack.size() - 1);
-    }
 
     // New methods to handle player turns and other game logic
     @Override
     @Transactional
     public void handleVirtualPlayerTurn(Player currentPlayer, GameState gameState) {
-        Card topCard = null;
+        Card topCard = gameState.getTopCard();
         int accumulatedDrawCount = 0;
         try {
-            topCard = this.getTopCard(gameState.getDiscardPile());
+            if(virtualPlayerInterface.shouldSayMau(currentPlayer)){
+                currentPlayer.setSaidMau(true);
+            }
             LOGGER.debug("Top card on the discard pile: {}", topCard);
 
             accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
@@ -211,7 +213,6 @@ public class GameService implements GameManagerInterface {
                 LOGGER.info("Virtual player {} chose to draw cards", currentPlayer.getName());
                 this.drawCards(accumulatedDrawCount, gameState, currentPlayer);
             }
-
         } catch (EmptyHandException e) {
             LOGGER.warn("Player has no cards to sort: {}", e.getMessage());
             this.handleEndOfTurnTasks(currentPlayer, gameState);
@@ -224,12 +225,11 @@ public class GameService implements GameManagerInterface {
     @Override
     @Transactional
     public void handleHumanPlayerTurn(Player currentPlayer, GameState gameState, String input) {
-        Card topCard = null;
+        Card topCard = gameState.getTopCard();
         int accumulatedDrawCount = 0;
         try {
             playerManagerInterface.sortPlayersCards(currentPlayer);
 
-            topCard = this.getTopCard(gameState.getDiscardPile());
             LOGGER.debug("Top card on the discard pile: {}", topCard);
 
             accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
@@ -281,14 +281,9 @@ public class GameService implements GameManagerInterface {
                 this.drawCards(2, gameState, currentPlayer);
             }
         }
-        if (currentPlayer.isSaidMau() && currentPlayer.getHand().size() > 1) {
-            currentPlayer.setSaidMau(false);
-            LOGGER.debug("Player {} reset 'mau'", currentPlayer.getName());
-        }
-
         nextPlayer(gameState);
     }
-
+    @Transactional
     public void drawCards(int accumulatedDrawCount, GameState gameState, Player currentPlayer) {
         IntStream.range(0, Math.max(accumulatedDrawCount, 1))
                 .forEach(i -> {
@@ -298,7 +293,7 @@ public class GameService implements GameManagerInterface {
         gameState.getRules().setCardsToBeDrawn(0);
         LOGGER.info("Reset accumulated draw count to 0");
     }
-
+    @Transactional
     public boolean isNumeric(String str) {
         if (str == null) {
             return false;
@@ -310,5 +305,12 @@ public class GameService implements GameManagerInterface {
             return false;
         }
         return true;
+    }
+    @Override
+    @Transactional
+    public List<Player> getSortedPlayersList(GameState gameState) {
+        return gameState.getPlayers().stream()
+                .sorted(Comparator.comparingLong(Player::getId))
+                .collect(Collectors.toList());
     }
 }

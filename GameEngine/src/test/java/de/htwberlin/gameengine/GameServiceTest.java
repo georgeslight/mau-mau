@@ -8,6 +8,7 @@ import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.cardsmanagement.api.service.CardManagerInterface;
 import de.htwberlin.gameengine.api.service.GameManagerInterface;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
+import de.htwberlin.rulesmanagement.api.model.Rules;
 import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
 import de.htwberlin.gameengine.impl.GameService;
 import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
@@ -227,6 +228,7 @@ class GameServiceTest {
         GameState gameState = new GameState();
         gameState.setPlayers(List.of(player));
         gameState.setDiscardPile(discardPile);
+        gameState.setRules(new Rules());
 
         // Play the card
         gameService.playCard(player, cardToPlay, gameState);

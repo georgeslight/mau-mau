@@ -42,7 +42,7 @@ public class RuleService implements RuleEngineInterface {
         // If Jack was played
         if (topCard.getRank().equals(Rank.JACK) && rules.getWishCard() != null) {
             LOGGER.debug("Top card is a JACK with wished suit: {}", rules.getWishCard());
-            if (card.getSuit().equals(rules.getWishCard())) {
+            if (card.getSuit().equals(rules.getWishCard()) && !card.getRank().equals(Rank.JACK)) {
                 LOGGER.debug("Playing card of the wished suit: {}", card.getSuit());
                 rules.setWishCard(null);
                 return true;
