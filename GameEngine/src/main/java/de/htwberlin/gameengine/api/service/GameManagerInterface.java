@@ -89,11 +89,6 @@ public interface GameManagerInterface {
      */
     void reshuffleDeck(GameState game);
 
-    // New methods to handle player turns and other game logic
-    void handleVirtualPlayerTurn(Player currentPlayer, GameState gameState);
-
-    @Transactional
-    void handleHumanPlayerTurn(Player currentPlayer, GameState gameState, String input);
 
     @Transactional
     List<Player> getSortedPlayersList(GameState gameState);

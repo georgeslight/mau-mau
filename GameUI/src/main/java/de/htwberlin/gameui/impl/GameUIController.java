@@ -85,8 +85,12 @@ public class GameUIController implements GameUIInterface {
         Card topCard = gameState.getTopCard();
         int accumulatedDrawCount = 0;
         try {
-            LOGGER.debug("Top card on the discard pile: {}", topCard);
             view.showTopCard(topCard);
+            LOGGER.debug("Top card on the discard pile: {}", topCard);
+            if(virtualPlayerInterface.shouldSayMau(currentPlayer)){
+                currentPlayer.setSaidMau(true);
+                view.showMauMessage(currentPlayer);
+            }
 
             accumulatedDrawCount = gameState.getRules().getCardsToBeDrawn();
             Card playedCard = virtualPlayerInterface.decideCardToPlay(currentPlayer, topCard, ruleService, gameState.getRules());
