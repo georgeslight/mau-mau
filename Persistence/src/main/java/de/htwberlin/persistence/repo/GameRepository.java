@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
  * Bietet grundlegende CRUD-Operationen und benutzerdefinierte Methoden für den Spielzustand.
  */
 @Repository
-public interface GameRepository extends JpaRepository<GameState, Long>, GameRepositoryCustom {
+public interface GameRepository extends JpaRepository<GameState, Long> {
 }

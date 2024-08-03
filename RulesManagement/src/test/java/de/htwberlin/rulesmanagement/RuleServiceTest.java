@@ -128,6 +128,7 @@ class RuleServiceTest {
     void playingTowJacks() {
         Card topCard = new Card(Suit.HEARTS, Rank.JACK);
         Card card = new Card(Suit.CLUBS, Rank.JACK);
+        rules.setWishCard(Suit.HEARTS);
         assertFalse(ruleService.isValidMove(card, topCard, rules));
     }
 

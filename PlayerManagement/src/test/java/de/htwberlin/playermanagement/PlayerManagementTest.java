@@ -38,7 +38,7 @@ class PlayerManagementTest {
                 cardService.createCard(Suit.SPADES, Rank.JACK),
                 cardService.createCard(Suit.DIAMONDS, Rank.NINE),
                 cardService.createCard(Suit.CLUBS, Rank.QUEEN),
-                cardService.createCard(Suit.HEARTS, Rank.QUEEN)));
+                cardService.createCard(Suit.HEARTS, Rank.QUEEN)), false);
         assertNotNull(player);
         assertEquals("Player 1", player.getName());
         assertEquals(5, player.getHand().size());
@@ -52,12 +52,12 @@ class PlayerManagementTest {
     @Test
     void mau() {
         //        test if player has only one card, if one card keep playing
-        Player playerWithTwoCard = new Player("Player 1", List.of(cardService.createCard(Suit.HEARTS, Rank.ACE), new Card(Suit.SPADES, Rank.KING)));
+        Player playerWithTwoCard = new Player("Player 1", List.of(cardService.createCard(Suit.HEARTS, Rank.ACE), new Card(Suit.SPADES, Rank.KING)), false);
         playerService.mau(playerWithTwoCard);
         assertTrue(playerWithTwoCard.isSaidMau());
         assertEquals(2, playerWithTwoCard.getHand().size());
 
-        Player playerWithMultipleCards = new Player("Player 1", List.of(cardService.createCard(Suit.HEARTS, Rank.ACE), cardService.createCard(Suit.SPADES, Rank.KING), cardService.createCard(Suit.SPADES, Rank.JACK)));
+        Player playerWithMultipleCards = new Player("Player 1", List.of(cardService.createCard(Suit.HEARTS, Rank.ACE), cardService.createCard(Suit.SPADES, Rank.KING), cardService.createCard(Suit.SPADES, Rank.JACK)), false);
         playerService.mau(playerWithMultipleCards);
         assertFalse(playerWithMultipleCards.isSaidMau(), "Player should not be able to say Mau with more than two card.");
         assertEquals(3, playerWithMultipleCards.getHand().size());
@@ -76,7 +76,7 @@ class PlayerManagementTest {
         hand.add(cardService.createCard(Suit.HEARTS, Rank.KING));
         hand.add(cardService.createCard(Suit.DIAMONDS, Rank.KING));
 
-        Player player = new Player("test", hand);
+        Player player = new Player("test", hand, false);
         playerService.sortPlayersCards(player);
 
         List<Card> sortedHand = player.getHand();

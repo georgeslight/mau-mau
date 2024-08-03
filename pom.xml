@@ -18,7 +18,8 @@
 		<module>GameUI</module>
 		<module>Configuration</module>
 		<module>Persistence</module>
-	</modules>
+        <module>VirtualPlayer</module>
+    </modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

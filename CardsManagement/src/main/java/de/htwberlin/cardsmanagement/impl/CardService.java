@@ -20,6 +20,10 @@ public class CardService implements CardManagerInterface {
 
     @Override
     public List<Card> shuffle(List<Card> deck) {
+        if (deck == null || deck.isEmpty()) {
+            LOGGER.warn("Attempted to shuffle an empty or null deck.");
+            throw new IllegalArgumentException("Cannot shuffle an empty or null deck");
+        }
         return deck.stream()
                 .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
                     Collections.shuffle(collected);

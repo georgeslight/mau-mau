@@ -35,7 +35,7 @@ public class PlayerRepositoryTest {
     @Test
     public void testFindByName() {
         // Create and save a new Player entity
-        Player player = new Player("John Doe", new ArrayList<>());
+        Player player = new Player("John Doe", new ArrayList<>(), false);
         playerRepository.save(player);
 
         // Retrieve the Player entity by its name
@@ -49,13 +49,13 @@ public class PlayerRepositoryTest {
     @Test
     public void testFindByRankingPointsGreaterThan() {
         // Create and save a new Players entity
-        Player player1 = new Player("Player1", new ArrayList<>());
+        Player player1 = new Player("Player1", new ArrayList<>(), false);
         player1.setRankingPoints(10);
-        Player player2 = new Player("Player2", new ArrayList<>());
+        Player player2 = new Player("Player2", new ArrayList<>(), false);
         player2.setRankingPoints(15);
-        Player player3 = new Player("Player3", new ArrayList<>());
+        Player player3 = new Player("Player3", new ArrayList<>(), false);
         player3.setRankingPoints(20);
-        Player player4 = new Player("Player4", new ArrayList<>());
+        Player player4 = new Player("Player4", new ArrayList<>(), false);
         player4.setRankingPoints(30);
         playerRepository.save(player1);
         playerRepository.save(player2);
@@ -79,19 +79,19 @@ public class PlayerRepositoryTest {
         // Create and Save player1
         List<Card> hand1 = new ArrayList<>();
         hand1.add(new Card(Suit.HEARTS, Rank.ACE));
-        Player player1 = new Player("Player1", hand1);
+        Player player1 = new Player("Player1", hand1, false);
         playerRepository.save(player1);
 
         // Create and Save player2
         List<Card> hand2 = new ArrayList<>();
         hand2.add(new Card(Suit.HEARTS, Rank.KING));
-        Player player2 = new Player("Player2", hand2);
+        Player player2 = new Player("Player2", hand2, false);
         playerRepository.save(player2);
 
         // Create and Save player3
         List<Card> hand3 = new ArrayList<>();
         hand3.add(new Card(Suit.CLUBS, Rank.EIGHT));
-        Player player3 = new Player("Player3", hand3);
+        Player player3 = new Player("Player3", hand3, false);
         playerRepository.save(player3);
 
         // Retrieve
@@ -108,17 +108,17 @@ public class PlayerRepositoryTest {
     @Test
     public void testFindBySaidMau() {
         // Create and Save player1
-        Player player1 = new Player("Player1", anyList());
+        Player player1 = new Player("Player1", anyList(), false);
         player1.setSaidMau(true);
         playerRepository.save(player1);
 
         // Create and Save player2
-        Player player2 = new Player("Player2", anyList());
+        Player player2 = new Player("Player2", anyList(), false);
         player2.setSaidMau(false);
         playerRepository.save(player2);
 
         // Create and Save player3
-        Player player3 = new Player("Player3", anyList());
+        Player player3 = new Player("Player3", anyList(), false);
         player3.setSaidMau(true);
         playerRepository.save(player3);
 

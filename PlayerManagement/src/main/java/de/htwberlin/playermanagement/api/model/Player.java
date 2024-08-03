@@ -14,20 +14,22 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "player_id") // specifies the foreign key in the Card table
     private List<Card> hand;
     private Integer rankingPoints;
     private boolean saidMau;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<Integer> score;
+    private boolean isVirtual;
 
-    public Player(String name, List<Card> hand) {
+    public Player(String name, List<Card> hand, boolean isVirtual) {
         this.score = new ArrayList<>();
         this.saidMau = false;
         this.rankingPoints = 0;
         this.hand = hand;
         this.name = name;
+        this.isVirtual = isVirtual;
     }
 
     public Player() {
@@ -71,6 +73,14 @@ public class Player {
 
     public void setSaidMau(boolean saidMau) {
         this.saidMau = saidMau;
+    }
+
+    public boolean isVirtual() {
+        return isVirtual;
+    }
+
+    public void setVirtual(boolean virtual) {
+        isVirtual = virtual;
     }
 
     public Long getId() {

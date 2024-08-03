@@ -19,7 +19,7 @@ public interface PlayerManagerInterface {
      * @param hand die Handkarten des Spielers
      * @return der erstellte Spieler
      */
-    Player createPlayer(String name, List<Card> hand);
+    Player createPlayer(String name, List<Card> hand, boolean isVirtual);
 
     /**
      * Sortiert die Karten in der Hand des Spielers, um das Spielerlebnis zu optimieren.

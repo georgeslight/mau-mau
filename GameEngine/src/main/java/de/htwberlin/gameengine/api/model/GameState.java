@@ -13,13 +13,13 @@ public class GameState {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "game_id") // specifies the foreign key in the Player table
     private List<Player> players;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "deck_id") // specifies the foreign key in the Card table
     private List<Card> deck;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "pile_id") // specifies the foreign key in the Card table
     private List<Card> discardPile;
     private int currentPlayerIndex;

@@ -38,15 +38,15 @@ public class RulesRepositoryTest {
     public void testFindRulesWithMoreCardsToBeDrawnThan() {
         // Create and save Rules entities
         Rules rules1 = new Rules();
-        rules1.setCardsTObeDrawn(5);
+        rules1.setCardsToBeDrawn(5);
         rulesRepository.save(rules1);
 
         Rules rules2 = new Rules();
-        rules2.setCardsTObeDrawn(10);
+        rules2.setCardsToBeDrawn(10);
         rulesRepository.save(rules2);
 
         Rules rules3 = new Rules();
-        rules3.setCardsTObeDrawn(7);
+        rules3.setCardsToBeDrawn(7);
         rulesRepository.save(rules3);
 
         // Retrieve Rules entities with more cards to be drawn than specified value

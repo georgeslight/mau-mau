@@ -1,13 +1,15 @@
 package de.htwberlin.gameengine.impl;
 
-import de.htwberlin.cardsmanagement.api.service.CardManagerInterface;
-import de.htwberlin.gameengine.api.service.GameManagerInterface;
 import de.htwberlin.cardsmanagement.api.model.Card;
+import de.htwberlin.cardsmanagement.api.service.CardManagerInterface;
 import de.htwberlin.gameengine.api.model.GameState;
+import de.htwberlin.gameengine.api.service.GameManagerInterface;
+import de.htwberlin.gameengine.exception.EmptyPileException;
 import de.htwberlin.playermanagement.api.model.Player;
 import de.htwberlin.playermanagement.api.service.PlayerManagerInterface;
 import de.htwberlin.rulesmanagement.api.model.Rules;
 import de.htwberlin.rulesmanagement.api.service.RuleEngineInterface;
+import de.htwberlin.virtualplayer.api.service.VirtualPlayerInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +30,14 @@ public class GameService implements GameManagerInterface {
     private PlayerManagerInterface playerManagerInterface;
     private CardManagerInterface cardManagerInterface;
     private RuleEngineInterface ruleEngineInterface;
+    private VirtualPlayerInterface virtualPlayerInterface;
 
     @Autowired
-    public GameService(PlayerManagerInterface playerManagerInterface, CardManagerInterface cardManagerInterface, RuleEngineInterface ruleEngineInterface) {
+    public GameService(PlayerManagerInterface playerManagerInterface, CardManagerInterface cardManagerInterface, RuleEngineInterface ruleEngineInterface, VirtualPlayerInterface virtualPlayerInterface) {
         this.playerManagerInterface = playerManagerInterface;
         this.cardManagerInterface = cardManagerInterface;
         this.ruleEngineInterface = ruleEngineInterface;
+        this.virtualPlayerInterface = virtualPlayerInterface;
     }
 
     public GameService() {
@@ -49,15 +53,15 @@ public class GameService implements GameManagerInterface {
         List<Card> firstPlayerHand = IntStream.range(0, 5)
                 .mapToObj(i -> deck.remove(deck.size() - 1))
                 .collect(Collectors.toList());
-        Player firstPlayer = playerManagerInterface.createPlayer(playerName, firstPlayerHand);
+        Player firstPlayer = playerManagerInterface.createPlayer(playerName, firstPlayerHand, false);
 
-        // Create remaining players with default names
+        // Create remaining players with default names, including virtual players
         List<Player> players = IntStream.range(1, numberOfPlayers)
                 .mapToObj(i -> {
                     List<Card> hand = IntStream.range(0, 5)
                             .mapToObj(j -> deck.remove(deck.size() - 1))
                             .collect(Collectors.toList());
-                    return playerManagerInterface.createPlayer("Player " + (i + 1), hand);
+                    return playerManagerInterface.createPlayer("Player " + (i + 1), hand, true);
                 })
                 .collect(Collectors.toList());
 
@@ -68,11 +72,8 @@ public class GameService implements GameManagerInterface {
         game.setDiscardPile(discardPile);
         game.setRules(new Rules());
         game.setGameRunning(true);
-
         game.setDeck(deck);
-
         game.setCurrentPlayerIndex(0);
-//        game.setNextPlayerIndex(1);
 
         return game;
     }
@@ -82,13 +83,15 @@ public class GameService implements GameManagerInterface {
     public Player nextPlayer(GameState gameState) {
         int nextPlayerIndex = ruleEngineInterface.calculateNextPlayerIndex(gameState.getCurrentPlayerIndex(), gameState.getPlayers().size(), gameState.getRules());
         gameState.setCurrentPlayerIndex(nextPlayerIndex);
-        return gameState.getPlayers().get(nextPlayerIndex);
+        return  gameState.getPlayers().get(nextPlayerIndex);
     }
+
+
 
     @Override
     @Transactional
     public void calcRankingPoints(GameState game) {
-        game.getPlayers().forEach( player -> {
+        game.getPlayers().forEach(player -> {
             // Updated rankingPoints with the sum of all scores
             player.setRankingPoints(player.getScore().stream().reduce(0, Integer::sum));
         });
@@ -103,7 +106,7 @@ public class GameService implements GameManagerInterface {
     @Override
     @Transactional
     public void endRound(GameState game) {
-        game.getPlayers().forEach( player -> {
+        game.getPlayers().forEach(player -> {
             // Updated score
             player.getScore().add(ruleEngineInterface.calculateScore(player.getHand()));
             // Updated rankingPoints with the sum of all scores
@@ -144,7 +147,8 @@ public class GameService implements GameManagerInterface {
         return drawCard;
     }
 
-    private void reshuffleDeck(GameState game) {
+    @Override
+    public void reshuffleDeck(GameState game) {
         LOGGER.info("Deck is empty, reshuffling Deck");
 
         // Save the last card from the discard pile
@@ -179,5 +183,11 @@ public class GameService implements GameManagerInterface {
         return player.getHand().isEmpty();
     }
 
+    @Override
+    public Card getTopCard(List<Card> stack) {
+        if (stack == null || stack.isEmpty()) {
+            throw new EmptyPileException("The pile is empty.");
+        }
+        return stack.get(stack.size() - 1);
+    }
 }
-

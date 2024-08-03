@@ -7,6 +7,8 @@ PlayerManagement/target/
 RulesManagement/target/
 GameUI/target/
 Configuration/target/
+Persistence/target/
+VirtualPlayer/target/
 
 /*.class
 /*.log
